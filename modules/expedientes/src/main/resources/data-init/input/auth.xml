@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<auth>
+
+
+
+  <permission name="TipoExpediente.all" object="com.educaflow.apps.expedientes.db.TipoExpediente">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
+
+
+
+
+  <role name="users.all" description="Permisos de usuarios">
+    <permission name="TipoExpediente.all"/>
+  </role>
+
+  <group code="users">
+    <role name="users.all" />
+  </group>
+
+</auth>

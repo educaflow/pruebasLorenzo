@@ -1,0 +1,13 @@
+plugins {
+    id 'com.axelor.app'
+}
+
+group = 'com.educaflow.apps.expedientes'
+version = '1.0.0'
+
+axelor {
+    title "educaFlow Expedientes"
+    description "educaFlow Expedientes Módulo"
+}
+
+

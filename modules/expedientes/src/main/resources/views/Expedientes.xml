@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://raw.githubusercontent.com/educaflow/axelor-open-platform/refs/heads/master/xml/ns/object-views/object-views_7.4.xsd">
+
+  <action-method name="action-event-new-expediente">
+    <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="triggerInitialEvent"/>
+  </action-method>
+  <action-method name="action-event-expediente">
+    <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="triggerEvent"/>
+  </action-method>
+
+
+
+  <menuitem name="menu-expedientes" title="Expedientes" groups="admins,users"/>
+
+  <menuitem name="menu-item-nuevo-expediente" parent="menu-expedientes" title="Nuevo Expediente" action="accion-nuevo-expediente" groups="admins,users"/>
+
+
+  <action-view name="action-nuevo-expediente" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" >
+    <view type="grid" name="grid-tipo-expediente"  />
+  </action-view>
+
+
+
+
+  <grid name="grid-tipo-expediente" title="tipos de expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" groups="admins,users"
+        editable="false" edit-icon="false" x-selector="none" canNew="false"  canEdit="false"  canDelete="false" canSave="false"
+        action="action-event-new-expediente" actionSignal="aaaa"
+  >
+    <field name="code" />
+    <field name="name" />
+    <field name="versionExpediente" />
+    <field name="openDate" />
+    <field name="closeDate" />
+    <field name="fqcnEventManager" />
+
+  </grid>
+
+
+
+
+</object-views>

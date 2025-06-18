@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<datos>
+    <tiposExpedientes>
+        <tipoExpediente code="FaltaJustificada" name="Falta Justificada"     versionExpediente="1" fqcnEventManager="com.educaflow.apps.expedientes.flujos.faltajustificada.FaltaJustificadaEventManager" />
+        <tipoExpediente code="ComisionServicio" name="Comision de servicios" versionExpediente="1" fqcnEventManager="com.educaflow.apps.expedientes.flujos.comisionservicio.ComisionServicioEventManager" />
+        <tipoExpediente code="Prueba"           name="Expediente de prueba"  versionExpediente="1" fqcnEventManager="com.educaflow.apps.expedientes.flujos.prueba.PruebaEventManager" />
+    </tiposExpedientes>
+</datos>

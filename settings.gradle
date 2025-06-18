@@ -43,3 +43,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'pruebasLorenzo'
+
+include 'modules:expedientes'
