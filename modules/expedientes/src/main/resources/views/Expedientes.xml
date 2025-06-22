@@ -1,29 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <object-views xmlns="http://axelor.com/xml/ns/object-views"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://axelor.com/xml/ns/object-views https://raw.githubusercontent.com/educaflow/axelor-open-platform/refs/heads/master/xml/ns/object-views/object-views_7.4.xsd">
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_7.2.xsd">
 
-  <action-method name="action-event-new-expediente">
-    <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="triggerInitialEvent"/>
-  </action-method>
+
   <action-method name="action-event-expediente">
     <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="triggerEvent"/>
   </action-method>
 
 
-
   <menuitem name="menu-expedientes" title="Expedientes" groups="admins,users"/>
 
-  <menuitem name="menu-item-nuevo-expediente" parent="menu-expedientes" title="Nuevo Expediente" action="accion-nuevo-expediente" groups="admins,users"/>
-
-
+  <menuitem name="menu-item-nuevo-expediente" parent="menu-expedientes" title="Nuevo Expediente"
+            action="action-nuevo-expediente" groups="admins,users"/>
   <action-view name="action-nuevo-expediente" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" >
     <view type="grid" name="grid-tipo-expediente"  />
   </action-view>
-
-
-
-
   <grid name="grid-tipo-expediente" title="tipos de expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" groups="admins,users"
         editable="false" edit-icon="false" x-selector="none" canNew="false"  canEdit="false"  canDelete="false" canSave="false"
         action="action-event-new-expediente" actionSignal="aaaa"
@@ -36,7 +28,167 @@
     <field name="fqcnEventManager" />
 
   </grid>
+  <action-method name="action-event-new-expediente">
+    <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="triggerInitialEvent"/>
+  </action-method>
+  <form name="form-expediente-prueba-estado-inicial-form" title="Prueba Estado inicial"
+        model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" onNew="datos-iniciales">
+    <panel title="Datos">
+      <field name="tipoExpediente"/>
+      <field name="solicita"/>
+      <field name="justificante" type="binary" widget="file"/>
+    </panel>
 
+    <panel title="Acciones">
+      <button name="GUARDAR_DATOS" title="Guardar" onClick="action-event-expediente"/>
+      <button name="CANCELAR" title="Cancelar" onClick="action-nuevo-expediente"/>
+    </panel>
+
+  </form>
+
+
+  <action-record name="datos-iniciales"
+                 model="com.educaflow.apps.expedientes.db.Prueba">
+    <field name="tipoExpediente" expr="eval: newEntity.tipoExpediente" />
+  </action-record>
+
+  <menuitem name="menu-item-ver-expedientes" parent="menu-expedientes" title="Ver Expediente"
+            action="action-ver-expedientes" groups="admins,users"/>
+  <action-view name="action-ver-expedientes" title="Nuevo expediente"
+               model="com.educaflow.apps.expedientes.db.Expediente">
+    <view type="grid" name="grid-ver-expedientes"/>
+  </action-view>
+  <grid name="grid-ver-expedientes" title="Expedientes" model="com.educaflow.apps.expedientes.db.Expediente"
+        groups="admins,users"
+        editable="false" edit-icon="false" x-selector="none" canNew="false" canEdit="false" canDelete="false"
+        canSave="false"
+        action="action-event-view-expediente" actionSignal="aaaa"
+  >
+    <field name="tipoExpediente.name"/>
+    <field name="nameState"/>
+    <field name="fechaUltimoEstado"/>
+    <field name="created_by"/>
+
+  </grid>
+  <action-method name="action-event-view-expediente">
+    <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="viewExpediente"/>
+  </action-method>
+  <form name="form-expediente-prueba-datos-guardados-form" title="Prueba Estado inicial"
+        model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+
+    <panel title="Espediente">
+      <field name="tipoExpediente.name" readonly="true" colSpan="12"/>
+      <field name="name" readonly="true"  colSpan="12"/>
+      <field name="codeState" readonly="true"  colSpan="3"/>
+      <field name="nameState" readonly="true"  colSpan="3"/>
+      <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
+      <field name="abierto" readonly="true" colSpan="3"/>
+    </panel>
+
+    <panel title="Datos">
+      <label title="Presentar los datos en Jefatura de estudios"/>
+      <field name="justificante" type="binary" widget="file"/>
+    </panel>
+
+    <panel title="Acciones">
+      <button name="PRESENTAR" title="Presentar" onClick="action-event-expediente" colSpam="2"/>
+      <button name="CANCELAR" title="Cancelar" onClick="action-nuevo-expediente" colSpam="2"/>
+    </panel>
+
+
+  </form>
+
+
+  <form name="form-expediente-prueba-revision-form" title="Prueba Estado inicial"
+        model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+
+    <panel colSpan="12">
+      <panel  colSpan="8" >
+        <field name="tipoExpediente.name" readonly="true" colSpan="6"/>
+        <field name="name" readonly="true"  colSpan="6"/>
+        <field name="nameState" readonly="true"  colSpan="3"/>
+        <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
+        <field name="abierto" widget="boolean-switch" readonly="true" colSpan="3"/>
+        <button name="mostrar-historial-estados" icon="printer" onClick="action-grid-expediente-historial-estados" colSpam="3" />
+      </panel>
+      <panel  colSpan="4" itemSpan="12">
+        <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente" />
+        <button name="RECHAZAR" title="Rechazar" onClick="action-event-expediente"/>
+        <button name="SUBSANAR" title="Subsanar información" onClick="action-event-expediente"/>
+      </panel>
+    </panel>
+
+    <panel title="Datos">
+      <field name="solicita" readonly="true" colSpan="9"/>
+      <field name="justificante" type="binary" widget="file" readonly="true" colSpan="3"/>
+      <field name="motivoAceptacion" colSpan="12"/>
+      <field name="motivoRechazo" colSpan="12"/>
+    </panel>
+
+
+  </form>
+
+  <form name="form-expediente-prueba-aceptado-form" title="Prueba Estado inicial"
+        model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <panel title="Expediente">
+      <field name="tipoExpediente.name" readonly="true" colSpan="12"/>
+      <field name="name" readonly="true"  colSpan="12"/>
+      <field name="codeState" readonly="true"  colSpan="3"/>
+      <field name="nameState" readonly="true"  colSpan="3"/>
+      <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
+      <field name="abierto" readonly="true" colSpan="3"/>
+    </panel>
+
+    <panel title="Datos">
+      <field name="solicita" readonly="true" colSpan="12"/>
+      <field name="motivoAceptacion" readonly="true" colSpan="12"/>
+    </panel>
+  </form>
+
+  <form name="form-expediente-prueba-rechazado-form" title="Prueba Estado inicial"
+        model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+
+    <panel title="Expediente">
+      <field name="tipoExpediente.name" readonly="true" colSpan="12"/>
+      <field name="name" readonly="true"  colSpan="12"/>
+      <field name="codeState" readonly="true"  colSpan="3"/>
+      <field name="nameState" readonly="true"  colSpan="3"/>
+      <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
+      <field name="abierto" readonly="true" colSpan="3"/>
+    </panel>
+
+    <panel title="Datos">
+      <field name="solicita" readonly="true" colSpan="12"/>
+      <field name="motivoRechazo" readonly="true" colSpan="12"/>
+    </panel>
+  </form>
+
+
+
+
+
+
+  <grid name="grid-expediente-historial-estados" title="Historial Estados" model="com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados"
+        groups="admins,users"
+        editable="false" edit-icon="false" x-selector="none" canNew="false" canEdit="false" canDelete="false"
+        canSave="false" orderBy="fecha"
+  >
+
+    <field name="expediente"/>
+
+    <field name="nameEvent"/>
+    <field name="nameState"/>
+    <field name="createdBy.name"/>
+    <field name="fecha"/>
+  </grid>
+
+  <action-view name="action-grid-expediente-historial-estados" title="Mostrar historial estados" model="com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados">
+    <view type="grid" name="grid-expediente-historial-estados"/>
+    <view-param name="popup" value="true"/>
+    <view-param name="show-toolbar" value="false"/>
+    <domain>self.expediente.id=:idExpediente</domain>
+    <context name="idExpediente" expr="eval: id"/>
+  </action-view>
 
 
 

@@ -46,7 +46,9 @@ allprojects {
 
 
 dependencies {
+    implementation project('modules:common')
     implementation project('modules:expedientes')
+    implementation 'org.modelmapper:modelmapper:3.1.1'
 }
 
 

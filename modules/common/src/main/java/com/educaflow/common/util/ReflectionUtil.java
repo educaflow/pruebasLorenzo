@@ -1,0 +1,62 @@
+package com.educaflow.common.util;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ReflectionUtil {
+    public static Method getMethod(Class<?> baseClass, String methodName, Class<?> returnClass, Class<? extends Annotation> annotation, Class<?>[] parameterTypes) {
+        List<Method> matchingMethods = new ArrayList<>();
+
+        for (Method method : baseClass.getDeclaredMethods()) {
+
+            if (methodName!=null) {
+                if (!method.getName().equals(methodName)) {
+                    continue;
+                }
+            }
+
+            if (returnClass!=null) {
+                if (!returnClass.isAssignableFrom(method.getReturnType())) {
+                    continue;
+                }
+            }
+
+            if (annotation!=null) {
+                if (!method.isAnnotationPresent(annotation)) {
+                    continue;
+                }
+            }
+            Class<?>[] methodParamTypes = method.getParameterTypes();
+            if (methodParamTypes.length != parameterTypes.length) {
+
+                continue;
+            }
+
+            boolean paramsMatch = true;
+            for (int i = 0; i < parameterTypes.length; i++) {
+                if (!methodParamTypes[i].equals(parameterTypes[i])) {
+                    paramsMatch = false;
+                    break;
+                }
+            }
+
+            if (paramsMatch) {
+                matchingMethods.add(method);
+            }
+        }
+
+        if (matchingMethods.size() > 1) {
+            throw new RuntimeException("Se encontró más de un método: " + methodName + " en la clase: " + baseClass.getName() + " con Nº parámetros: " + (parameterTypes != null ? parameterTypes.length : "N/A") + " y retorno: " + (returnClass != null ? returnClass.getName() : "N/A") + " y la anotación: " + (annotation != null ? annotation.getName() : "N/A"));
+        }
+
+        if (matchingMethods.size() == 1) {
+            return matchingMethods.get(0);
+        } else {
+            throw new RuntimeException("No existe el método: " + methodName + " en la clase: " + baseClass.getName() + " con Nº parámetros: " + (parameterTypes != null ? parameterTypes.length : "N/A") + " y retorno: " + (returnClass != null ? returnClass.getName() : "N/A") + " y la anotación: " + (annotation != null ? annotation.getName() : "N/A"));
+        }
+
+
+    }
+}

@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <domain-models xmlns="http://axelor.com/xml/ns/domain-models"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://axelor.com/xml/ns/domain-models http://axelor.com/xml/ns/domain-models/domain-models_5.1.xsd">
+               xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
 
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
-    <entity name="Expediente">
+    <entity name="Expediente" strategy="JOINED">
         <many-to-one name="tipoExpediente" title="Tipo de Expediente" ref="com.educaflow.apps.expedientes.db.TipoExpediente" />
         <string name="name" namecolumn="true" />
+        <string name="numeroExpediente"  />
         <string name="codeState" />
         <string name="nameState" />
+        <datetime name="fechaUltimoEstado" />
+        <boolean name="abierto" defaultValue="true" />
+        <one-to-many name="historialEstados" ref="ExpedienteHistorialEstados" mappedBy="expediente" />
+
+        <extra-code-model>
+            <![CDATA[
+public void changeState(Enum estado) {
+    this.setCodeState(estado.name());
+    this.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(estado.name()));
+    this.setFechaUltimoEstado(java.time.LocalDateTime.now());
+}
+]]>
+        </extra-code-model>
+
     </entity>
 
 </domain-models>

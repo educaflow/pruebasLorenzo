@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_7.2.xsd">
+
+
+    <menuitem name="menu-tipos-expedientes" title="Tipos de Expedientes" groups="admins,users"/>
+
+    <menuitem name="menu-item-tipos-expedientes" parent="menu-tipos-expedientes" title="Tipos Expedientes" action="action-crud-expedientes" groups="admins,users"/>
+
+
+    <action-view name="action-crud-expedientes" title="tipos de expedientes" model="com.educaflow.apps.expedientes.db.TipoExpediente">
+        <view type="grid" name="tipo-expediente-grid"/>
+        <view type="form" name="tipo-expediente-form"/>
+    </action-view>
+
+
+    <grid name="tipo-expediente-grid" title="Listado tipos expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente">
+        <field name="code"  />
+        <field name="name"  />
+        <field name="fqcnEventManager" />
+    </grid>
+
+    <form name="tipo-expediente-form" title="Mant. Tipos Expedientes" model="com.educaflow.apps.expedientes.db.TipoExpediente" width="large">
+        <panel title="Datos" >
+            <field name="code"  />
+            <field name="name"  />
+            <field name="versionExpediente" />
+            <field name="openDate" />
+            <field name="closeDate" />
+            <field name="fqcnEventManager" />
+            <field name="justificante" widget="file" />
+        </panel>
+    </form>
+
+</object-views>

@@ -45,6 +45,7 @@
             <bind node="@code" to="code" />
             <bind node="@name" to="name" />
             <bind node="@versionExpediente" to="versionExpediente" />
+            <bind node="@fqcnEventManager" to="fqcnEventManager" />
 
         </bind>
     </input>

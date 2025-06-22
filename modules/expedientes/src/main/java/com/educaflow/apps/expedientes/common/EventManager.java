@@ -1,90 +1,78 @@
 package com.educaflow.apps.expedientes.common;
 
-import com.axelor.db.Model;
-import com.axelor.rpc.ActionRequest;
-import com.axelor.rpc.ActionResponse;
-import com.educaflow.apps.expedientes.common.annotations.OnState;
-import com.educaflow.apps.expedientes.common.annotations.TriggerEvent;
+import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
+import com.educaflow.apps.expedientes.common.annotations.ViewForState;
+import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
+import com.educaflow.apps.expedientes.db.Expediente;
+import com.educaflow.apps.expedientes.db.TipoExpediente;
+import com.educaflow.common.util.ReflectionUtil;
+import com.educaflow.common.util.TextUtil;
 
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
-public abstract class EventManager<T extends Model,Eventos extends Enum,Estados extends Enum > {
+public abstract class EventManager<T extends Expediente, Estado extends Enum<Estado>, Evento extends Enum<Evento> > {
 
-    public abstract void triggerInitialEvent(ActionRequest request, ActionResponse response);
+    private final Class<T> modelClass;
+    private final Class<Estado> stateClass;
+    private final Class<Evento> eventClass;
 
-    public String triggerEvent(String strEvent, ActionRequest request, ActionResponse response) {
+    public EventManager(Class<T> modelClass, Class<Estado> stateClass, Class<Evento> eventClass) {
+        this.modelClass = modelClass;
+        this.stateClass = stateClass;
+        this.eventClass = eventClass;
+    }
+
+    public abstract void triggerInitialEvent(TipoExpediente tipoExpediente, Contexto contexto);
+    public abstract  String getViewForNullState(TipoExpediente tipoExpediente, Contexto contexto);
+
+
+
+    public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, Contexto contexto) {
         try {
-            Eventos event = (Eventos) Enum.valueOf(getEventClass(), strEvent);
-            String methodName = "trigger" + ExpedientesUtil.getLowerCamelCaseFromScreamingSnakeCase(event.name());
-            Method method = ExpedientesUtil.getMethod(this.getClass(), methodName, this.getStateClass(), TriggerEvent.class, new Class<?>[]{ActionRequest.class, ActionResponse.class});
+            Evento event = (Evento) Enum.valueOf(eventClass, strEvent);
+            String methodName = "trigger" + TextUtil.getLowerCamelCaseFromScreamingSnakeCase(event.name());
+            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, Contexto.class});
 
-            Estados state =(Estados)method.invoke(this, request, response);
-
-            return state.name();
-
+            method.invoke(this, expediente, expedienteOriginal, contexto);
         } catch (Exception ex) {
-            throw new RuntimeException("Error al invocar el evento: " + strEvent, ex);
+            throw new RuntimeException("Error al invocar el evento: " + strEvent , ex);
         }
     }
 
-    public void onState(String strState, ActionRequest request, ActionResponse response) {
+    public void onEnterState(T expediente, Contexto contexto) {
+        Estado estado=null;
         try {
-            Estados state = (Estados) Enum.valueOf(getEventClass(), strState);
-            String methodName = "on" + ExpedientesUtil.getLowerCamelCaseFromScreamingSnakeCase(state.name());
-            Method method = ExpedientesUtil.getMethod(this.getClass(), methodName, this.getStateClass(), OnState.class, new Class<?>[]{ActionRequest.class, ActionResponse.class});
+            estado = (Estado) Enum.valueOf(stateClass, expediente.getCodeState());
+            String methodName = "onEnter" + TextUtil.getLowerCamelCaseFromScreamingSnakeCase(estado.name());
+            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, OnEnterState.class, new Class<?>[]{modelClass, Contexto.class});
 
-            method.invoke(this, request, response);
+            method.invoke(this, expediente, contexto);
         } catch (Exception ex) {
-            throw new RuntimeException("Error al invocar el estado: " + strState, ex);
+            throw new RuntimeException("Error al invocar el estado: " + estado, ex);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private T getRequestEntity(ActionRequest request) {
-        Class<T> clazz=null;
-        Type type = getClass().getGenericSuperclass();
-        if (type instanceof ParameterizedType) {
-            clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    public String getViewForState(T expediente, Contexto contexto) {
+
+        Estado estado=null;
+        try {
+            estado = (Estado) Enum.valueOf(stateClass, expediente.getCodeState());
+            String methodName = "getViewFor" + TextUtil.getLowerCamelCaseFromScreamingSnakeCase(estado.name());
+            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, String.class, ViewForState.class, new Class<?>[]{modelClass, Contexto.class});
+
+            String viewName =(String)method.invoke(this,  expediente, contexto);
+
+            return viewName;
+
+        } catch (Exception ex) {
+            throw new RuntimeException("Error al obtener la vista del estado: " + estado, ex);
         }
+    }
 
-        if (clazz == null) {
-            throw new IllegalStateException("Cannot determine entity type from EventManager implementation: " + getClass().getName());
-        }
 
-        return (T) request.getContext().asType(clazz);
-    };
-
-    @SuppressWarnings("unchecked")
-    private Class<? extends Enum> getEventClass() {
-        Class<? extends Enum> clazz=null;
-        Type type = getClass().getGenericSuperclass();
-        if (type instanceof ParameterizedType) {
-            clazz = (Class<? extends Enum>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-        }
-
-        if (clazz == null) {
-            throw new IllegalStateException("Cannot determine entity type from EventManager implementation: " + getClass().getName());
-        }
-
-        return clazz;
-    };
-
-    @SuppressWarnings("unchecked")
-    private Class<? extends Enum> getStateClass() {
-        Class<? extends Enum> clazz=null;
-        Type type = getClass().getGenericSuperclass();
-        if (type instanceof ParameterizedType) {
-            clazz = (Class<? extends Enum>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[2];
-        }
-
-        if (clazz == null) {
-            throw new IllegalStateException("Cannot determine entity type from EventManager implementation: " + getClass().getName());
-        }
-
-        return clazz;
-    };
+    public Class<T> getModelClass() {
+        return modelClass;
+    }
 
 }

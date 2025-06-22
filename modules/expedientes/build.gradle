@@ -11,3 +11,7 @@ axelor {
 }
 
 
+dependencies {
+    implementation project(':modules:common')
+    implementation 'org.modelmapper:modelmapper:3.1.1'
+}
