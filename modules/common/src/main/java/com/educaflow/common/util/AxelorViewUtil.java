@@ -21,4 +21,13 @@ public class AxelorViewUtil {
 
         response.setView(actionViewBuilder.map());
     }
+
+    public static void doResponseViewGrid(ActionResponse response, String viewName, Class<? extends Model> modelClass) {
+        ActionView.ActionViewBuilder actionViewBuilder=ActionView.define("Hola")
+                .model(modelClass.getName())
+                .add("grid", viewName)
+                .name("Pepe");
+
+        response.setView(actionViewBuilder.map());
+    }
 }
