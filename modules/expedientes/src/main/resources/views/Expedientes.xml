@@ -20,7 +20,9 @@
   <action-method name="action-event-view-expediente">
     <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="viewExpediente"/>
   </action-method>
-
+  <action-method name="action-event-borrar-expediente">
+    <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="borrarExpediente"/>
+  </action-method>
 
 
   <action-view name="action-ver-expedientes" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.Expediente">

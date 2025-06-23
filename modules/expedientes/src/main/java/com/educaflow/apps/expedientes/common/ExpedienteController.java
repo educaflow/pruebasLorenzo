@@ -92,15 +92,10 @@ public class ExpedienteController {
 
             Expediente expediente;
             Expediente expedienteOriginal;
-            if ((expedienteProxy!=null) && (expedienteProxy.getId() != null)) {
-                expediente = (Expediente) jpaRepository.find(expedienteProxy.getId());
-                expedienteOriginal=(Expediente) BeanUtil.cloneEntity(eventManager.getModelClass(), expediente);
-                BeanUtil.copyMapToEntity(eventManager.getModelClass(),request.getData(),expediente);
-            } else {
-                expediente = (Expediente) eventManager.getModelClass().getDeclaredConstructor().newInstance();
-                expedienteOriginal=null;
-                BeanUtil.copyMapToEntity(eventManager.getModelClass(),request.getData(),expediente);
-            }
+            expediente = (Expediente) jpaRepository.find(expedienteProxy.getId());
+            expedienteOriginal=(Expediente) BeanUtil.cloneEntity(eventManager.getModelClass(), expediente);
+            BeanUtil.copyMapToEntity(eventManager.getModelClass(),request.getData(),expediente);
+
 
             String originalState = (expedienteOriginal == null) ? null : expedienteOriginal.getCodeState();
             eventManager.triggerEvent(eventName, expediente, expedienteOriginal, contexto);
@@ -127,6 +122,31 @@ public class ExpedienteController {
             AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente);
 
             return expediente;
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    @CallMethod
+    @Transactional
+    public void borrarExpediente(ActionRequest request, ActionResponse response) {
+        try {
+            Expediente expedienteProxy = request.getContext().asType(Expediente.class);
+            TipoExpediente tipoExpedienteProxy = expedienteProxy.getTipoExpediente();
+            EventManager eventManager=getEventManager(tipoExpedienteProxy);
+            Contexto contexto = getContextoFromRequest(request);
+
+
+            JpaRepository jpaRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+
+            Expediente expediente = (Expediente) jpaRepository.find(expedienteProxy.getId());
+
+            jpaRepository.remove(expediente);
+
+            String viewName="action-nuevo-expediente";
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente);
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
