@@ -1,21 +1,24 @@
 package com.educaflow.apps.expedientes.common;
 
+import com.axelor.common.ObjectUtils;
 import com.axelor.db.JpaRepository;
+import com.axelor.db.Model;
+import com.axelor.db.mapper.Mapper;
 import com.axelor.inject.Beans;
 import com.axelor.meta.CallMethod;
-import com.axelor.rpc.ActionRequest;
-import com.axelor.rpc.ActionResponse;
+import com.axelor.rpc.*;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
 import com.educaflow.apps.expedientes.db.Prueba;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
-import com.educaflow.common.util.AxelorDBUtil;
-import com.educaflow.common.util.AxelorViewUtil;
-import com.educaflow.common.util.BeanUtil;
-import com.educaflow.common.util.TextUtil;
+import com.educaflow.common.util.*;
 import com.google.inject.persist.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ExpedienteController {
@@ -26,6 +29,7 @@ public class ExpedienteController {
 
     public void triggerInitialEvent(ActionRequest request, ActionResponse response) {
         try {
+
             TipoExpediente tipoExpedienteProxy = request.getContext().asType(TipoExpediente.class);
             TipoExpediente tipoExpediente = BeanUtil.cloneEntity(TipoExpediente.class, tipoExpedienteProxy);
             EventManager eventManager=getEventManager(tipoExpediente);
@@ -46,31 +50,31 @@ public class ExpedienteController {
 
 
     @Transactional
-    public void triggerEvent(ActionRequest request, ActionResponse response) {
+    public Expediente triggerEvent(Request request, ActionResponse response) {
         try {
-            Expediente expedienteProxy = request.getContext().asType(Expediente.class);
+
+            Expediente expedienteProxy = new Expediente();
+
+            if (request.getData().containsKey("_original")) {
+                BeanUtil.copyMapToEntity(Expediente.class, (Map<String, Object>) request.getData().get("_original"), expedienteProxy);
+            }
+            BeanUtil.copyMapToEntity(Expediente.class,request.getData(),expedienteProxy);
             TipoExpediente tipoExpedienteProxy = expedienteProxy.getTipoExpediente();
             EventManager eventManager=getEventManager(tipoExpedienteProxy);
-            String eventName=(String)request.getContext().get("_signal");
+            String eventName=expedienteProxy.getCurrentEvent();
             Contexto contexto = getContextoFromRequest(request);
             JpaRepository jpaRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
-
-            if (expedienteProxy!=null) {
-                Prueba prueba=(Prueba)expedienteProxy;
-                System.out.println(prueba.getJustificante());
-            }
-
 
             Expediente expediente;
             Expediente expedienteOriginal;
             if ((expedienteProxy!=null) && (expedienteProxy.getId() != null)) {
                 expediente = (Expediente) jpaRepository.find(expedienteProxy.getId());
                 expedienteOriginal=(Expediente) BeanUtil.cloneEntity(eventManager.getModelClass(), expediente);
-                BeanUtil.copyEntity(eventManager.getModelClass(),expedienteProxy,expediente);
+                BeanUtil.copyMapToEntity(eventManager.getModelClass(),request.getData(),expediente);
             } else {
                 expediente = (Expediente) eventManager.getModelClass().getDeclaredConstructor().newInstance();
                 expedienteOriginal=null;
-                BeanUtil.copyEntity(eventManager.getModelClass(),expedienteProxy,expediente);
+                BeanUtil.copyMapToEntity(eventManager.getModelClass(),request.getData(),expediente);
             }
 
             String originalState = (expedienteOriginal == null) ? null : expedienteOriginal.getCodeState();
@@ -94,7 +98,10 @@ public class ExpedienteController {
 
             String viewName = eventManager.getViewForState(expediente, contexto);
 
+
             AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente);
+
+            return expediente;
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -108,7 +115,7 @@ public class ExpedienteController {
             TipoExpediente tipoExpedienteProxy = expedienteProxy.getTipoExpediente();
             EventManager eventManager=getEventManager(tipoExpedienteProxy);
             Expediente expediente = (Expediente) BeanUtil.cloneEntity(eventManager.getModelClass(), expedienteProxy);
-            String eventName=(String)request.getContext().get("_signal");
+            String eventName=expedienteProxy.getCurrentEvent();
             Contexto contexto = getContextoFromRequest(request);
 
             String viewName = eventManager.getViewForState(expediente, contexto);
@@ -122,7 +129,7 @@ public class ExpedienteController {
 
 
 
-    private Contexto getContextoFromRequest(ActionRequest request) {
+    private Contexto getContextoFromRequest(Request request) {
         return new Contexto();
     }
 

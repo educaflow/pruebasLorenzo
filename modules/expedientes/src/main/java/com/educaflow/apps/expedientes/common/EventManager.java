@@ -7,6 +7,7 @@ import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.common.util.ReflectionUtil;
 import com.educaflow.common.util.TextUtil;
+import com.google.common.base.CaseFormat;
 
 
 import java.lang.reflect.Method;
@@ -31,7 +32,7 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
     public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, Contexto contexto) {
         try {
             Evento event = (Evento) Enum.valueOf(eventClass, strEvent);
-            String methodName = "trigger" + TextUtil.getLowerCamelCaseFromScreamingSnakeCase(event.name());
+            String methodName = "trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,event.name());
             Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, Contexto.class});
 
             method.invoke(this, expediente, expedienteOriginal, contexto);
@@ -44,7 +45,7 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         Estado estado=null;
         try {
             estado = (Estado) Enum.valueOf(stateClass, expediente.getCodeState());
-            String methodName = "onEnter" + TextUtil.getLowerCamelCaseFromScreamingSnakeCase(estado.name());
+            String methodName = "onEnter" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,estado.name());
             Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, OnEnterState.class, new Class<?>[]{modelClass, Contexto.class});
 
             method.invoke(this, expediente, contexto);
@@ -58,7 +59,7 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         Estado estado=null;
         try {
             estado = (Estado) Enum.valueOf(stateClass, expediente.getCodeState());
-            String methodName = "getViewFor" + TextUtil.getLowerCamelCaseFromScreamingSnakeCase(estado.name());
+            String methodName = "getViewFor" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,estado.name());
             Method method = ReflectionUtil.getMethod(this.getClass(), methodName, String.class, ViewForState.class, new Class<?>[]{modelClass, Contexto.class});
 
             String viewName =(String)method.invoke(this,  expediente, contexto);

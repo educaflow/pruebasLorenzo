@@ -9,6 +9,8 @@
         <string name="motivoAceptacion" />
         <string name="motivoRechazo" />
         <binary name="justificante" />
+        <string name="justificanteFileName" />
+        <string name="justificanteFileType" />
 
         <extra-code-model><![CDATA[
 public enum Estado {

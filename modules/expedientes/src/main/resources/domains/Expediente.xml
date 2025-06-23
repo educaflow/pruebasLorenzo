@@ -13,6 +13,7 @@
         <datetime name="fechaUltimoEstado" />
         <boolean name="abierto" defaultValue="true" />
         <one-to-many name="historialEstados" ref="ExpedienteHistorialEstados" mappedBy="expediente" />
+        <string name="currentEvent" />
 
         <extra-code-model>
             <![CDATA[

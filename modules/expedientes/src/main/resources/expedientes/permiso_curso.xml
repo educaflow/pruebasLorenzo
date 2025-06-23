@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<expedientes>
+
+    <expediente code="AsistenciaCurso" name="Asistencia a curso">
+        <state code="INTRODUCIENDO_DATOS" isInitial="true" />
+        <state code="REVISION"  />
+        <state code="ACEPTADO" isFinal="true"  />
+        <state code="RECHAZADO"  isFinal="true" />
+
+        <event name="PRESENTAR" />
+        <event name="ACEPTAR" />
+        <event name="DENEGAR" />
+        <event name="SUBSANAR" />
+        <event name="BORRAR" />
+        <event name="REABRIR" />
+
+
+    </expediente>
+
+
+</expedientes>

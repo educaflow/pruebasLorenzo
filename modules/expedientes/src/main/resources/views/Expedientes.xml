@@ -3,6 +3,23 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_7.2.xsd">
 
+  <action-record name="eventGUARDAR_DATOS" model="com.educaflow.apps.expedientes.db.Expediente">
+    <field name="currentEvent" expr="GUARDAR_DATOS" />
+  </action-record>
+  <action-record name="eventPRESENTAR" model="com.educaflow.apps.expedientes.db.Expediente">
+    <field name="currentEvent" expr="PRESENTAR" />
+  </action-record>
+  <action-record name="eventSUBSANAR" model="com.educaflow.apps.expedientes.db.Expediente">
+    <field name="currentEvent" expr="SUBSANAR" />
+  </action-record>
+  <action-record name="eventACEPTAR" model="com.educaflow.apps.expedientes.db.Expediente">
+    <field name="currentEvent" expr="ACEPTAR" />
+  </action-record>
+  <action-record name="eventRECHAZAR" model="com.educaflow.apps.expedientes.db.Expediente">
+    <field name="currentEvent" expr="RECHAZAR" />
+  </action-record>
+
+
 
   <action-method name="action-event-expediente">
     <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="triggerEvent"/>
@@ -40,8 +57,8 @@
     </panel>
 
     <panel title="Acciones">
-      <button name="GUARDAR_DATOS" title="Guardar" onClick="action-event-expediente"/>
-      <button name="CANCELAR" title="Cancelar" onClick="action-nuevo-expediente"/>
+      <button name="GUARDAR_DATOS" title="Guardar" onClick="eventGUARDAR_DATOS,save,action-event-view-expediente"/>
+      <button name="CANCELAR" title="Cancelar" onClick="save"/>
     </panel>
 
   </form>
@@ -91,8 +108,8 @@
     </panel>
 
     <panel title="Acciones">
-      <button name="PRESENTAR" title="Presentar" onClick="action-event-expediente" colSpam="2"/>
-      <button name="CANCELAR" title="Cancelar" onClick="action-nuevo-expediente" colSpam="2"/>
+      <button name="PRESENTAR" title="Presentar" onClick="eventPRESENTAR,save,action-event-view-expediente" colSpam="2"/>
+      <button name="CANCELAR" title="Cancelar" onClick="eventCANCELAR,save,action-event-view-expediente" colSpam="2"/>
     </panel>
 
 
@@ -112,15 +129,21 @@
         <button name="mostrar-historial-estados" icon="printer" onClick="action-grid-expediente-historial-estados" colSpam="3" />
       </panel>
       <panel  colSpan="4" itemSpan="12">
-        <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente" />
-        <button name="RECHAZAR" title="Rechazar" onClick="action-event-expediente"/>
-        <button name="SUBSANAR" title="Subsanar información" onClick="action-event-expediente"/>
+        <button name="ACEPTAR" title="Aceptar" onClick="eventACEPTAR,save,action-event-view-expediente" />
+        <button name="RECHAZAR" title="Rechazar" onClick="eventRECHAZAR,save,action-event-view-expediente"/>
+        <button name="SUBSANAR" title="Subsanar información" onClick="eventSUBSANAR,save,action-event-view-expediente"/>
       </panel>
     </panel>
 
     <panel title="Datos">
       <field name="solicita" readonly="true" colSpan="9"/>
-      <field name="justificante" type="binary" widget="file" readonly="true" colSpan="3"/>
+      <field name="justificanteFileName" colSpan="3"  readonly="true" >
+        <viewer depends="justificanteFileName,id"><![CDATA[
+          <>
+          <a href={`ws/rest/com.educaflow.apps.expedientes.db.Prueba/${id}/justificante/download?fileName=${justificanteFileName}`}>{justificanteFileName}</a>
+          </>
+          ]]></viewer>
+      </field>
       <field name="motivoAceptacion" colSpan="12"/>
       <field name="motivoRechazo" colSpan="12"/>
     </panel>
