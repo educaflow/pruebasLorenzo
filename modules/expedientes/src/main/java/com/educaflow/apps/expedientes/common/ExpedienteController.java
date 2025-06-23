@@ -145,7 +145,7 @@ public class ExpedienteController {
 
             jpaRepository.remove(expediente);
 
-            String viewName="action-nuevo-expediente";
+            String viewName="grid-tipo-expediente";
             AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente);
 
         } catch (Exception ex) {
