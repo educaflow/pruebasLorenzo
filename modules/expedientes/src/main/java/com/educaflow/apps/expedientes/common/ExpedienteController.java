@@ -11,7 +11,10 @@ import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
 import com.educaflow.apps.expedientes.db.Prueba;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
+import com.educaflow.apps.expedientes.db.repo.ExpedienteRepository;
+import com.educaflow.apps.expedientes.db.repo.TipoExpedienteRepository;
 import com.educaflow.common.util.*;
+import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
 import java.time.LocalDateTime;
@@ -24,22 +27,41 @@ import java.util.Map;
 public class ExpedienteController {
 
 
+    @Inject
+    TipoExpedienteRepository tipoExpedienteRepository;
+
     public ExpedienteController() {;
+
     }
 
+    @Transactional
     public void triggerInitialEvent(ActionRequest request, ActionResponse response) {
         try {
-
-            TipoExpediente tipoExpedienteProxy = request.getContext().asType(TipoExpediente.class);
-            TipoExpediente tipoExpediente = BeanUtil.cloneEntity(TipoExpediente.class, tipoExpedienteProxy);
+            Map<String,Object> context=(Map<String,Object>)request.getData().get("context");
+            long id=((Integer)context.get("id")).longValue();
+            TipoExpediente tipoExpediente=tipoExpedienteRepository.find(id);
             EventManager eventManager=getEventManager(tipoExpediente);
             Contexto contexto = getContextoFromRequest(request);
 
-            eventManager.triggerInitialEvent(tipoExpediente, contexto);
-            Expediente expediente = (Expediente) eventManager.getModelClass().getDeclaredConstructor().newInstance();
-            expediente.setTipoExpediente(tipoExpediente);
+            Expediente expediente=eventManager.triggerInitialEvent(tipoExpediente, contexto);
 
-            String viewName = eventManager.getViewForNullState(tipoExpediente, contexto);
+            JpaRepository jpaRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+
+
+            ExpedienteHistorialEstados historialEstado = new ExpedienteHistorialEstados();
+            historialEstado.setCodeState(expediente.getCodeState());
+            historialEstado.setNameState(TextUtil.getHumanCaseFromScreamingSnakeCase(expediente.getCodeState()));
+            historialEstado.setCodeEvent("");
+            historialEstado.setNameEvent("");
+            historialEstado.setFecha(LocalDateTime.now());
+            expediente.addHistorialEstado(historialEstado);
+
+            eventManager.onEnterState(expediente, contexto);
+
+
+            jpaRepository.save(expediente);
+
+            String viewName = eventManager.getViewForState(expediente, contexto);
 
             AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente);
 
@@ -62,6 +84,9 @@ public class ExpedienteController {
             TipoExpediente tipoExpedienteProxy = expedienteProxy.getTipoExpediente();
             EventManager eventManager=getEventManager(tipoExpedienteProxy);
             String eventName=expedienteProxy.getCurrentEvent();
+            if (eventName==null) {
+                throw new RuntimeException("eventName is null");
+            }
             Contexto contexto = getContextoFromRequest(request);
             JpaRepository jpaRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
 
@@ -115,7 +140,6 @@ public class ExpedienteController {
             TipoExpediente tipoExpedienteProxy = expedienteProxy.getTipoExpediente();
             EventManager eventManager=getEventManager(tipoExpedienteProxy);
             Expediente expediente = (Expediente) BeanUtil.cloneEntity(eventManager.getModelClass(), expedienteProxy);
-            String eventName=expedienteProxy.getCurrentEvent();
             Contexto contexto = getContextoFromRequest(request);
 
             String viewName = eventManager.getViewForState(expediente, contexto);
@@ -142,7 +166,7 @@ public class ExpedienteController {
             }
             String fqcnEventManager = tipoExpediente.getFqcnEventManager();
             if (fqcnEventManager == null || fqcnEventManager.isEmpty()) {
-                throw new RuntimeException("No existe el EventManager para el tipo de expediente: " + tipoExpediente.getName());
+                throw new RuntimeException("No existe el fqcnEventManager para el tipo de expediente: " + tipoExpediente.getName());
             }
             Class<EventManager> eventManagerClass = (Class<EventManager>) Class.forName(tipoExpediente.getFqcnEventManager());
 

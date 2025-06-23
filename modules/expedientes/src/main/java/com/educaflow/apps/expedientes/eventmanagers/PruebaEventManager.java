@@ -5,6 +5,7 @@ import com.educaflow.apps.expedientes.common.EventManager;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.ViewForState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
+import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.Prueba;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.apps.expedientes.db.repo.PruebaRepository;
@@ -22,14 +23,14 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
     }
 
     @Override
-    public void triggerInitialEvent(TipoExpediente tipoExpediente,Contexto contexto) {
+    public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, Contexto contexto) {
+        Prueba prueba=new Prueba();
+        prueba.setTipoExpediente(tipoExpediente);
+        prueba.changeState(Prueba.Estado.ENTRADA_DATOS);
 
+        return prueba;
     }
 
-    @WhenEvent
-    public void triggerGuardarDatos(Prueba prueba,Prueba pruebaOriginal, Contexto contexto) {
-        prueba.changeState(Prueba.Estado.DATOS_GUARDADOS);
-    }
 
     @WhenEvent
     public void triggerPresentar(Prueba prueba,Prueba pruebaOriginal, Contexto contexto) {
@@ -39,7 +40,7 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
 
     @WhenEvent
     public void triggerSubsanar(Prueba prueba,Prueba pruebaOriginal, Contexto contexto) {
-        prueba.changeState(Prueba.Estado.DATOS_GUARDADOS);
+        prueba.changeState(Prueba.Estado.ENTRADA_DATOS);
     }
 
     @WhenEvent
@@ -57,8 +58,8 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
 
 
     @OnEnterState
-    public void onEnterDatosGuardados(Prueba prueba, Contexto contexto) {
-        System.out.println("onDatosGuardados");
+    public void onEnterEntradaDatos(Prueba prueba, Contexto contexto) {
+        System.out.println("onEnterEntradaDatos");
     }
 
     @OnEnterState
@@ -76,14 +77,9 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
         System.out.println("onRechazado");
     }
 
-    @Override
-    public String getViewForNullState(TipoExpediente tipoExpediente, Contexto contexto) {
-        return "form-expediente-prueba-estado-inicial-form";
-    }
-
     @ViewForState
-    public String getViewForDatosGuardados(Prueba prueba, Contexto contexto) {
-        return "form-expediente-prueba-datos-guardados-form";
+    public String getViewForEntradaDatos(Prueba prueba, Contexto contexto) {
+        return "form-expediente-prueba-estado-inicial-form";
     }
 
     @ViewForState

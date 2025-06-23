@@ -6,22 +6,20 @@
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
     <entity name="Prueba" extends="Expediente" >
         <string name="solicita" />
-        <string name="motivoAceptacion" />
-        <string name="motivoRechazo" />
+        <string name="motivo" />
         <binary name="justificante" />
         <string name="justificanteFileName" />
         <string name="justificanteFileType" />
 
         <extra-code-model><![CDATA[
 public enum Estado {
-    DATOS_GUARDADOS,
+    ENTRADA_DATOS,
     REVISION,
     ACEPTADO,
     RECHAZADO;
 }
 
 public enum Evento {
-    GUARDAR_DATOS,
     PRESENTAR,
     SUBSANAR,
     ACEPTAR,

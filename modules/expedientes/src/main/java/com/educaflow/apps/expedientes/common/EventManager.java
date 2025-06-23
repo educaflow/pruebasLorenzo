@@ -24,9 +24,7 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         this.eventClass = eventClass;
     }
 
-    public abstract void triggerInitialEvent(TipoExpediente tipoExpediente, Contexto contexto);
-    public abstract  String getViewForNullState(TipoExpediente tipoExpediente, Contexto contexto);
-
+    public abstract Expediente triggerInitialEvent(TipoExpediente tipoExpediente, Contexto contexto);
 
 
     public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, Contexto contexto) {
