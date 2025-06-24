@@ -145,10 +145,7 @@ public class ExpedienteController {
 
             jpaRepository.remove(expediente);
 
-            //String viewName="grid-tipo-expediente";
-            //AxelorViewUtil.doResponseViewGrid(response,viewName,TipoExpediente.class);
-
-            response.setSignal("refresh-tab",null);
+            response.setSignal("refresh-app",null);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

@@ -202,7 +202,7 @@ public class BeanUtil {
                             Model newDestinationModel = AxelorDBUtil.getRepository((Class) getter.getReturnType()).find( ((Integer)sourceModel.get("id")).longValue());
                             setter.invoke(destination, newDestinationModel);
                         } else if ((value != null) && (destinationModel != null)) {
-                            copySimpleAndModelProperties(value, destinationModel, propertyType);
+                            copyMapToObject((Map<String,Object>)value, destinationModel, propertyType);
                         } else {
                             throw new RuntimeException("Error de lógica");
                         }
