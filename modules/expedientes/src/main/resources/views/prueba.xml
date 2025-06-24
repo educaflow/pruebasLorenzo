@@ -16,7 +16,7 @@
         <field name="currentEvent" expr="RECHAZAR"/>
     </action-record>
 
-    <form name="form-expediente-prueba-estado-inicial-form" canSave="false" canBack="false" canAttach="false" canMore="false" canNew="false" title="Prueba Estado inicial" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" onNew="datos-iniciales">
+    <form name="form-expediente-prueba-estado-inicial-form" canSave="false" canBack="false" canAttach="false" canMore="false" canNew="false" title="Prueba Estado inicial1" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" onNew="datos-iniciales">
 
         <panel colSpan="12">
             <panel colSpan="8">
@@ -42,7 +42,7 @@
     </form>
 
 
-    <form name="form-expediente-prueba-revision-form" title="Prueba Estado inicial" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <form name="form-expediente-prueba-revision-form" title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
 
         <panel colSpan="12">
             <panel colSpan="8">
@@ -72,7 +72,7 @@
 
     </form>
 
-    <form name="form-expediente-prueba-aceptado-form" title="Prueba Estado inicial" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <form name="form-expediente-prueba-aceptado-form" title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
         <panel colSpan="12">
             <panel colSpan="8">
                 <field name="tipoExpediente.name" title="Nombre" readonly="true" colSpan="6"/>
@@ -97,7 +97,7 @@
         </panel>
     </form>
 
-    <form name="form-expediente-prueba-rechazado-form" title="Prueba Estado inicial" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <form name="form-expediente-prueba-rechazado-form" title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
 
         <panel colSpan="12">
             <panel colSpan="8">

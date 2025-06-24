@@ -5,12 +5,14 @@ import com.axelor.meta.schema.actions.ActionView;
 import com.axelor.rpc.ActionResponse;
 
 public class AxelorViewUtil {
-    public static void doResponseViewForm(ActionResponse response, String viewName, Class<? extends Model> modelClass, Model entity) {
-        ActionView.ActionViewBuilder actionViewBuilder=ActionView.define("Hola")
+    public static void doResponseViewForm(ActionResponse response, String viewName, Class<? extends Model> modelClass, Model entity,String title) {
+        ActionView.ActionViewBuilder actionViewBuilder=ActionView.define(title)
                 .model(modelClass.getName())
                 .add("form", viewName)
-                .name("Pepe")
-                .param("forceEdit", "true");
+                .param("forceEdit", "true")
+                .param("forceTitle", "true")
+                .param("show-confirm", "false")
+                .param("show-toolbar", "false");
 
         if ((entity != null)  && (entity.getId() != null)) {
             actionViewBuilder.context("_showRecord", entity.getId()).param("forceEdit", "true");

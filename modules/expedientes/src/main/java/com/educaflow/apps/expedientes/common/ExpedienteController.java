@@ -63,7 +63,7 @@ public class ExpedienteController {
 
             String viewName = eventManager.getViewForState(expediente, contexto);
 
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente);
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getTipoExpediente().getName());
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -119,7 +119,7 @@ public class ExpedienteController {
             String viewName = eventManager.getViewForState(expediente, contexto);
 
 
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente);
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getTipoExpediente().getName());
 
             return expediente;
 
@@ -145,9 +145,10 @@ public class ExpedienteController {
 
             jpaRepository.remove(expediente);
 
-            String viewName="grid-tipo-expediente";
-            AxelorViewUtil.doResponseViewGrid(response,viewName,eventManager.getModelClass());
+            //String viewName="grid-tipo-expediente";
+            //AxelorViewUtil.doResponseViewGrid(response,viewName,TipoExpediente.class);
 
+            response.setSignal("refresh-tab",null);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -164,7 +165,7 @@ public class ExpedienteController {
 
             String viewName = eventManager.getViewForState(expediente, contexto);
 
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente);
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getTipoExpediente().getName());
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);

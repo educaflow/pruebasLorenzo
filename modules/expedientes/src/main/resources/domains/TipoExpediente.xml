@@ -11,7 +11,6 @@
         <datetime name="openDate" />
         <datetime name="closeDate" />
         <string name="fqcnEventManager"  />
-        <binary name="justificante" />
     </entity>
 
 </domain-models>

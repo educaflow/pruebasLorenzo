@@ -5,13 +5,17 @@
 
 
     <menuitem name="menu-tipos-expedientes" title="Tipos de Expedientes" groups="admins,users"/>
-
     <menuitem name="menu-item-tipos-expedientes" parent="menu-tipos-expedientes" title="Tipos Expedientes" action="action-crud-expedientes" groups="admins,users"/>
+    <menuitem name="menu-item-tipos-expedientes-mant-3" parent="menu-tipos-expedientes" title="Edit Prueba" action="accion-mantenimiento-tipoExpediente-3" groups="admins,users"/>
 
 
     <action-view name="action-crud-expedientes" title="tipos de expedientes" model="com.educaflow.apps.expedientes.db.TipoExpediente">
         <view type="grid" name="tipo-expediente-grid"/>
         <view type="form" name="tipo-expediente-form"/>
+    </action-view>
+    <action-view name="accion-mantenimiento-tipoExpediente-3" title="Tipo Expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente"  >
+        <view type="form" name="tipo-expediente-form" />
+        <context name="_showRecord" expr="3" />
     </action-view>
 
 
@@ -29,7 +33,6 @@
             <field name="openDate" />
             <field name="closeDate" />
             <field name="fqcnEventManager" />
-            <field name="justificante" widget="file" />
         </panel>
     </form>
 
