@@ -37,8 +37,20 @@
             <field name="solicita" colSpan="11"/>
             <field name="justificante" type="binary" widget="file" colSpan="1"/>
         </panel>
+        <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
 
+    </form>
+    <grid name="fct-grid" title="FCTs" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" >
+        <field name="alumno" />
+    </grid>
 
+    <form name="fct-details" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users">
+        <panel colSpan="12">
+            <field name="alumno" title="Nombre" colSpan="6"/>
+            <field name="prueba" title="Expediente" colSpan="6"/>
+            <field name="a2" title="Anexo A2" colSpan="6"/>
+            <field name="a3" title="Anexo A3" colSpan="6"/>
+        </panel>
     </form>
 
 
@@ -64,6 +76,8 @@
             <field name="solicita" colSpan="11" readonly="true"/>
             <field name="justificante" type="binary" widget="file" colSpan="1" readonly="true"/>
         </panel>
+
+        <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
 
         <panel title="Datos Resolución">
             <field name="motivo" colSpan="12"/>
