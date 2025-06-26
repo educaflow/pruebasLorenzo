@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar y Descargar Ficheros Individualmente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .download-single-btn {
+            background-color: #28a745; /* Color diferente para botones individuales */
+            margin-left: 15px;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .download-single-btn:hover {
+            background-color: #218838;
+        }
+        #fileInfo {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            max-width: 600px;
+            width: 90%;
+            word-wrap: break-word;
+            text-align: left;
+        }
+        .file-item {
+            border-bottom: 1px dashed #eee;
+            padding: 8px 0;
+            display: flex; /* Para alinear el texto y el botón */
+            align-items: center;
+            justify-content: space-between; /* Para empujar el botón a la derecha */
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .file-details {
+            flex-grow: 1; /* Permite que los detalles ocupen el espacio disponible */
+        }
+    </style>
+</head>
+<body>
+
+<button id="selectFileButton">Seleccionar Ficheros</button>
+<input type="file" id="fileInput" style="display: none;" multiple>
+
+<div id="fileInfo">
+    <h3>Información de los Ficheros Seleccionados:</h3>
+    <div id="selectedFilesList">
+        <p>No se han seleccionado ficheros.</p>
+    </div>
+</div>
+
+<script>
+    // Variables para almacenar la información de los ficheros
+    let selectedFilesData = [];
+
+    // Obtener referencias a los elementos del DOM
+    const selectFileButton = document.getElementById('selectFileButton');
+    const fileInput = document.getElementById('fileInput');
+    const selectedFilesList = document.getElementById('selectedFilesList');
+
+    // Asociar el clic del botón con el clic del input de tipo file
+    selectFileButton.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    // Función para descargar un fichero individual
+    function downloadFile(fileData) {
+        const { contentBase64, name, mimeType } = fileData;
+
+        if (contentBase64 && name && mimeType) {
+            const base64WithoutPrefix = contentBase64.split(',')[1];
+            const decodedContent = atob(base64WithoutPrefix);
+
+            const byteCharacters = decodedContent.split('').map(char => char.charCodeAt(0));
+            const byteArray = new Uint8Array(byteCharacters);
+
+            const blob = new Blob([byteArray], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            console.log(`Fichero descargado: ${name}`);
+        } else {
+            console.error('No se pudo descargar el fichero. Faltan datos.');
+        }
+    }
+
+    // Manejar el cambio cuando se seleccionan ficheros
+    fileInput.addEventListener('change', (event) => {
+        const files = event.target.files;
+
+        if (files.length>3) {
+            alert("No se pueden subir más de 3 ficheros");
+            return;
+        }
+
+        if (files.length > 0) {
+            selectedFilesData = []; // Limpiar datos anteriores
+            selectedFilesList.innerHTML = ''; // Limpiar la lista mostrada
+
+            let filesProcessed = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                if (file.size>400000) {
+                    break;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    const base64String = e.target.result;
+
+                    const fileInfo = {
+                        contentBase64: base64String,
+                        name: file.name,
+                        mimeType: file.type
+                    };
+                    selectedFilesData.push(fileInfo);
+
+                    // Crear el elemento de la lista para este fichero
+                    const fileItemDiv = document.createElement('div');
+                    fileItemDiv.classList.add('file-item');
+
+                    const fileDetailsDiv = document.createElement('div');
+                    fileDetailsDiv.classList.add('file-details');
+                    fileDetailsDiv.innerHTML = `
+                            <p><strong>Nombre:</strong> ${file.name}</p>
+                            <p><strong>Tamaño:</strong> ${file.size}</p>
+                            <p><strong>Tipo MIME:</strong> ${file.type}</p>
+                            <p><strong>Base64 (inicio):</strong> ${base64String.substring(0, 70)}...</p>
+                        `;
+                    fileItemDiv.appendChild(fileDetailsDiv);
+
+                    // Crear el botón de descarga para este fichero
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.textContent = 'Descargar';
+                    downloadBtn.classList.add('download-single-btn');
+                    downloadBtn.addEventListener('click', () => {
+                        downloadFile(fileInfo); // Llamar a la función de descarga con los datos de este fichero
+                    });
+                    fileItemDiv.appendChild(downloadBtn);
+
+                    selectedFilesList.appendChild(fileItemDiv);
+
+                    console.log(`Fichero ${file.name} cargado.`);
+
+                    filesProcessed++;
+                    if (filesProcessed === files.length) {
+                        console.log('Todos los ficheros cargados y listos para descargar individualmente.');
+                    }
+                };
+
+                reader.onerror = () => {
+                    console.error(`Error al leer el fichero: ${file.name}`);
+                    filesProcessed++;
+                    if (filesProcessed === files.length) {
+                        console.log('Finalizada la carga de ficheros (con posibles errores).');
+                    }
+                };
+
+                reader.readAsDataURL(file);
+            }
+        } else {
+            selectedFilesData = [];
+            selectedFilesList.innerHTML = '<p>No se han seleccionado ficheros.</p>';
+            console.log('No se seleccionó ningún fichero.');
+        }
+    });
+</script>
+
+</body>
+</html>

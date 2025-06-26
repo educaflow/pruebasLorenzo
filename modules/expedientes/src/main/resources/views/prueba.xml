@@ -44,10 +44,10 @@
         <field name="alumno" />
     </grid>
 
-    <form name="fct-details" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users">
+    <form name="fct-details" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" >
         <panel colSpan="12">
-            <field name="alumno" title="Nombre" colSpan="6"/>
-            <field name="prueba" title="Expediente" colSpan="6"/>
+            <field name="alumno" title="Nombre" colSpan="6" />
+            <field name="prueba" title="Expediente" colSpan="6" />
             <field name="a2" title="Anexo A2" colSpan="6"/>
             <field name="a3" title="Anexo A3" colSpan="6"/>
         </panel>

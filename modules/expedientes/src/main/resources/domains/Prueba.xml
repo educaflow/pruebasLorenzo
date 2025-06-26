@@ -10,7 +10,7 @@
         <binary name="justificante" />
         <string name="justificanteFileName" />
         <string name="justificanteFileType" />
-        <one-to-many name="formacionesCentrosTrabajo" ref="FormacionCentroTrabajo" mappedBy="expediente" />
+        <one-to-many name="formacionesCentrosTrabajo" ref="FormacionCentroTrabajo" mappedBy="prueba" cascade="all" orphanRemoval="true" />
         <extra-code-model><![CDATA[
 public enum Estado {
     ENTRADA_DATOS,

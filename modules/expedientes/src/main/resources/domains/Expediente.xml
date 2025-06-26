@@ -4,7 +4,7 @@
                xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
 
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
-    <entity name="Expediente" strategy="JOINED">
+    <entity name="Expediente" strategy="JOINED" jsonAttrs="false">
         <many-to-one name="tipoExpediente" title="Tipo de Expediente" ref="com.educaflow.apps.expedientes.db.TipoExpediente" />
         <string name="name" namecolumn="true" />
         <string name="numeroExpediente"  />
