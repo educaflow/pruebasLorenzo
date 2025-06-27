@@ -22,8 +22,8 @@
         </panel>
 
         <panel title="Datos Solicitante">
-            <field name="solicita" colSpan="11"/>
-            <field name="justificante" type="binary" widget="file" colSpan="1"/>
+            <field name="solicita" colSpan="9"/>
+            <field name="justificante"  widget="binary-link" colSpan="3"/>
         </panel>
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
 
@@ -36,8 +36,8 @@
         <panel colSpan="12">
             <field name="alumno" title="Nombre" colSpan="6" />
             <field name="prueba" title="Expediente" colSpan="6" />
-            <field name="a2" title="Anexo A2" colSpan="6"/>
-            <field name="a3" title="Anexo A3" colSpan="6"/>
+            <field name="a2" title="Anexo A2" widget="binary-link" colSpan="6"/>
+            <field name="a3" title="Anexo A3" widget="binary-link" colSpan="6"/>
         </panel>
     </form>
 
@@ -62,7 +62,7 @@
 
         <panel title="Datos Solicitante">
             <field name="solicita" colSpan="11" readonly="true"/>
-            <field name="justificante" type="binary" widget="file" colSpan="1" readonly="true"/>
+            <field name="justificante"  widget="binary-link" colSpan="3"/>
         </panel>
 
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
@@ -91,7 +91,7 @@
 
         <panel title="Datos Solicitante">
             <field name="solicita" colSpan="11" readonly="true"/>
-            <field name="justificante" type="binary" widget="file" colSpan="1" readonly="true"/>
+            <field name="justificante"  widget="binary-link" colSpan="3"/>
         </panel>
 
         <panel title="Datos Resolución">
@@ -117,7 +117,7 @@
 
         <panel title="Datos Solicitante">
             <field name="solicita" colSpan="11" readonly="true"/>
-            <field name="justificante" type="binary" widget="file" colSpan="1" readonly="true"/>
+            <field name="justificante"  widget="binary-link" colSpan="3"/>
         </panel>
 
         <panel title="Datos Resolución">

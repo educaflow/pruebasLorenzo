@@ -7,9 +7,7 @@
     <entity name="Prueba" extends="Expediente" >
         <string name="solicita" />
         <string name="motivo" />
-        <binary name="justificante" />
-        <string name="justificanteFileName" />
-        <string name="justificanteFileType" />
+        <many-to-one name="justificante" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
         <one-to-many name="formacionesCentrosTrabajo" ref="FormacionCentroTrabajo" mappedBy="prueba" cascade="all" orphanRemoval="true" />
         <extra-code-model><![CDATA[
 public enum Estado {

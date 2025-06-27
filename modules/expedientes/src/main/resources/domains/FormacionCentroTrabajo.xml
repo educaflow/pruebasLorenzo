@@ -7,12 +7,8 @@
     <entity name="FormacionCentroTrabajo"  >
         <string name="alumno" namecolumn="true" />
         <many-to-one name="prueba" ref="Prueba" />
-        <binary name="a2" />
-        <string name="a2FileName" />
-        <string name="a2FileType" />
-        <binary name="a3" />
-        <string name="a3FileName" />
-        <string name="a3FileType" />
+        <many-to-one name="a2" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
+        <many-to-one name="a3" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
     </entity>
 
 </domain-models>
