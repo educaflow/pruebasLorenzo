@@ -47,7 +47,7 @@ public class ExpedienteController {
 
             saveExpediente(expedienteRepository,expediente);
 
-            String viewName = eventManager.getViewForState(expediente, eventContext);
+            String viewName = eventManager.getViewName(expediente, eventContext);
             AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -80,7 +80,7 @@ public class ExpedienteController {
 
             saveExpediente(expedienteRepository,expediente);
 
-            String viewName = eventManager.getViewForState(expediente, eventContext);
+            String viewName = eventManager.getViewName(expediente, eventContext);
             AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName());
 
         } catch (Exception ex) {
@@ -115,7 +115,7 @@ public class ExpedienteController {
             EventContext eventContext = getEventContext(request);
             EventManager eventManager=getEventManager(expediente.getTipoExpediente());
 
-            String viewName = eventManager.getViewForState(expediente, eventContext);
+            String viewName = eventManager.getViewName(expediente, eventContext);
 
             AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName());
 
@@ -229,11 +229,6 @@ public class ExpedienteController {
         }
     }
 
-    private long objectToLong(Object obj) {
-        return ((Number)obj).longValue();
-    }
-
-
     private Map<String,Object> getActionRequestContext(ActionRequest request) {
          Map<String,Object> requestcontext=(Map<String,Object>) request.getData().get("context");
 
@@ -244,6 +239,12 @@ public class ExpedienteController {
     }
 
 
+    /**
+     * Obtiene el Repository de un expediente en función del id del expediente.
+     * Se usa este método porque de otra forma se retornaría el Repositorio de Expediente y no del expdiente en concreto.
+     * @param idExpediente
+     * @return
+     */
     private JpaRepository<Expediente> getJpaRepository(long idExpediente) {
         JpaRepository<Expediente> onlyExpedienteRepository = AxelorDBUtil.getRepository(Expediente.class);
         Expediente expediente=onlyExpedienteRepository.find(idExpediente);
@@ -253,6 +254,12 @@ public class ExpedienteController {
 
         return realExpedienteRepository;
     }
+
+
+    private long objectToLong(Object obj) {
+        return ((Number)obj).longValue();
+    }
+
 
 
 

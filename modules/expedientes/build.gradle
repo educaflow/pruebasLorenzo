@@ -15,3 +15,16 @@ dependencies {
     implementation project(':modules:common')
     implementation 'org.modelmapper:modelmapper:3.1.1'
 }
+
+tasks.register('myCustomResourceProcessingTask') {
+    doLast {
+        javaexec {
+            main = 'com.educaflow.common.devtools.processview.Main'
+            classpath = sourceSets.main.runtimeClasspath
+            args './build/resources'
+        }
+    }
+}
+tasks.named('processResources') {
+    finalizedBy 'myCustomResourceProcessingTask'
+}

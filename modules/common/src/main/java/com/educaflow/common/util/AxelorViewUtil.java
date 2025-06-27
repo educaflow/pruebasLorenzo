@@ -1,7 +1,9 @@
 package com.educaflow.common.util;
 
 import com.axelor.db.Model;
+import com.axelor.meta.loader.XMLViews;
 import com.axelor.meta.schema.actions.ActionView;
+import com.axelor.meta.schema.views.AbstractView;
 import com.axelor.rpc.ActionResponse;
 
 public class AxelorViewUtil {
@@ -32,4 +34,14 @@ public class AxelorViewUtil {
 
         response.setView(actionViewBuilder.map());
     }
+
+    public static boolean existsView(String name, String type, String model) {
+        AbstractView data = XMLViews.findView(name, type, model);
+        if (data==null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

@@ -77,27 +77,5 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
         System.out.println("onRechazado");
     }
 
-    @ViewForState
-    public String getViewForEntradaDatos(Prueba prueba, EventContext eventContext) {
-        return "form-expediente-prueba-estado-inicial-form";
-    }
-
-    @ViewForState
-    public String getViewForRevision(Prueba prueba, EventContext eventContext) {
-        return "form-expediente-prueba-revision-form";
-    }
-
-    @ViewForState
-    public String getViewForAceptado(Prueba prueba, EventContext eventContext) {
-        return "form-expediente-prueba-aceptado-form";
-    }
-
-
-    @ViewForState
-    public String getViewForRechazado(Prueba prueba, EventContext eventContext) {
-        return "form-expediente-prueba-rechazado-form";
-    }
-
-
 
 }

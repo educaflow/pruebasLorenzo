@@ -1,17 +1,25 @@
 package com.educaflow.apps.expedientes.common;
 
+import com.axelor.meta.service.MetaService;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.ViewForState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
+import com.educaflow.common.util.AxelorViewUtil;
 import com.educaflow.common.util.ReflectionUtil;
 import com.google.common.base.CaseFormat;
+import com.google.inject.Inject;
 
 
 import java.lang.reflect.Method;
 
 public abstract class EventManager<T extends Expediente, Estado extends Enum<Estado>, Evento extends Enum<Evento> > {
+
+    final private String VIEW_NAME_FULL_FORMAT="exp-${EXPEDIENT_CODE}-${ROLE_NAME}-${STATE}-form";
+
+    @Inject
+    private MetaService metaService;
 
     private final Class<T> modelClass;
     private final Class<Estado> stateClass;
@@ -51,23 +59,27 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         }
     }
 
-    public String getViewForState(T expediente, EventContext eventContext) {
+    public String getViewName(T expediente, EventContext eventContext) {
+        String defaultViewName=getDefaultViewName(expediente, eventContext);
 
-        Estado estado=null;
-        try {
-            estado = (Estado) Enum.valueOf(stateClass, expediente.getCodeState());
-            String methodName = "getViewFor" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,estado.name());
-            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, String.class, ViewForState.class, new Class<?>[]{modelClass, EventContext.class});
 
-            String viewName =(String)method.invoke(this,  expediente, eventContext);
 
-            return viewName;
+        boolean existsView=AxelorViewUtil.existsView(defaultViewName,"form",this.getModelClass().getName());
 
-        } catch (Exception ex) {
-            throw new RuntimeException("Error al obtener la vista del estado: " + estado, ex);
+        if (existsView==false) {
+            throw new RuntimeException("Para el expediente no existe la vista para el estado y rol concretos: "+defaultViewName);
         }
+
+        return defaultViewName;
     }
 
+    private String getDefaultViewName(T expediente, EventContext eventContext) {
+        String viewName = VIEW_NAME_FULL_FORMAT.replace("${EXPEDIENT_CODE}", expediente.getTipoExpediente().getCode())
+                .replace("${ROLE_NAME}", eventContext.getPerfil().name())
+                .replace("${STATE}", expediente.getCodeState());
+
+        return viewName;
+    }
 
     public Class<T> getModelClass() {
         return modelClass;
