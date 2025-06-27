@@ -15,7 +15,6 @@ import com.educaflow.apps.expedientes.db.repo.TipoExpedienteRepository;
 import com.educaflow.common.util.*;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 
