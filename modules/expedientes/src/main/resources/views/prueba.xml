@@ -3,18 +3,6 @@
               xmlns="http://axelor.com/xml/ns/object-views"
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
-    <action-record name="eventPRESENTAR" model="com.educaflow.apps.expedientes.db.Expediente">
-        <field name="currentEvent" expr="PRESENTAR"/>
-    </action-record>
-    <action-record name="eventSUBSANAR" model="com.educaflow.apps.expedientes.db.Expediente">
-        <field name="currentEvent" expr="SUBSANAR"/>
-    </action-record>
-    <action-record name="eventACEPTAR" model="com.educaflow.apps.expedientes.db.Expediente">
-        <field name="currentEvent" expr="ACEPTAR"/>
-    </action-record>
-    <action-record name="eventRECHAZAR" model="com.educaflow.apps.expedientes.db.Expediente">
-        <field name="currentEvent" expr="RECHAZAR"/>
-    </action-record>
 
     <form name="form-expediente-prueba-estado-inicial-form" canSave="false" canBack="false" canAttach="false" canMore="false" canNew="false" title="Prueba Estado inicial1" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" onNew="datos-iniciales">
 
@@ -27,7 +15,7 @@
 
             </panel>
             <panel colSpan="4" itemSpan="12">
-                <button name="PRESENTAR" title="Guardar" onClick="eventPRESENTAR,save,action-event-view-expediente"/>
+                <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
                 <button name="Borrar" css="btn-danger" title="Borrar" onClick="action-event-borrar-expediente"  prompt="¿Está seguro que desea borrar el expediente?"/>
                 <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
             </panel>
@@ -65,8 +53,8 @@
 
             </panel>
             <panel colSpan="4" itemSpan="12">
-                <button name="ACEPTAR" title="Aceptar" onClick="eventACEPTAR,save,action-event-view-expediente"/>
-                <button name="RECHAZAR" title="Rechazar" css="btn-danger" onClick="eventRECHAZAR,save,action-event-view-expediente" prompt="¿Esta seguro que desea recharlo?"/>
+                <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
+                <button name="RECHAZAR" title="Rechazar" css="btn-danger" onClick="action-event-expediente" prompt="¿Esta seguro que desea recharlo?"/>
                 <button name="SUBSANAR" title="Subsanar información" onClick="eventSUBSANAR,save,action-event-view-expediente"/>
                 <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
             </panel>
@@ -96,7 +84,7 @@
 
             </panel>
             <panel colSpan="4" itemSpan="12">
-                <button name="SUBSANAR" title="Reabrir" onClick="eventSUBSANAR,save,action-event-view-expediente"/>
+                <button name="SUBSANAR" title="Reabrir" onClick="action-event-expediente"/>
                 <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
             </panel>
         </panel>
@@ -122,7 +110,7 @@
 
             </panel>
             <panel colSpan="4" itemSpan="12">
-                <button name="SUBSANAR" title="Reabrir" onClick="eventSUBSANAR,save,action-event-view-expediente"/>
+                <button name="SUBSANAR" title="Reabrir" onClick="action-event-expediente"/>
                 <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
             </panel>
         </panel>

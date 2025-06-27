@@ -6,7 +6,6 @@ import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.common.util.ReflectionUtil;
-import com.educaflow.common.util.TextUtil;
 import com.google.common.base.CaseFormat;
 
 
@@ -24,43 +23,43 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         this.eventClass = eventClass;
     }
 
-    public abstract Expediente triggerInitialEvent(TipoExpediente tipoExpediente, Contexto contexto);
+    public abstract Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext);
 
 
-    public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, Contexto contexto) {
+    public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, EventContext eventContext) {
         try {
             Evento event = (Evento) Enum.valueOf(eventClass, strEvent);
             String methodName = "trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,event.name());
-            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, Contexto.class});
+            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, EventContext.class});
 
-            method.invoke(this, expediente, expedienteOriginal, contexto);
+            method.invoke(this, expediente, expedienteOriginal, eventContext);
         } catch (Exception ex) {
             throw new RuntimeException("Error al invocar el evento: " + strEvent , ex);
         }
     }
 
-    public void onEnterState(T expediente, Contexto contexto) {
+    public void onEnterState(T expediente, EventContext eventContext) {
         Estado estado=null;
         try {
             estado = (Estado) Enum.valueOf(stateClass, expediente.getCodeState());
             String methodName = "onEnter" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,estado.name());
-            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, OnEnterState.class, new Class<?>[]{modelClass, Contexto.class});
+            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, OnEnterState.class, new Class<?>[]{modelClass, EventContext.class});
 
-            method.invoke(this, expediente, contexto);
+            method.invoke(this, expediente, eventContext);
         } catch (Exception ex) {
             throw new RuntimeException("Error al invocar el estado: " + estado, ex);
         }
     }
 
-    public String getViewForState(T expediente, Contexto contexto) {
+    public String getViewForState(T expediente, EventContext eventContext) {
 
         Estado estado=null;
         try {
             estado = (Estado) Enum.valueOf(stateClass, expediente.getCodeState());
             String methodName = "getViewFor" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,estado.name());
-            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, String.class, ViewForState.class, new Class<?>[]{modelClass, Contexto.class});
+            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, String.class, ViewForState.class, new Class<?>[]{modelClass, EventContext.class});
 
-            String viewName =(String)method.invoke(this,  expediente, contexto);
+            String viewName =(String)method.invoke(this,  expediente, eventContext);
 
             return viewName;
 
