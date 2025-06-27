@@ -23,7 +23,7 @@
 
         <panel title="Datos Solicitante">
             <field name="solicita" colSpan="9"/>
-            <field name="justificante"  widget="binary-link" colSpan="3"/>
+            <field name="justificante"  widget="binary-link" colSpan="3" x-accept=".pdf"/>
         </panel>
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
 
@@ -62,7 +62,7 @@
 
         <panel title="Datos Solicitante">
             <field name="solicita" colSpan="11" readonly="true"/>
-            <field name="justificante"  widget="binary-link" colSpan="3"/>
+            <field name="justificante"  widget="binary-link" colSpan="3" readonly="true"/>
         </panel>
 
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>

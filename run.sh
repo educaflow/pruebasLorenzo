@@ -1,4 +1,7 @@
 #!/bin/bash
+if [ -n "$HOME" ]; then
+  rm -rf ${HOME}/.axelor/attachments/
+fi
 set -e
 clear
 sudo docker stop educaflow

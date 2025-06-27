@@ -9,7 +9,7 @@
         <string name="nameState" />
         <string name="codeEvent" />
         <string name="nameEvent" />
-        <many-to-one name="expediente" ref="Expediente" />
+        <one-to-one name="expediente" ref="Expediente" />
         <datetime name="fecha" />
     </entity>
 
