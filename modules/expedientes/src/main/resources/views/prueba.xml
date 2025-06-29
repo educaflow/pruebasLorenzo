@@ -4,64 +4,49 @@
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
 
-    <form name="exp-Prueba-Base"  model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" >
-
-        <panel name="head" colSpan="12">
-            <panel colSpan="8">
-                <field name="tipoExpediente.name" title="Nombre" readonly="true" colSpan="6"/>
-                <field name="createdBy.name" title="Creado por" readonly="true" colSpan="6"/>
-                <field name="nameState" readonly="true" colSpan="3"/>
-                <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
-
-            </panel>
-            <panel name="events" colSpan="4" itemSpan="12">
-                <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
-                <button name="Borrar" css="btn-danger" title="Borrar" onClick="action-event-borrar-expediente"  prompt="¿Está seguro que desea borrar el expediente?"/>
-                <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
-            </panel>
-        </panel>
-    </form>
-
-
-
-
-
-    <form name="form-expediente-prueba-estado-ENTRADA_DATOS-form" canSave="false" canBack="false" canAttach="false" canMore="false" canNew="false" title="Prueba Estado inicial1" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" onNew="datos-iniciales">
-
-        <panel colSpan="12">
-            <panel colSpan="8">
-                <field name="tipoExpediente.name" title="Nombre" readonly="true" colSpan="6"/>
-                <field name="createdBy.name" title="Creado por" readonly="true" colSpan="6"/>
-                <field name="nameState" readonly="true" colSpan="3"/>
-                <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
-
-            </panel>
-            <panel colSpan="4" itemSpan="12">
-                <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
-                <button name="Borrar" css="btn-danger" title="Borrar" onClick="action-event-borrar-expediente"  prompt="¿Está seguro que desea borrar el expediente?"/>
-                <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
-            </panel>
-        </panel>
-
-        <panel title="Datos Solicitante">
+    <form name="exp-Prueba-form" title="hola"  model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" >
+        <panel name="datos-solicitante" title="Datos Solicitante">
             <field name="solicita" colSpan="9"/>
             <field name="justificante"  widget="binary-link" colSpan="3" x-accept=".pdf"/>
         </panel>
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
 
+        <panel name="datos-resolucion" title="Datos Resolución">
+            <field name="motivo" colSpan="12"/>
+        </panel>
+
+
+
     </form>
-    <grid name="fct-grid" title="FCTs" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" >
+
+
+    <form name="exp-Prueba-ENTRADA_DATOS-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+            <extend target="panel[@name='events']">
+                <insert position="inside-before">
+                    <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
+                    <button name="Borrar" css="btn-danger" title="Borrar" onClick="action-event-borrar-expediente"  prompt="¿Está seguro que desea borrar el expediente?"/>
+                </insert>
+            </extend>
+        </include>
+
+        <include target="panel[@name='datos-solicitante']" />
+        <include target="panel-related[@name='fcts-panel']" />
+    </form>
+
+
+    <grid name="fct-grid" title="FCTs" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" canEdit="false" edit-icon="false" >
         <field name="alumno" />
     </grid>
-
     <form name="fct-details" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" >
         <panel colSpan="12">
-            <field name="alumno" title="Nombre" colSpan="6" />
-            <field name="prueba" title="Expediente" colSpan="6" />
-            <field name="a2" title="Anexo A2" widget="binary-link" colSpan="6"/>
+            <field name="alumno" title="Nombre" colSpan="6"  />
+            <field name="a2" title="Anexo A2" widget="binary-link" colSpan="6" colOffset="6"/>
             <field name="a3" title="Anexo A3" widget="binary-link" colSpan="6"/>
         </panel>
     </form>
+
+
     <form name="fct-details-firma" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" >
         <panel colSpan="12">
             <field name="alumno" title="Nombre" colSpan="6" />
@@ -92,87 +77,57 @@
 
     </form>
 
-    <form name="form-expediente-prueba-revision-form" title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <form name="exp-Prueba-REVISION-form"  include="exp-Prueba-form" title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+            <extend target="panel[@name='events']">
+                <insert position="inside-before">
+                    <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
+                    <button name="RECHAZAR" title="Rechazar" css="btn-danger" onClick="action-event-expediente" prompt="¿Esta seguro que desea recharlo?"/>
+                    <button name="SUBSANAR" title="Subsanar información" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
 
-        <panel colSpan="12">
-            <panel colSpan="8">
-                <field name="tipoExpediente.name" title="Nombre" readonly="true" colSpan="6"/>
-                <field name="createdBy.name" title="Creado por" readonly="true" colSpan="6"/>
-                <field name="nameState" readonly="true" colSpan="3"/>
-                <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
 
-            </panel>
-            <panel colSpan="4" itemSpan="12">
-                <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
-                <button name="RECHAZAR" title="Rechazar" css="btn-danger" onClick="action-event-expediente" prompt="¿Esta seguro que desea recharlo?"/>
-                <button name="SUBSANAR" title="Subsanar información" onClick="eventSUBSANAR,save,action-event-view-expediente"/>
-                <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
-            </panel>
-        </panel>
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
 
-        <panel title="Datos Solicitante">
-            <field name="solicita" colSpan="11" readonly="true"/>
-            <field name="justificante"  widget="binary-link" colSpan="3" readonly="true"/>
-        </panel>
 
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details-firma" grid-view="fct-grid"/>
 
-        <panel title="Datos Resolución">
-            <field name="motivo" colSpan="12"/>
-        </panel>
+        <include target="panel[@name='datos-resolucion']" />
 
 
     </form>
 
-    <form name="form-expediente-prueba-aceptado-form" title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-        <panel colSpan="12">
-            <panel colSpan="8">
-                <field name="tipoExpediente.name" title="Nombre" readonly="true" colSpan="6"/>
-                <field name="createdBy.name" title="Creado por" readonly="true" colSpan="6"/>
-                <field name="nameState" readonly="true" colSpan="3"/>
-                <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
+    <form name="exp-Prueba-ACEPTADO-form"  include="exp-Prueba-form" title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+            <extend target="panel[@name='events']">
+                <insert position="inside-before">
+                    <button name="SUBSANAR" title="Reabrir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
 
-            </panel>
-            <panel colSpan="4" itemSpan="12">
-                <button name="SUBSANAR" title="Reabrir" onClick="action-event-expediente"/>
-                <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
-            </panel>
-        </panel>
 
-        <panel title="Datos Solicitante">
-            <field name="solicita" colSpan="11" readonly="true"/>
-            <field name="justificante"  widget="binary-link" colSpan="3"/>
-        </panel>
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+        <include target="panel[@name='datos-resolucion']" readonly="true"/>
 
-        <panel title="Datos Resolución">
-            <field name="motivo" colSpan="12" readonly="true"/>
-        </panel>
+
     </form>
 
-    <form name="form-expediente-prueba-rechazado-form" title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <form name="exp-Prueba-RECHAZADO-form"  include="exp-Prueba-form" title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml">
+            <extend target="panel[@name='events']">
+                <insert position="inside-before">
+                    <button name="SUBSANAR" title="Reabrir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
 
-        <panel colSpan="12">
-            <panel colSpan="8">
-                <field name="tipoExpediente.name" title="Nombre" readonly="true" colSpan="6"/>
-                <field name="createdBy.name" title="Creado por" readonly="true" colSpan="6"/>
-                <field name="nameState" readonly="true" colSpan="3"/>
-                <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
-
-            </panel>
-            <panel colSpan="4" itemSpan="12">
-                <button name="SUBSANAR" title="Reabrir" onClick="action-event-expediente"/>
-                <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
-            </panel>
-        </panel>
-
-        <panel title="Datos Solicitante">
-            <field name="solicita" colSpan="11" readonly="true"/>
-            <field name="justificante"  widget="binary-link" colSpan="3"/>
-        </panel>
-
-        <panel title="Datos Resolución">
-            <field name="motivo" colSpan="12" readonly="true"/>
-        </panel>
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+        <include target="panel[@name='datos-resolucion']" readonly="true" />
     </form>
 
 </object-views>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://axelor.com/xml/ns/domain-models http://axelor.com/xml/ns/domain-models/domain-models_5.1.xsd">
+
+
+    <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
+    <entity name="JustificacionFaltaProfesorado" extends="Expediente" >
+        <string name="apellidos" />
+        <string name="nombre" />
+        <string name="dni" />
+        <string name="dias" />
+        <enum name="mes" ref="com.educaflow.apps.expedientes.db.MesJustificacionFaltaProfesorado" />
+        <integer name="anyo" />
+
+
+        <enum name="tipoJornadaFalta" ref="TipoJornadaFaltaJustificacionFaltaProfesorado" />
+        <time name="horaInicio"  />
+        <time name="horaFin"  />
+        <enum name="motivoFalta" ref="MotivoFaltaJustificacionFaltaProfesorado" />
+        <string name="otroMotivo"  />
+        <string name="disconformidad"  />
+        <string name="resolucion" />
+        <one-to-one name="justificante" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
+        <one-to-one name="justificanteFirmadoUsuario" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
+        <one-to-one name="justificanteFirmadoUsuarioDirector" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
+
+        <extra-code-model><![CDATA[
+            public enum Estado {
+                ENTRADA_DATOS,
+                REVISION,
+                ACEPTADO,
+                RECHAZADO;
+            }
+
+            public enum Evento {
+                PRESENTAR,
+                SUBSANAR,
+                ACEPTAR,
+                RECHAZAR;
+            }
+
+            public void changeState(Estado estado) {
+                super.changeState(estado);
+            }
+		]]></extra-code-model>
+
+    </entity>
+
+    <enum name="TipoJornadaFaltaJustificacionFaltaProfesorado">
+        <item name="TODA_LA_JORNADA" value="Toda la jornada"/>
+        <item name="JORNADA_PARCIAL" value="Jornada parcial"/>
+    </enum>
+
+    <enum name="MotivoFaltaJustificacionFaltaProfesorado">
+        <item name="ENFERMEDAD_COMUN" value="Enfermedad común"/>
+        <item name="PERMISO_MEDICO_EDUCATIVO_ASISTENCIAL" value="Permiso médico, educativo o asistencial"/>
+        <item name="TRASLADO_DOMICILIO" value="Traslado de domicilio"/>
+        <item name="ASISTENCIA_PRUEBAS_EXAMENES" value="Asistencia a pruebas selectivas y exámenes"/>
+        <item name="NACIMIENTO_ADOPCION_ACOGIMIENTO" value="Nacimiento, adopción o acogimiento"/>
+        <item name="FALLECIMIENTO_ENFERMEDAD_GRAVE_FAMILIAR" value="Fallecimiento o enfermedad grave de un familiar"/>
+        <item name="DEBER_INEXCUSABLE" value="Deber inexcusable"/>
+        <item name="FUNCIONES_REPRESENTATIVAS" value="Funciones representativas"/>
+        <item name="OTROS" value="Otros"/>
+    </enum>
+    <enum name="MesJustificacionFaltaProfesorado">
+        <item name="ENERO" value="Enero"/>
+        <item name="FEBRERO" value="Febrero"/>
+        <item name="MARZO" value="Marzo"/>
+        <item name="ABRIL" value="Abril"/>
+        <item name="MAYO" value="Mayo"/>
+        <item name="JUNIO" value="Junio"/>
+        <item name="JULIO" value="Julio"/>
+        <item name="AGOSTO" value="Agosto"/>
+        <item name="SEPTIEMBRE" value="Septiembre"/>
+        <item name="OCTUBRE" value="Octubre"/>
+        <item name="NOVIEMBRE" value="Noviembre"/>
+        <item name="DICIEMBRE" value="Diciembre"/>
+    </enum>
+</domain-models>

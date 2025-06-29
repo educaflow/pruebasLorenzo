@@ -9,7 +9,11 @@ public class EventContext {
         this.profile = profile;
     }
 
-    public Profile getPerfil() {
+    public Profile getProfile() {
         return profile;
+    }
+
+    public String toString() {
+        return "EventContext [profile=" + profile + "]";
     }
 }

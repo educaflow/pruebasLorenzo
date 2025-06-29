@@ -34,17 +34,22 @@ public class ReflectionUtil {
                 continue;
             }
 
-            boolean paramsMatch = true;
-            for (int i = 0; i < parameterTypes.length; i++) {
-                if (!methodParamTypes[i].equals(parameterTypes[i])) {
-                    paramsMatch = false;
-                    break;
+            if (methodParamTypes!=null) {
+                boolean paramsMatch = true;
+                for (int i = 0; i < parameterTypes.length; i++) {
+                    if (!methodParamTypes[i].equals(parameterTypes[i])) {
+                        paramsMatch = false;
+                        break;
+                    }
+                }
+
+                if (paramsMatch==false) {
+                    continue;
                 }
             }
 
-            if (paramsMatch) {
-                matchingMethods.add(method);
-            }
+            matchingMethods.add(method);
+
         }
 
         if (matchingMethods.size() > 1) {

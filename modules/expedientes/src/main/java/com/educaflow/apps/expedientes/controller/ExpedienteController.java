@@ -13,6 +13,7 @@ import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.apps.expedientes.db.repo.TipoExpedienteRepository;
 import com.educaflow.common.util.*;
+import com.educaflow.common.util.mapper.BeanMapperModel;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import java.time.LocalDateTime;
@@ -41,6 +42,12 @@ public class ExpedienteController {
 
 
             Expediente expediente=eventManager.triggerInitialEvent(tipoExpediente, eventContext);
+            expediente.setTipoExpediente(tipoExpediente);
+            if (expediente.getCodeState()==null) {
+                throw new RuntimeException("El estado del expediente no puede ser null");
+            }
+            updateState(expediente);
+            updateName(expediente);
             addHistorialEstado(expediente,null);
             eventManager.onEnterState(expediente, eventContext);
 
@@ -60,10 +67,11 @@ public class ExpedienteController {
     public void triggerEvent(ActionRequest request, ActionResponse response) {
         try {
             String eventName=getEventName(request);
-            Expedientes expedientes=getExpedientes(request);
+            EventContext eventContext = getEventContext(request);
+            Expedientes expedientes=getExpedientes(request,eventName, eventContext);
             Expediente expedienteOriginal=expedientes.getOriginalExpediente();
             Expediente expediente=expedientes.getCurrentExpediente();
-            EventContext eventContext = getEventContext(request);
+
             EventManager eventManager=getEventManager(expediente.getTipoExpediente());
             JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
 
@@ -72,9 +80,9 @@ public class ExpedienteController {
             eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
             String newState = expediente.getCodeState();
 
-            addHistorialEstado(expediente, eventName);
-
             if (newState.equals(originalState)==false) {
+                updateState(expediente);
+                addHistorialEstado(expediente,eventName);
                 eventManager.onEnterState(expediente, eventContext);
             }
 
@@ -93,9 +101,10 @@ public class ExpedienteController {
     @Transactional
     public void borrarExpediente(ActionRequest request, ActionResponse response) {
         try {
-            Expedientes expedientes=getExpedientes(request);
-            Expediente expediente=expedientes.getCurrentExpediente();
             EventContext eventContext = getEventContext(request);
+            Expedientes expedientes=getExpedientes(request,null, eventContext);
+            Expediente expediente=expedientes.getCurrentExpediente();
+
             EventManager eventManager=getEventManager(expediente.getTipoExpediente());
             JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
 
@@ -110,9 +119,9 @@ public class ExpedienteController {
     @CallMethod
     public void viewExpediente(ActionRequest request, ActionResponse response) {
         try {
-            Expedientes expedientes=getExpedientes(request);
-            Expediente expediente=expedientes.getCurrentExpediente();
             EventContext eventContext = getEventContext(request);
+            Expedientes expedientes=getExpedientes(request,null, eventContext);
+            Expediente expediente=expedientes.getCurrentExpediente();
             EventManager eventManager=getEventManager(expediente.getTipoExpediente());
 
             String viewName = eventManager.getViewName(expediente, eventContext);
@@ -137,6 +146,14 @@ public class ExpedienteController {
         expediente.addHistorialEstado(historialEstado);
     }
 
+    public void updateState(Expediente expediente) {
+        expediente.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(expediente.getCodeState()));
+        expediente.setFechaUltimoEstado(java.time.LocalDateTime.now());
+    }
+
+    public void updateName(Expediente expediente) {
+        expediente.setName(expediente.getTipoExpediente().getName());
+    }
 
 
     /*******************************************************************/
@@ -151,17 +168,30 @@ public class ExpedienteController {
         return tipoExpediente;
     }
 
-    private Expedientes getExpedientes(ActionRequest request) {
+    private Expedientes getExpedientes(ActionRequest request,String eventName,EventContext eventContext) {
         long id=objectToLong(getActionRequestContext(request).get("id"));
         JpaRepository<Expediente> expedienteRepository =getJpaRepository(id);
 
         //No cambiar el orden de estas 3 lineas
         Expediente expediente=findExpediente(expedienteRepository,id);
-        Expediente expedienteOriginal=(Expediente) BeanUtil.cloneEntity(expediente.getClass(), expediente);
-        BeanUtil.copyMapToEntity(expediente.getClass(),getActionRequestContext(request),expediente);
-
+        Expediente expedienteOriginal=(Expediente) BeanMapperModel.getEntityCloned(expediente.getClass(), expediente);
+        populateExpedienteFromActionRequest(expediente,request,eventName, eventContext);
 
         return new  Expedientes(expediente,expedienteOriginal);
+    }
+
+    /**
+     * Esta es la funcion más importante ya que pasa los datos del GUI al modelo
+     * Y hay que comprobar que se puede pasar y que no se puede.
+     * @param expediente
+     * @param request
+     * @param eventName
+     * @param eventContext
+     */
+    private void populateExpedienteFromActionRequest(Expediente expediente, ActionRequest request,String eventName, EventContext eventContext) {
+        if (eventName!=null) {
+            BeanMapperModel.copyMapToEntity(expediente.getClass(), getActionRequestContext(request), expediente);
+        }
     }
 
 

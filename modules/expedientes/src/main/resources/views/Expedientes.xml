@@ -51,12 +51,8 @@
         editable="false" edit-icon="false" x-selector="none" canNew="false"  canEdit="false"  canDelete="false" canSave="false"
         action="action-event-new-expediente" actionSignal="aaaa"
   >
-    <field name="code" />
     <field name="name" />
     <field name="versionExpediente" />
-    <field name="openDate" />
-    <field name="closeDate" />
-    <field name="fqcnEventManager" />
   </grid>
 
   <grid name="grid-ver-expedientes" title="Expedientes" model="com.educaflow.apps.expedientes.db.Expediente"
@@ -65,8 +61,9 @@
         canSave="false"
         action="action-event-view-expediente" actionSignal="aaaa"
   >
-    <field name="createdBy.name"/>
+    <field name="numeroExpediente"/>
     <field name="tipoExpediente.name"/>
+    <field name="createdBy.name"/>
     <field name="nameState"/>
     <field name="fechaUltimoEstado"/>
   </grid>
@@ -76,7 +73,6 @@
         editable="false" edit-icon="false" x-selector="none" canNew="false" canEdit="false" canDelete="false"
         canSave="false" orderBy="fecha"
   >
-    <field name="expediente"/>
     <field name="nameEvent"/>
     <field name="nameState"/>
     <field name="createdBy.name"/>

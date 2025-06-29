@@ -1,25 +1,22 @@
 package com.educaflow.apps.expedientes.common;
 
-import com.axelor.meta.service.MetaService;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
-import com.educaflow.apps.expedientes.common.annotations.ViewForState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.common.util.AxelorViewUtil;
 import com.educaflow.common.util.ReflectionUtil;
 import com.google.common.base.CaseFormat;
-import com.google.inject.Inject;
 
 
 import java.lang.reflect.Method;
 
 public abstract class EventManager<T extends Expediente, Estado extends Enum<Estado>, Evento extends Enum<Evento> > {
 
-    final private String VIEW_NAME_FULL_FORMAT="exp-${EXPEDIENT_CODE}-${ROLE_NAME}-${STATE}-form";
-
-    @Inject
-    private MetaService metaService;
+    final private String VIEW_NAME_DEFAULT_FORMAT ="exp-${EXPEDIENT_CODE}-${ROLE_NAME}-${STATE}-form";
+    final private String VIEW_NAME_NO_ROLE_FORMAT="exp-${EXPEDIENT_CODE}-${STATE}-form";
+    final private String VIEW_NAME_NO_STATE_FORMAT="exp-${EXPEDIENT_CODE}-${ROLE_NAME}-form";
+    final private String VIEW_NAME_NO_STATE_NO_ROLE_FORMAT="exp-${EXPEDIENT_CODE}-form";
 
     private final Class<T> modelClass;
     private final Class<Estado> stateClass;
@@ -61,21 +58,49 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
 
     public String getViewName(T expediente, EventContext eventContext) {
         String defaultViewName=getDefaultViewName(expediente, eventContext);
+        String noRoleViewName= getNoRoleViewName(expediente, eventContext);
+        String noStateViewName= getNoStateViewName(expediente, eventContext);
+        String noRoleNoStateViewName= getNoRoleNoStateViewName(expediente, eventContext);
 
 
-
-        boolean existsView=AxelorViewUtil.existsView(defaultViewName,"form",this.getModelClass().getName());
-
-        if (existsView==false) {
-            throw new RuntimeException("Para el expediente no existe la vista para el estado y rol concretos: "+defaultViewName);
+        //Los nombre de las vistas tienen una prioridad en caso de que existan varias.
+        if (existsView(defaultViewName)) {
+            return defaultViewName;
+        }
+        if (existsView(noRoleViewName)) {
+            return noRoleViewName;
+        }
+        if (existsView(noStateViewName)) {
+            return noStateViewName;
+        }
+        if (existsView(noRoleNoStateViewName)) {
+            return noRoleNoStateViewName;
         }
 
-        return defaultViewName;
+        throw new RuntimeException("No existe la vista" + expediente + "---" + eventContext);
     }
 
-    private String getDefaultViewName(T expediente, EventContext eventContext) {
-        String viewName = VIEW_NAME_FULL_FORMAT.replace("${EXPEDIENT_CODE}", expediente.getTipoExpediente().getCode())
-                .replace("${ROLE_NAME}", eventContext.getPerfil().name())
+    private boolean existsView(String viewName) {
+        return AxelorViewUtil.existsView(viewName,"form",this.getModelClass().getName());
+    }
+
+    private String getDefaultViewName(Expediente expediente, EventContext eventContext) {
+        return interpolateViewName(VIEW_NAME_DEFAULT_FORMAT,expediente,eventContext);
+    }
+    private String getNoRoleViewName(Expediente expediente, EventContext eventContext) {
+        return interpolateViewName(VIEW_NAME_NO_ROLE_FORMAT,expediente,eventContext);
+    }
+    private String getNoStateViewName(Expediente expediente, EventContext eventContext) {
+        return interpolateViewName(VIEW_NAME_NO_STATE_FORMAT,expediente,eventContext);
+    }
+    private String getNoRoleNoStateViewName(Expediente expediente, EventContext eventContext) {
+        return interpolateViewName(VIEW_NAME_NO_STATE_NO_ROLE_FORMAT,expediente,eventContext);
+    }
+
+
+    private String interpolateViewName(String template,Expediente expediente, EventContext eventContext) {
+        String viewName = template.replace("${EXPEDIENT_CODE}", expediente.getTipoExpediente().getCode())
+                .replace("${ROLE_NAME}", eventContext.getProfile().name())
                 .replace("${STATE}", expediente.getCodeState());
 
         return viewName;

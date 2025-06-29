@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <datos>
     <tiposExpedientes>
-        <tipoExpediente code="FaltaJustificada" name="Falta Justificada"     versionExpediente="1" fqcnEventManager="com.educaflow.apps.expedientes.eventmanagers.FaltaJustificadaEventManager" />
+        <tipoExpediente code="JustificacionFaltaProfesorado" name="Justificar falta de profesorado"     versionExpediente="1" fqcnEventManager="com.educaflow.apps.expedientes.eventmanagers.JustificacionFaltaProfesoradoEventManager" />
         <tipoExpediente code="ComisionServicio" name="Comision de servicios" versionExpediente="1" fqcnEventManager="com.educaflow.apps.expedientes.eventmanagers.ComisionServicioEventManager" />
         <tipoExpediente code="Prueba"           name="Expediente de prueba"  versionExpediente="1" fqcnEventManager="com.educaflow.apps.expedientes.eventmanagers.PruebaEventManager" />
     </tiposExpedientes>
