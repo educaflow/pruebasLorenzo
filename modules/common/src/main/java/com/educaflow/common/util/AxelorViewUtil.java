@@ -5,16 +5,20 @@ import com.axelor.meta.loader.XMLViews;
 import com.axelor.meta.schema.actions.ActionView;
 import com.axelor.meta.schema.views.AbstractView;
 import com.axelor.rpc.ActionResponse;
+import com.oracle.truffle.api.profiles.Profile;
+
+import java.util.Map;
 
 public class AxelorViewUtil {
-    public static void doResponseViewForm(ActionResponse response, String viewName, Class<? extends Model> modelClass, Model entity,String title) {
+    public static void doResponseViewForm(ActionResponse response, String viewName, Class<? extends Model> modelClass, Model entity, String title, String profile) {
         ActionView.ActionViewBuilder actionViewBuilder=ActionView.define(title)
                 .model(modelClass.getName())
                 .add("form", viewName)
                 .param("forceEdit", "true")
                 .param("forceTitle", "true")
                 .param("show-confirm", "false")
-                .param("show-toolbar", "false");
+                .param("show-toolbar", "false")
+                .context("_profile",profile);
 
         if ((entity != null)  && (entity.getId() != null)) {
             actionViewBuilder.context("_showRecord", entity.getId()).param("forceEdit", "true");

@@ -13,6 +13,15 @@
         <datetime name="fechaUltimoEstado" />
         <boolean name="abierto" defaultValue="true" />
         <one-to-many name="historialEstados" ref="ExpedienteHistorialEstados" mappedBy="expediente" />
+        <one-to-many name="currentActionProfiles" ref="ExpedienteProfile" mappedBy="expediente" />
+
+        <extra-imports-model>
+            <![CDATA[
+                import java.util.ArrayList;
+                import com.axelor.inject.Beans;
+                import com.educaflow.apps.expedientes.db.repo.ProfileRepository;
+            ]]>
+        </extra-imports-model>
 
         <extra-code-model>
             <![CDATA[
@@ -21,6 +30,24 @@ public void changeState(Enum estado) {
     this.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(estado.name()));
     this.setFechaUltimoEstado(java.time.LocalDateTime.now());
 }
+
+    public void setCurrentActionProfiles(com.educaflow.apps.expedientes.common.Profile... profiles) {
+        if (this.getCurrentActionProfiles()==null) {
+            this.setCurrentActionProfiles(new ArrayList<ExpedienteProfile>());
+        } else {
+            this.getCurrentActionProfiles().clear();
+        }
+        ProfileRepository profileRepository = Beans.get(ProfileRepository.class);
+
+        for (com.educaflow.apps.expedientes.common.Profile profile : profiles) {
+            ExpedienteProfile expedienteProfile=new ExpedienteProfile();
+            expedienteProfile.setExpediente(this);
+            expedienteProfile.setProfile(profileRepository.findByCode(profile.name()));
+            this.addCurrentActionProfile(expedienteProfile);
+        }
+    }
+
+
 ]]>
         </extra-code-model>
     </entity>

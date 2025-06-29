@@ -1,13 +1,17 @@
 package com.educaflow.apps.expedientes.eventmanagers;
 
+import com.axelor.inject.Beans;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.EventManager;
+import com.educaflow.apps.expedientes.common.Profile;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.ViewForState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
+import com.educaflow.apps.expedientes.db.ExpedienteProfile;
 import com.educaflow.apps.expedientes.db.Prueba;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
+import com.educaflow.apps.expedientes.db.repo.ProfileRepository;
 import com.educaflow.apps.expedientes.db.repo.PruebaRepository;
 import com.google.inject.Inject;
 
@@ -46,35 +50,36 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
     @WhenEvent
     public void triggerAceptar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
         prueba.changeState(Prueba.Estado.ACEPTADO);
-        prueba.setAbierto(false);
     }
 
     @WhenEvent
     public void triggerRechazar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
         prueba.changeState(Prueba.Estado.RECHAZADO);
-        prueba.setAbierto(false);
     }
 
 
 
     @OnEnterState
     public void onEnterEntradaDatos(Prueba prueba, EventContext eventContext) {
-        System.out.println("onEnterEntradaDatos");
+        prueba.setCurrentActionProfiles(Profile.CREADOR);
+
+        prueba.setAbierto(true);
     }
 
     @OnEnterState
     public void onEnterRevision(Prueba prueba, EventContext eventContext) {
-        System.out.println("onRevision");
+        prueba.setCurrentActionProfiles(Profile.RESPONSABLE);
+        prueba.setAbierto(true);
     }
 
     @OnEnterState
     public void onEnterAceptado(Prueba prueba, EventContext eventContext) {
-        System.out.println("onAceptado");
+        prueba.setAbierto(false);
     }
 
     @OnEnterState
     public void onEnterRechazado(Prueba prueba, EventContext eventContext) {
-        System.out.println("onRechazado");
+        prueba.setAbierto(false);
     }
 
 

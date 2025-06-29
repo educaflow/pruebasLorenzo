@@ -55,7 +55,7 @@ public class ExpedienteController {
             saveExpediente(expedienteRepository,expediente);
 
             String viewName = eventManager.getViewName(expediente, eventContext);
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName());
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName(),eventContext.getProfile().name());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -89,7 +89,7 @@ public class ExpedienteController {
             saveExpediente(expedienteRepository,expediente);
 
             String viewName = eventManager.getViewName(expediente, eventContext);
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName());
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName(),eventContext.getProfile().name());
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -126,7 +126,7 @@ public class ExpedienteController {
 
             String viewName = eventManager.getViewName(expediente, eventContext);
 
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName());
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName(),eventContext.getProfile().name());
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -207,9 +207,13 @@ public class ExpedienteController {
     }
 
 
-    private EventContext getEventContext(Request request) {
-        //String signal=(String)request.getData().get("_signal");
-        Profile profile=Profile.CREADOR; //signal!=null ? Profile.valueOf(signal) : null;
+    private EventContext getEventContext(ActionRequest request) {
+        String profileName=(String)getActionRequestContext(request).get("_profile");
+        if (profileName==null) {
+            throw new RuntimeException("profileName is null");
+        }
+
+        Profile profile=Profile.valueOf(profileName);
         return new EventContext(profile);
     }
 

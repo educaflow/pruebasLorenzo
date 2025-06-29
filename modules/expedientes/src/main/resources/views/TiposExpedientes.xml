@@ -4,9 +4,9 @@
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_7.2.xsd">
 
 
-    <menuitem name="menu-tipos-expedientes" title="Tipos de Expedientes" groups="admins,users"/>
-    <menuitem name="menu-item-tipos-expedientes" parent="menu-tipos-expedientes" title="Tipos Expedientes" action="action-crud-expedientes" groups="admins,users"/>
-    <menuitem name="menu-item-tipos-expedientes-mant-3" parent="menu-tipos-expedientes" title="Edit Prueba" action="accion-mantenimiento-tipoExpediente-3" groups="admins,users"/>
+    <menuitem name="menu-tipos-expedientes" title="Tipos de Expedientes" groups="admins"/>
+    <menuitem name="menu-item-tipos-expedientes" parent="menu-tipos-expedientes" title="Tipos Expedientes" action="action-crud-expedientes" groups="admins"/>
+    <menuitem name="menu-item-tipos-expedientes-mant-3" parent="menu-tipos-expedientes" title="Edit Prueba" action="accion-mantenimiento-tipoExpediente-3" groups="admins"/>
 
 
     <action-view name="action-crud-expedientes" title="tipos de expedientes" model="com.educaflow.apps.expedientes.db.TipoExpediente">

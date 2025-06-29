@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
+
+    <action-view name="action-grid-expediente-historial-estados" title="Mostrar historial estados" model="com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados">
+        <view type="grid" name="grid-expediente-historial-estados"/>
+        <view-param name="popup" value="true"/>
+        <view-param name="show-toolbar" value="false"/>
+        <view-param name="popup-save" value="false"/>
+        <domain>self.expediente.id=:idExpediente</domain>
+        <context name="idExpediente" expr="eval: id"/>
+    </action-view>
+
+
+    <grid name="grid-expediente-historial-estados" title="Historial Estados" model="com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados"
+          groups="admins,users"
+          editable="false" edit-icon="false" x-selector="none" canNew="false" canEdit="false" canDelete="false"
+          canSave="false" orderBy="fecha"
+    >
+        <field name="nameEvent"/>
+        <field name="nameState"/>
+        <field name="createdBy.name"/>
+        <field name="fecha"/>
+    </grid>
+
+</object-views>

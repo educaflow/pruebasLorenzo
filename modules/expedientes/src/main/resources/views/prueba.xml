@@ -10,17 +10,13 @@
             <field name="justificante"  widget="binary-link" colSpan="3" x-accept=".pdf"/>
         </panel>
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
-
         <panel name="datos-resolucion" title="Datos Resolución">
             <field name="motivo" colSpan="12"/>
         </panel>
-
-
-
     </form>
 
 
-    <form name="exp-Prueba-ENTRADA_DATOS-form" include="exp-Prueba-form"  >
+    <form name="exp-Prueba-CREADOR-ENTRADA_DATOS-form" include="exp-Prueba-form"  >
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
@@ -32,6 +28,13 @@
 
         <include target="panel[@name='datos-solicitante']" />
         <include target="panel-related[@name='fcts-panel']" />
+    </form>
+    <form name="exp-Prueba-RESPONSABLE-ENTRADA_DATOS-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        </include>
+
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
     </form>
 
 
@@ -45,8 +48,6 @@
             <field name="a3" title="Anexo A3" widget="binary-link" colSpan="6"/>
         </panel>
     </form>
-
-
     <form name="fct-details-firma" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" >
         <panel colSpan="12">
             <field name="alumno" title="Nombre" colSpan="6" />
@@ -74,10 +75,18 @@
                 </field>
             </panel>
         </panel-tabs>
-
     </form>
 
-    <form name="exp-Prueba-REVISION-form"  include="exp-Prueba-form" title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+
+
+    <form name="exp-Prueba-CREADOR-REVISION-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        </include>
+
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+    </form>
+    <form name="exp-Prueba-RESPONSABLE-REVISION-form"  include="exp-Prueba-form" title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
@@ -87,19 +96,24 @@
                 </insert>
             </extend>
         </include>
-
-
         <include target="panel[@name='datos-solicitante']" readonly="true" />
-
-
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details-firma" grid-view="fct-grid"/>
-
         <include target="panel[@name='datos-resolucion']" />
-
-
     </form>
 
-    <form name="exp-Prueba-ACEPTADO-form"  include="exp-Prueba-form" title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+
+
+
+
+    <form name="exp-Prueba-CREADOR-ACEPTADO-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        </include>
+
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+        <include target="panel[@name='datos-resolucion']" readonly="true" />
+    </form>
+    <form name="exp-Prueba-RESPONSABLE-ACEPTADO-form"  include="exp-Prueba-form" title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
@@ -116,7 +130,18 @@
 
     </form>
 
-    <form name="exp-Prueba-RECHAZADO-form"  include="exp-Prueba-form" title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+
+
+
+    <form name="exp-Prueba-CREADOR-RECHAZADO-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        </include>
+
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+        <include target="panel[@name='datos-resolucion']" readonly="true" />
+    </form>
+    <form name="exp-Prueba-RESPONSABLE-RECHAZADO-form"  include="exp-Prueba-form" title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml">
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
@@ -129,5 +154,7 @@
         <include target="panel-related[@name='fcts-panel']" readonly="true" />
         <include target="panel[@name='datos-resolucion']" readonly="true" />
     </form>
+
+
 
 </object-views>

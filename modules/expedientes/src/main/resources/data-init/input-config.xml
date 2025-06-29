@@ -50,5 +50,12 @@
         </bind>
     </input>
 
+    <input file="Profiles.xml" root="datos">
+
+        <bind node="profiles/profile" type="com.educaflow.apps.expedientes.db.Profile" search="self.code = :code"  create="true">
+            <bind node="@code" to="code" />
+            <bind node="@name" to="name" />
+        </bind>
+    </input>
 
 </xml-inputs>
