@@ -2,11 +2,11 @@
 <templates>
     <panel name="head" colSpan="12">
         <panel colSpan="8">
-            <field name="name" title="Nombre" readonly="true" colSpan="6"/>
-            <field name="createdBy.name" title="Creado por" readonly="true" colSpan="6"/>
+            <field name="numeroExpediente" title="Nº" readonly="true" colSpan="3"/>
+            <field name="name" title="Nombre" readonly="true" colSpan="9"/>
             <field name="nameState" readonly="true" colSpan="3"/>
             <field name="fechaUltimoEstado" readonly="true" colSpan="3"/>
-
+            <field name="createdBy.name" title="Creado por" readonly="true" colSpan="6"/>
         </panel>
         <panel name="events" colSpan="4" itemSpan="12">
             <button name="mostrar-historial-estados" icon="assignment" title="Historial Eventos" css="btn-default" onClick="action-grid-expediente-historial-estados" colSpam="2"/>
