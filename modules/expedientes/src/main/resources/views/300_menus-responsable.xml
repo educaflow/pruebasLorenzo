@@ -9,17 +9,17 @@
     <menuitem name="responsable-cerrado-menu" parent="responsable-menu" title="Cerrado" action="responsable-cerrado-action" groups="admins,users"/>
 
 
-    <action-view name="responsable-pendiente-action" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.Expediente">
+    <action-view name="responsable-pendiente-action" title="Listado de expedientes pendientes de que realices la tarea" model="com.educaflow.apps.expedientes.db.Expediente">
         <view type="grid" name="expediente-ver-grid"/>
         <domain>self.abierto=true AND EXISTS(SELECT 1 FROM ExpedienteProfile ep WHERE ep.expediente.id = self.id AND ep.profile.code='RESPONSABLE')</domain>
         <context name="_profile" expr="RESPONSABLE"/>
     </action-view>
-    <action-view name="responsable-esperando-action" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.Expediente" >
+    <action-view name="responsable-esperando-action" title="Expedientes esperando a que otra persona realice una tarea" model="com.educaflow.apps.expedientes.db.Expediente" >
         <view type="grid" name="expediente-ver-grid"  />
         <domain>self.abierto=true AND NOT EXISTS(SELECT 1 FROM ExpedienteProfile ep WHERE ep.expediente.id = self.id AND ep.profile.code='RESPONSABLE')</domain>
         <context name="_profile" expr="RESPONSABLE"/>
     </action-view>
-    <action-view name="responsable-cerrado-action" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.Expediente">
+    <action-view name="responsable-cerrado-action" title="Expedientes cerrados" model="com.educaflow.apps.expedientes.db.Expediente">
         <view type="grid" name="expediente-ver-grid"/>
         <domain>self.abierto=false</domain>
         <context name="_profile" expr="RESPONSABLE"/>

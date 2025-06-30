@@ -9,20 +9,24 @@
     <menuitem name="alumnos-esperando-menu" parent="alumnos-menu" title="Esperando" action="alumnos-esperando-action" groups="admins,users"/>
     <menuitem name="alumnos-cerrado-menu" parent="alumnos-menu" title="Cerrado" action="alumnos-cerrado-action" groups="admins,users"/>
 
-    <action-view name="alumnos-nuevo-action" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" >
+    <action-view name="alumnos-nuevo-action" title="Crear un nuevo expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" >
         <view type="grid" name="expediente-nuevo-grid"  />
+        <domain>1=0</domain>
         <context name="_profile" expr="CREADOR"/>
     </action-view>
-    <action-view name="alumnos-pendiente-action" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.Expediente">
-        <view type="grid" name="expediente-ver-grid"/>
+    <action-view name="alumnos-pendiente-action" title="Listado de expedientes pendientes de que realices la tarea" model="com.educaflow.apps.expedientes.db.Expediente">
+        <view type="grid" name="expediente-ver-grid-creador"/>
+        <domain>self.abierto=true AND 1=0</domain>
         <context name="_profile" expr="CREADOR"/>
     </action-view>
-    <action-view name="alumnos-esperando-action" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.Expediente" >
-        <view type="grid" name="expediente-ver-grid"  />
+    <action-view name="alumnos-esperando-action" title="Expedientes esperando a que otra persona realice una tarea" model="com.educaflow.apps.expedientes.db.Expediente" >
+        <view type="grid" name="expediente-ver-grid-creador"  />
+        <domain>self.abierto=true AND 1=0</domain>
         <context name="_profile" expr="CREADOR"/>
     </action-view>
-    <action-view name="alumnos-cerrado-action" title="Nuevo expediente" model="com.educaflow.apps.expedientes.db.Expediente">
-        <view type="grid" name="expediente-ver-grid"/>
+    <action-view name="alumnos-cerrado-action" title="Expedientes cerrados" model="com.educaflow.apps.expedientes.db.Expediente">
+        <view type="grid" name="expediente-ver-grid-creador"/>
+        <domain>self.abierto=true AND 1=0</domain>
         <context name="_profile" expr="CREADOR"/>
     </action-view>
 

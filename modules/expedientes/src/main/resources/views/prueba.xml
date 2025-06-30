@@ -36,6 +36,13 @@
         <include target="panel[@name='datos-solicitante']" readonly="true" />
         <include target="panel-related[@name='fcts-panel']" readonly="true" />
     </form>
+    <form name="exp-Prueba-AUDITOR-ENTRADA_DATOS-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        </include>
+
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+    </form>
 
 
     <grid name="fct-grid" title="FCTs" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" canEdit="false" edit-icon="false" >
@@ -100,7 +107,13 @@
         <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details-firma" grid-view="fct-grid"/>
         <include target="panel[@name='datos-resolucion']" />
     </form>
+    <form name="exp-Prueba-AUDITOR-REVISION-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        </include>
 
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+    </form>
 
 
 
@@ -129,7 +142,14 @@
 
 
     </form>
+    <form name="exp-Prueba-AUDITOR-ACEPTADO-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        </include>
 
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+        <include target="panel[@name='datos-resolucion']" readonly="true" />
+    </form>
 
 
 
@@ -154,7 +174,14 @@
         <include target="panel-related[@name='fcts-panel']" readonly="true" />
         <include target="panel[@name='datos-resolucion']" readonly="true" />
     </form>
+    <form name="exp-Prueba-AUDITOR-RECHAZADO-form" include="exp-Prueba-form"  >
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        </include>
 
+        <include target="panel[@name='datos-solicitante']" readonly="true" />
+        <include target="panel-related[@name='fcts-panel']" readonly="true" />
+        <include target="panel[@name='datos-resolucion']" readonly="true" />
+    </form>
 
 
 </object-views>

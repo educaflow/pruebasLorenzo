@@ -8,6 +8,6 @@
         <profile code="DIRECTOR" name="Director" />
         <profile code="SECRETARIO" name="Secretario" />
         <profile code="ADMINISTRADOR" name="Administrador" />
-        <profile code="OBSERVADOR" name="Observador" />
+        <profile code="AUDITOR" name="Auditor" />
     </profiles>
 </datos>

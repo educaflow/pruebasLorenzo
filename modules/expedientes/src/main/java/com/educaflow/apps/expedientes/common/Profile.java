@@ -8,5 +8,5 @@ public enum Profile {
     DIRECTOR,
     SECRETARIO,
     ADMINISTRADOR,
-    OBSERVADOR
+    AUDITOR
 }
