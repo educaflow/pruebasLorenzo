@@ -109,5 +109,12 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
     public Class<T> getModelClass() {
         return modelClass;
     }
+    public Class<Estado> getStateClass() {
+        return stateClass;
+    }
+    public Class<Evento> getEventClass() {
+        return eventClass;
+    }
+
 
 }

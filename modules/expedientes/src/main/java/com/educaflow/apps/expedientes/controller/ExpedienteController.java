@@ -17,6 +17,7 @@ import com.educaflow.common.util.mapper.BeanMapperModel;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Map;
 
 
@@ -46,7 +47,7 @@ public class ExpedienteController {
             if (expediente.getCodeState()==null) {
                 throw new RuntimeException("El estado del expediente no puede ser null");
             }
-            updateState(expediente);
+            updateState(expediente,eventManager.getStateClass());
             updateName(expediente);
             addHistorialEstado(expediente,null);
             eventManager.onEnterState(expediente, eventContext);
@@ -81,7 +82,7 @@ public class ExpedienteController {
             String newState = expediente.getCodeState();
 
             if (newState.equals(originalState)==false) {
-                updateState(expediente);
+                updateState(expediente,eventManager.getStateClass());
                 addHistorialEstado(expediente,eventName);
                 eventManager.onEnterState(expediente, eventContext);
             }
@@ -146,13 +147,26 @@ public class ExpedienteController {
         expediente.addHistorialEstado(historialEstado);
     }
 
-    public void updateState(Expediente expediente) {
+    private void updateState(Expediente expediente,Class<? extends Enum> enumClass) {
+        assertValidState(expediente,enumClass);
+
+
         expediente.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(expediente.getCodeState()));
         expediente.setFechaUltimoEstado(java.time.LocalDateTime.now());
     }
 
-    public void updateName(Expediente expediente) {
+    private void updateName(Expediente expediente) {
         expediente.setName(expediente.getTipoExpediente().getName());
+    }
+
+
+    void assertValidState(Expediente expediente,Class<? extends Enum> enumClass) {
+        String stateCode=expediente.getCodeState();
+        boolean isValid = Arrays.stream(enumClass.getEnumConstants()).anyMatch(enumConstant -> stateCode.equals(enumConstant.name()));
+
+        if (isValid==false) {
+            throw new IllegalArgumentException("Invalid state code '" + stateCode + "'  "+enumClass.getSimpleName());
+        }
     }
 
 
@@ -244,7 +258,7 @@ public class ExpedienteController {
     /********************** Funciones de Utilidad **********************/
     /*******************************************************************/
 
-    public static  EventManager getEventManager(TipoExpediente tipoExpediente) {
+    private static  EventManager getEventManager(TipoExpediente tipoExpediente) {
         try {
             if (tipoExpediente == null) {
                 throw new RuntimeException("No existe el tipo del expediente a crear.");
