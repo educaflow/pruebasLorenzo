@@ -21,7 +21,7 @@
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
                     <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
-                    <button name="Borrar" css="btn-danger" title="Borrar" onClick="action-event-borrar-expediente"  prompt="¿Está seguro que desea borrar el expediente?"/>
+                    <button name="Borrar" css="btn-danger" outline="true" title="Borrar" onClick="action-event-borrar-expediente"  prompt="¿Está seguro que desea borrar el expediente?"/>
                 </insert>
             </extend>
         </include>
@@ -98,8 +98,8 @@
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
                     <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
-                    <button name="RECHAZAR" title="Rechazar" css="btn-danger" onClick="action-event-expediente" prompt="¿Esta seguro que desea recharlo?"/>
-                    <button name="SUBSANAR" title="Subsanar información" onClick="action-event-expediente"/>
+                    <button name="RECHAZAR" title="Rechazar" css="btn-danger" outline="true" onClick="action-event-expediente" prompt="¿Esta seguro que desea recharlo?"/>
+                    <button name="SUBSANAR" title="Subsanar información" outline="true" onClick="action-event-expediente"/>
                 </insert>
             </extend>
         </include>
@@ -130,7 +130,7 @@
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
-                    <button name="SUBSANAR" title="Reabrir" onClick="action-event-expediente"/>
+                    <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
                 </insert>
             </extend>
         </include>
@@ -165,7 +165,7 @@
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml">
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
-                    <button name="SUBSANAR" title="Reabrir" onClick="action-event-expediente"/>
+                    <button name="SUBSANAR" title="Reabrir" outline="true" onClick="action-event-expediente"/>
                 </insert>
             </extend>
         </include>
