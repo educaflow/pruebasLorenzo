@@ -7,9 +7,7 @@ import com.educaflow.apps.expedientes.common.EventManager;
 import com.educaflow.apps.expedientes.common.Profile;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
-import com.educaflow.apps.expedientes.db.Expediente;
-import com.educaflow.apps.expedientes.db.TipoExpediente;
-import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
+import com.educaflow.apps.expedientes.db.*;
 import com.educaflow.apps.expedientes.db.repo.JustificacionFaltaProfesoradoRepository;
 import com.google.inject.Inject;
 
@@ -46,31 +44,72 @@ public class JustificacionFaltaProfesoradoEventManager extends EventManager<Just
         appendDocuments(justificacionFaltaProfesorado);
         justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.FIRMA_POR_USUARIO);
     }
-
     @WhenEvent
     public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
         justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+        justificacionFaltaProfesorado.setTipoResolucion(TipoResolucionJustificacionFaltaProfesorado.ACEPTAR);
+        justificacionFaltaProfesorado.setDisconformidad(null);
+        justificacionFaltaProfesorado.setResolucion(null);
     }
 
     @WhenEvent
-    public void triggerBorrar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+    public void triggerResolver(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+        TipoResolucionJustificacionFaltaProfesorado tipoResolucion = justificacionFaltaProfesorado.getTipoResolucion();
+
+        switch (tipoResolucion) {
+            case ACEPTAR:
+                justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.ACEPTADO);
+                break;
+            case RECHAZAR:
+                justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.RECHAZADO);
+                break;
+            case SUBSANAR_DATOS:
+                justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo de resolución no reconocido: " + tipoResolucion);
+        }
+    }
+
+
+
+    @WhenEvent
+    public void triggerDelete(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
 
     }
 
     @WhenEvent
-    public void triggerSubsanar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
-        justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+    public void triggerBack(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+            JustificacionFaltaProfesorado.Estado estado=JustificacionFaltaProfesorado.Estado.valueOf(justificacionFaltaProfesorado.getCodeState());
+
+            switch (estado) {
+                case ENTRADA_DATOS:
+                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    break;
+                case FIRMA_POR_USUARIO:
+                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    break;
+                case REVISION_Y_FIRMA_POR_RESPONSABLE:
+                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    break;
+                case ACEPTADO:
+                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+                    break;
+                case RECHAZADO:
+                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Estado no reconocido: " + estado);
+            }
+
     }
 
     @WhenEvent
-    public void triggerAceptar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
-        justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.ACEPTADO);
+    public void triggerExit(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+
     }
 
-    @WhenEvent
-    public void triggerRechazar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
-        justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.RECHAZADO);
-    }
+
 
     @OnEnterState
     public void onEnterEntradaDatos(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
@@ -118,29 +157,7 @@ public class JustificacionFaltaProfesoradoEventManager extends EventManager<Just
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
-            if (inputStream == null) {
-                throw new IOException("Resource not found: " + resourcePath);
-            }
 
-
-            justificacionFaltaProfesorado.setDocumentoCompletoFirmadoUsuario(Beans.get(com.axelor.meta.MetaFiles.class).upload(inputStream, fileName));
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
-            if (inputStream == null) {
-                throw new IOException("Resource not found: " + resourcePath);
-            }
-
-            justificacionFaltaProfesorado.setDocumentoCompletoFirmadoUsuarioDirector(Beans.get(com.axelor.meta.MetaFiles.class).upload(inputStream, fileName));
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 

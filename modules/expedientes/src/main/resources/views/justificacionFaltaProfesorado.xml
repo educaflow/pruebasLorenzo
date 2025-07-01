@@ -3,16 +3,17 @@
               xmlns="http://axelor.com/xml/ns/object-views"
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
-    <form name="exp-JustificacionFaltaProfesorado-form" title="Justificación Falta Profesorado" model="com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado" groups="admins,users">
+    <form name="exp-JustificacionFaltaProfesorado-form" title="Justificación Falta Profesorado"  width="large"  model="com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado" groups="admins,users">
         <panel name="datos-profesor" title="Datos del Profesor">
-            <field name="apellidos" colSpan="6" readonly="true"/>
-            <field name="nombre" colSpan="6" readonly="true"/>
-            <field name="dni" colSpan="2" readonly="true"/>
+            <field name="apellidos" colSpan="4" readonly="true"/>
+            <field name="nombre" colSpan="4" readonly="true"/>
+            <field name="dni" colSpan="4" readonly="true"/>
         </panel>
         <panel name="datos-falta" title="Datos de la Falta">
-            <field name="dias" colSpan="2"/>
-            <field name="mes" colSpan="12"  widget="SwitchSelect"/>
-            <field name="anyo" colSpan="2"/>
+            <field name="dias" colSpan="1"/>
+            <field name="mes" colSpan="10"  widget="SwitchSelect"/>
+            <field name="anyo" colSpan="1"/>
+
             <field name="tipoJornadaFalta" colSpan="6" colOffset="9" widget="SwitchSelect"/>
             <field name="horaInicio" colSpan="3" showIf="tipoJornadaFalta == 'JORNADA_PARCIAL'"/>
             <field name="horaFin" colSpan="3" showIf="tipoJornadaFalta == 'JORNADA_PARCIAL'"/>
@@ -30,6 +31,8 @@
             <field name="otroMotivo" colSpan="7"  showIf="motivoFalta == 'OTROS'" readonly="true"/>
         </panel>
 
+        <panel name="botones">
+        </panel>
 
         <panel name="justificante-upload" title="Adjuntar justificante">
             <field name="justificante" title="Foto o PDF del justificante" widget="binary-link" colSpan="4" />
@@ -38,7 +41,6 @@
             <field name="justificante" title="Foto o PDF del justificante" widget="binary-link" colSpan="4" readonly="true"/>
         </panel>
         <panel name="justificante-firmar-creador" title="Justificantes">
-            <button name="Firmar" title="Firmar digitalmente el documento" onClick="" colSpan="12"/>
 
             <field name="new" showTitle="false" readonly="true" colSpan="12">
                 <viewer depends="documentoCompletoSinFirmar" ><![CDATA[
@@ -47,17 +49,26 @@
                     </>
                     ]]></viewer>
             </field>
-        </panel>
-        <panel name="justificante-firmar-director" title="Justificantes">
-            <button name="Firmar" title="Firmar digitalmente el documento" onClick="" colSpan="12"/>
 
-            <field name="new" showTitle="false" readonly="true"  colSpan="12">
+            <button name="Firmar" colSpan="4" colOffset="8" title="Firmar digitalmente el documento" onClick="js:signDocument('documentoCompletoSinFirmar', 'documentoCompletoFirmadoUsuario', 'com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado', '_firmado_profesor',1)" />
+
+        </panel>
+        <panel name="justificante-firmar-director" title="Resolver expediente">
+            <field name="tipoResolucion" widget="SwitchSelect" colSpan="4" />
+
+            <field name="new" showTitle="false" readonly="true"  colSpan="12" showIf="tipoResolucion == 'ACEPTAR'">
                 <viewer depends="documentoCompletoFirmadoUsuario" ><![CDATA[
                     <>
                     <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentoCompletoFirmadoUsuario.id}/content/download?inline=true&name=${documentoCompletoFirmadoUsuario.fileName}`} ></Box>
                     </>
                     ]]></viewer>
             </field>
+
+            <button name="Firmar"  colSpan="4"  colOffset="8" title="Firmar digitalmente el documento" showIf="tipoResolucion == 'ACEPTAR'" onClick="js:signDocument('documentoCompletoFirmadoUsuario', 'documentoCompletoFirmadoUsuarioDirector', 'com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado', '_firmado_profesor',2)" />
+
+            <field name="disconformidad" colSpan="12" title="Explicar los datos a subsanar" showIf="tipoResolucion == 'SUBSANAR_DATOS'" />
+            <field name="resolucion" colSpan="12" title="Motivo del rechazo" showIf="tipoResolucion == 'RECHAZAR'"/>
+
         </panel>
         <panel name="justificante-view-documentoCompletoFirmadoUsuario" title="Justificantes">
             <field name="documentoCompletoFirmadoUsuario" title="Documento firmado por el usuario" widget="binary-link" colSpan="12" readonly="true" />
@@ -66,150 +77,250 @@
             <field name="documentoCompletoFirmadoUsuarioDirector" title="Documento firmado por el usuario y el director" widget="binary-link" colSpan="12" readonly="true"/>
         </panel>
 
-        <panel name="resolucion" title="Resolución">
-            <field name="disconformidad" colSpan="12"/>
-            <field name="resolucion" colSpan="12"/>
+        <panel name="disconformidad-view" title="Disconformidad de los datos presentados" showIf="(disconformidad!=null) &amp;&amp; (disconformidad!='')">
+            <field name="disconformidad" title="Motivo disconformidad"  colSpan="12" readonly="true"/>
         </panel>
+
+        <panel name="resolucion-view" title="Resolucion">
+            <field name="tipoResolucion" title="Resolución"  readonly="true"  />
+            <field name="disconformidad" colSpan="12" title="Explicar los datos a subsanar" readonly="true" showIf="tipoResolucion == 'SUBSANAR_DATOS'" />
+            <field name="resolucion" colSpan="12" title="Motivo del rechazo" readonly="true" showIf="tipoResolucion == 'RECHAZAR'"/>
+        </panel>
+
     </form>
 
-    <!-- ENTRADA_DATOS -->
-    <form name="exp-JustificacionFaltaProfesorado-CREADOR-ENTRADA_DATOS-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml">
-            <extend target="panel[@name='events']">
-                <insert position="inside-before">
-                    <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
-                    <button name="BORRAR" css="btn-danger" outline="true" title="Borrar" onClick="action-event-expediente" prompt="¿Está seguro que desea borrar el expediente?"/>
-                </insert>
-            </extend>
-        </include>
+    <!-- ***************************************************************************************  -->
+    <!-- *************************************** CREADOR ***************************************  -->
+    <!-- ***************************************************************************************  -->
+    <form name="exp-JustificacionFaltaProfesorado-CREADOR-ENTRADA_DATOS-form"  include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" />
         <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='disconformidad-view']" readonly="true"/>
         <include target="panel[@name='datos-falta']" />
         <include target="panel[@name='justificante-upload']"/>
-
-    </form>
-    <form name="exp-JustificacionFaltaProfesorado-RESPONSABLE-ENTRADA_DATOS-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
-        <include target="panel[@name='datos-profesor']" readonly="true"/>
-        <include target="panel[@name='datos-falta']" readonly="true"/>
-        <include target="panel[@name='justificante-view']" readonly="true"/>
-    </form>
-    <form name="exp-JustificacionFaltaProfesorado-AUDITOR-ENTRADA_DATOS-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
-        <include target="panel[@name='datos-profesor']" readonly="true"/>
-        <include target="panel[@name='datos-falta-view']" readonly="true"/>
-        <include target="panel[@name='justificante-view']" readonly="true"/>
-    </form>
-
-    <!-- FIRMA_POR_USUARIO -->
-    <form name="exp-JustificacionFaltaProfesorado-CREADOR-FIRMA_POR_USUARIO-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml">
-            <extend target="panel[@name='events']">
-                <insert position="inside-before">
-                    <button name="PRESENTAR_DOCUMENTOS_FIRMADOS" title="Guardar" onClick="action-event-expediente"/>
-                    <button name="BORRAR" css="btn-danger" outline="true" title="Borrar" onClick="action-event-expediente" prompt="¿Está seguro que desea borrar el expediente?"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside">
+                    <button name="DELETE" colSpan="2" css="btn-danger" outline="true" title="Borrar" onClick="action-event-expediente" prompt="¿Está seguro que desea borrar el expediente?"/>
+                    <button name="PRESENTAR" colSpan="2" title="Guardar" onClick="action-event-expediente" colOffset="8"/>
                 </insert>
             </extend>
         </include>
+    </form>
+    <form name="exp-JustificacionFaltaProfesorado-CREADOR-FIRMA_POR_USUARIO-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" />
         <include target="panel[@name='datos-profesor']" readonly="true"/>
         <include target="panel[@name='datos-falta-view']" readonly="true"/>
         <include target="panel[@name='justificante-firmar-creador']"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="BACK" colSpan="2" css="btn-danger" outline="true" title="Atrás" onClick="action-event-expediente" />
+                    <button name="PRESENTAR_DOCUMENTOS_FIRMADOS" colSpan="3" colOffset="7" title="Presentar documentación" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
+    </form>
+    <form name="exp-JustificacionFaltaProfesorado-CREADOR-REVISION_Y_FIRMA_POR_RESPONSABLE-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
+        <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='datos-falta-view']" readonly="true"/>
+        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuario']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
+    </form>
+    <form name="exp-JustificacionFaltaProfesorado-CREADOR-ACEPTADO-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
+        <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='datos-falta-view']" readonly="true"/>
+        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuarioDirector']" readonly="true"/>
+        <include target="panel[@name='resolucion-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
+    </form>
+    <form name="exp-JustificacionFaltaProfesorado-CREADOR-RECHAZADO-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
+        <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='datos-falta-view']" readonly="true"/>
+        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuario']" readonly="true"/>
+        <include target="panel[@name='resolucion-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
+    </form>
 
+
+
+
+
+
+    <!-- ***************************************************************************************  -->
+    <!-- ************************************* RESPONSABLE *************************************  -->
+    <!-- ***************************************************************************************  -->
+    <form name="exp-JustificacionFaltaProfesorado-RESPONSABLE-ENTRADA_DATOS-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
+        <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='disconformidad-view']" readonly="true"/>
+        <include target="panel[@name='datos-falta']" readonly="true"/>
+        <include target="panel[@name='justificante-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
     </form>
     <form name="exp-JustificacionFaltaProfesorado-RESPONSABLE-FIRMA_POR_USUARIO-form" include="exp-JustificacionFaltaProfesorado-form">
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
         <include target="panel[@name='datos-profesor']" readonly="true"/>
         <include target="panel[@name='datos-falta-view']" readonly="true"/>
         <include target="panel[@name='justificante-view']" readonly="true"/>
-    </form>
-    <form name="exp-JustificacionFaltaProfesorado-AUDITOR-FIRMA_POR_USUARIO-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
-        <include target="panel[@name='datos-profesor']" readonly="true"/>
-        <include target="panel[@name='datos-falta-view']" readonly="true"/>
-        <include target="panel[@name='justificante-view']" readonly="true"/>
-    </form>
-
-
-
-
-
-    <!-- -REVISION_Y_FIRMA_POR_RESPONSABLE- -->
-    <form name="exp-JustificacionFaltaProfesorado-CREADOR-REVISION_Y_FIRMA_POR_RESPONSABLE-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
-        <include target="panel[@name='datos-profesor']" readonly="true"/>
-        <include target="panel[@name='datos-falta-view']" readonly="true"/>
-        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuario']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
     </form>
     <form name="exp-JustificacionFaltaProfesorado-RESPONSABLE-REVISION_Y_FIRMA_POR_RESPONSABLE-form" include="exp-JustificacionFaltaProfesorado-form">
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml">
-            <extend target="panel[@name='events']">
-                <insert position="inside-before">
-                    <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
-                    <button name="RECHAZAR" title="Rechazar" css="btn-danger" outline="true" onClick="action-event-expediente" prompt="¿Está seguro que desea rechazarlo?"/>
-                    <button name="SUBSANAR" title="Subsanar información" outline="true" onClick="action-event-expediente"/>
-                </insert>
-            </extend>
         </include>
         <include target="panel[@name='datos-profesor']" readonly="true"/>
         <include target="panel[@name='datos-falta-view']" readonly="true"/>
         <include target="panel[@name='justificante-firmar-director']" />
-        <include target="panel[@name='resolucion']"/>
-    </form>
-    <form name="exp-JustificacionFaltaProfesorado-AUDITOR-REVISION_Y_FIRMA_POR_RESPONSABLE-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
-        <include target="panel[@name='datos-profesor']" readonly="true"/>
-        <include target="panel[@name='datos-falta-view']" readonly="true"/>
-        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuario']" readonly="true"/>
-    </form>
-
-    <!-- ACEPTADO -->
-    <form name="exp-JustificacionFaltaProfesorado-CREADOR-ACEPTADO-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
-        <include target="panel[@name='datos-profesor']" readonly="true"/>
-        <include target="panel[@name='datos-falta-view']" readonly="true"/>
-        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuarioDirector']" readonly="true"/>
-        <include target="panel[@name='resolucion']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="RESOLVER" colSpan="3" colOffset="9" title="Resolver el expediente" onClick="action-event-expediente" prompt="¿Esta seguro que desea resolver el expediente?&lt;br&gt;No podrá deshacer esta &lt;span style=&quot;color:red;&quot;&gt;acción&lt;/span&gt;&lt;script&gt;alert(&#x27;Hola mundo&#x27;);&lt;/script&gt;"/>
+                </insert>
+            </extend>
+        </include>
     </form>
     <form name="exp-JustificacionFaltaProfesorado-RESPONSABLE-ACEPTADO-form" include="exp-JustificacionFaltaProfesorado-form">
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml">
-            <extend target="panel[@name='events']">
-                <insert position="inside-before">
-                    <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
-                </insert>
-            </extend>
         </include>
         <include target="panel[@name='datos-profesor']" readonly="true"/>
         <include target="panel[@name='datos-falta-view']" readonly="true"/>
         <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuarioDirector']" readonly="true"/>
-        <include target="panel[@name='resolucion']" readonly="true"/>
-    </form>
-    <form name="exp-JustificacionFaltaProfesorado-AUDITOR-ACEPTADO-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
-        <include target="panel[@name='datos-profesor']" readonly="true"/>
-        <include target="panel[@name='datos-falta-view']" readonly="true"/>
-        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuarioDirector']" readonly="true"/>
-        <include target="panel[@name='resolucion']" readonly="true"/>
-    </form>
-
-    <!-- RECHAZADO -->
-    <form name="exp-JustificacionFaltaProfesorado-CREADOR-RECHAZADO-form" include="exp-JustificacionFaltaProfesorado-form">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
-        <include target="panel[@name='datos-profesor']" readonly="true"/>
-        <include target="panel[@name='datos-falta-view']" readonly="true"/>
-        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuario']" readonly="true"/>
-        <include target="panel[@name='resolucion']" readonly="true"/>
+        <include target="panel[@name='resolucion-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
     </form>
     <form name="exp-JustificacionFaltaProfesorado-RESPONSABLE-RECHAZADO-form" include="exp-JustificacionFaltaProfesorado-form">
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" />
         <include target="panel[@name='datos-profesor']" readonly="true"/>
         <include target="panel[@name='datos-falta-view']" readonly="true"/>
         <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuario']" readonly="true"/>
-        <include target="panel[@name='resolucion']" readonly="true"/>
+        <include target="panel[@name='resolucion-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
+    </form>
+
+
+
+
+
+
+
+
+    <!-- ***************************************************************************************  -->
+    <!-- *************************************** AUDITOR ***************************************  -->
+    <!-- ***************************************************************************************  -->
+    <form name="exp-JustificacionFaltaProfesorado-AUDITOR-ENTRADA_DATOS-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
+        <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='disconformidad-view']" readonly="true"/>
+        <include target="panel[@name='datos-falta-view']" readonly="true"/>
+        <include target="panel[@name='justificante-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
+    </form>
+    <form name="exp-JustificacionFaltaProfesorado-AUDITOR-FIRMA_POR_USUARIO-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
+        <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='datos-falta-view']" readonly="true"/>
+        <include target="panel[@name='justificante-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
+    </form>
+    <form name="exp-JustificacionFaltaProfesorado-AUDITOR-REVISION_Y_FIRMA_POR_RESPONSABLE-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
+        <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='datos-falta-view']" readonly="true"/>
+        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuario']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
+    </form>
+    <form name="exp-JustificacionFaltaProfesorado-AUDITOR-ACEPTADO-form" include="exp-JustificacionFaltaProfesorado-form">
+        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
+        <include target="panel[@name='datos-profesor']" readonly="true"/>
+        <include target="panel[@name='datos-falta-view']" readonly="true"/>
+        <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuarioDirector']" readonly="true"/>
+        <include target="panel[@name='resolucion-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
     </form>
     <form name="exp-JustificacionFaltaProfesorado-AUDITOR-RECHAZADO-form" include="exp-JustificacionFaltaProfesorado-form">
         <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml"/>
         <include target="panel[@name='datos-profesor']" readonly="true"/>
         <include target="panel[@name='datos-falta-view']" readonly="true"/>
         <include target="panel[@name='justificante-view-documentoCompletoFirmadoUsuario']" readonly="true"/>
-        <include target="panel[@name='resolucion']" readonly="true"/>
+        <include target="panel[@name='resolucion-view']" readonly="true"/>
+        <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
+            <extend target=".">
+                <insert position="inside-before">
+                    <button name="EXIT" colSpan="2" colOffset="10" title="Salir" onClick="action-event-expediente"/>
+                </insert>
+            </extend>
+        </include>
     </form>
+
+
+
 </object-views>

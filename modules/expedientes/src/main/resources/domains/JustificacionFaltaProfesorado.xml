@@ -21,6 +21,9 @@
         <string name="otroMotivo"  />
         <string name="disconformidad"  />
         <string name="resolucion" />
+
+        <enum name="tipoResolucion" ref="TipoResolucionJustificacionFaltaProfesorado" />
+
         <one-to-one name="justificante" title="Foto o PDF del justificante" ref="com.axelor.meta.db.MetaFile" />
         <one-to-one name="documentoCompletoSinFirmar" title="Documento a firmar por el usuario" ref="com.axelor.meta.db.MetaFile" />
         <one-to-one name="documentoCompletoFirmadoUsuario" title="Documento " ref="com.axelor.meta.db.MetaFile" />
@@ -38,10 +41,7 @@
             public enum Evento {
                 PRESENTAR,
                 PRESENTAR_DOCUMENTOS_FIRMADOS,
-                BORRAR,
-                SUBSANAR,
-                ACEPTAR,
-                RECHAZAR;
+                RESOLVER
             }
 
             public void changeState(Estado estado) {
@@ -78,5 +78,11 @@
         <item name="ABRIL" value="Abril"/>
         <item name="MAYO" value="Mayo"/>
         <item name="JUNIO" value="Junio"/>
+    </enum>
+
+    <enum name="TipoResolucionJustificacionFaltaProfesorado">
+        <item name="ACEPTAR" value="Resolver positicamente"/>
+        <item name="RECHAZAR" value="Resolver negativamente(Rechazar)"/>
+        <item name="SUBSANAR_DATOS" value="Solicitar subsanación de datos"/>
     </enum>
 </domain-models>

@@ -5,6 +5,7 @@ import com.axelor.db.JpaRepository;
 import com.axelor.inject.Beans;
 import com.axelor.meta.CallMethod;
 import com.axelor.rpc.*;
+import com.educaflow.apps.expedientes.common.CommonEvent;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.EventManager;
 import com.educaflow.apps.expedientes.common.Profile;
@@ -22,8 +23,6 @@ import java.util.Map;
 
 
 public class ExpedienteController {
-
-    final static String EVENT_SPECIAL_BORRAR = "BORRAR";
 
     @Inject
     TipoExpedienteRepository tipoExpedienteRepository;
@@ -82,12 +81,16 @@ public class ExpedienteController {
             eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
             String newState = expediente.getCodeState();
 
-            if (eventName.equals(EVENT_SPECIAL_BORRAR)) {
-                removeExpediente(expedienteRepository,expediente);
+            if (eventName.equals(CommonEvent.DELETE.name())) {
+                removeExpediente(expedienteRepository, expediente);
 
-                response.setSignal("refresh-app",null);
+                response.setSignal("refresh-app", null);
+            } else if (eventName.equals(CommonEvent.BACK.name())) {
+                //No se hace nada , lo tiene que gestionar el propio evento pero siempre tiene que estar.
+            } else if (eventName.equals(CommonEvent.EXIT.name())) {
+                response.setSignal("refresh-app", null);
             } else {
-
+                //Es un evento "normal" del expediente
                 if (newState.equals(originalState) == false) {
                     updateState(expediente, eventManager.getStateClass());
                     addHistorialEstado(expediente, eventName);

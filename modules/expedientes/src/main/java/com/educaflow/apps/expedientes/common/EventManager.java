@@ -37,7 +37,13 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
 
     public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, EventContext eventContext) {
         try {
-            Evento event = (Evento) Enum.valueOf(eventClass, strEvent);
+            Enum event;
+
+            try {
+                event  =  Enum.valueOf(eventClass, strEvent);
+            } catch (Exception e) {
+                event  =  Enum.valueOf(CommonEvent.class, strEvent);
+            }
             String methodName = "trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,event.name());
             Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, EventContext.class});
 
@@ -121,30 +127,47 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
     }
 
     private void checkMethods() {
-        StringBuilder messages = new StringBuilder();
-
+        StringBuilder messagesFaltanMetodosEventos = new StringBuilder();
+        StringBuilder messagesSobranMetodosEventos = new StringBuilder();
+        StringBuilder messagesFaltanMetodosEstados = new StringBuilder();
+        StringBuilder messagesSobranMetodosEstados = new StringBuilder();
         for (Evento event : eventClass.getEnumConstants()) {
             String methodName = "trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, event.name());
             boolean hasMethod = ReflectionUtil.hasMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, EventContext.class});
 
             if (hasMethod==false) {
-                messages.append("Falta el método '" + methodName + "' para el evento: " + event.name()+"\n");
-                messages.append("@WhenEvent\n");
-                messages.append("public void " + methodName + "(" + modelClass.getSimpleName() + " " + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,modelClass.getSimpleName()) + ", " + modelClass.getSimpleName() + " original, EventContext eventContext) {\n");
-                messages.append("\n");
-                messages.append("}\n");
-                messages.append("\n\n");
+                messagesFaltanMetodosEventos.append("@WhenEvent\n");
+                messagesFaltanMetodosEventos.append("public void " + methodName + "(" + modelClass.getSimpleName() + " " + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,modelClass.getSimpleName()) + ", " + modelClass.getSimpleName() + " original, EventContext eventContext) {\n");
+                messagesFaltanMetodosEventos.append("\n");
+                messagesFaltanMetodosEventos.append("}\n");
+                messagesFaltanMetodosEventos.append("\n");
             }
         }
+        for (Enum event : CommonEvent.class.getEnumConstants()) {
+            String methodName = "trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, event.name());
+            boolean hasMethod = ReflectionUtil.hasMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, EventContext.class});
+
+            if (hasMethod==false) {
+                messagesFaltanMetodosEventos.append("@WhenEvent\n");
+                messagesFaltanMetodosEventos.append("public void " + methodName + "(" + modelClass.getSimpleName() + " " + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,modelClass.getSimpleName()) + ", " + modelClass.getSimpleName() + " original, EventContext eventContext) {\n");
+                messagesFaltanMetodosEventos.append("\n");
+                messagesFaltanMetodosEventos.append("}\n");
+                messagesFaltanMetodosEventos.append("\n\n");
+            }
+        }
+
 
         for (Method method : this.getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(WhenEvent.class)) {
                 String methodName = method.getName();
-                boolean matches = Arrays.stream(eventClass.getEnumConstants())
+                boolean matchesEventClass = Arrays.stream(eventClass.getEnumConstants())
                         .anyMatch(event -> methodName.equals("trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, event.name())));
-                if (!matches) {
-                    messages.append("Sobra el método anotado con @WhenEvent: " + methodName);
-                    messages.append("\n\n");
+                boolean matchesEventoComunClass = Arrays.stream(CommonEvent.class.getEnumConstants())
+                        .anyMatch(event -> methodName.equals("trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, event.name())));
+
+
+                if (matchesEventClass==false && matchesEventoComunClass==false) {
+                    messagesSobranMetodosEventos.append("@WhenEvent " + methodName);
                 }
             }
         }
@@ -154,13 +177,11 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
             String methodName = "onEnter" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state.name());
             boolean hasMethod = ReflectionUtil.hasMethod(this.getClass(), methodName, void.class, OnEnterState.class, new Class<?>[]{modelClass, EventContext.class});
             if (hasMethod==false) {
-                messages.append("Falta el método '" + methodName + "' para el estado: " + state.name()+"\n");
-                messages.append("@OnEnterState\n");
-                messages.append("public void " + methodName + "(" + modelClass.getSimpleName() + " " + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,modelClass.getSimpleName()) + ", EventContext eventContext) {\n");
-                messages.append("\n");
-                messages.append("}\n");
-                messages.append("");
-                messages.append("");
+                messagesFaltanMetodosEstados.append("@OnEnterState\n");
+                messagesFaltanMetodosEstados.append("public void " + methodName + "(" + modelClass.getSimpleName() + " " + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,modelClass.getSimpleName()) + ", EventContext eventContext) {\n");
+                messagesFaltanMetodosEstados.append("\n");
+                messagesFaltanMetodosEstados.append("}\n");
+                messagesFaltanMetodosEstados.append("\n");
             }
         }
 
@@ -171,14 +192,28 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
                 boolean matches = Arrays.stream(stateClass.getEnumConstants())
                         .anyMatch(state -> methodName.equals("onEnter" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state.name())));
                 if (!matches) {
-                    messages.append("Sobra el método anotado con @OnEnterState: " + methodName);
-                    messages.append("\n\n");
+                    messagesSobranMetodosEstados.append("@OnEnterState: " + methodName+"\n");
                 }
             }
         }
 
+        StringBuilder messages = new StringBuilder();
+        if (messagesFaltanMetodosEventos.length()>0) {
+            messages.append("\n\n\nFaltan métodos para los eventos*****:\n\n"+ messagesFaltanMetodosEventos.toString());
+        }
+        if (messagesSobranMetodosEventos.length()>0) {
+            messages.append("\n\n\nSobran métodos para los eventos******:\n"+ messagesSobranMetodosEventos.toString());
+        }
+        if (messagesFaltanMetodosEstados.length()>0) {
+            messages.append("\n\n\nFaltan métodos para los estados*******:\n"+ messagesFaltanMetodosEstados.toString());
+        }
+        if (messagesSobranMetodosEstados.length()>0) {
+            messages.append("\n\n\nSobran métodos para los estados******:\n"+ messagesSobranMetodosEstados.toString());
+        }
+
+
         if (messages.length()>0) {
-            System.out.println(messages.toString());
+            messages.append("\n\n\n");
             throw new RuntimeException(messages.toString());
         }
     }
