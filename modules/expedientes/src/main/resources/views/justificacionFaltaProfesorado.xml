@@ -7,7 +7,7 @@
         <panel name="datos-profesor" title="Datos del Profesor">
             <field name="apellidos" colSpan="4" readonly="true"/>
             <field name="nombre" colSpan="4" readonly="true"/>
-            <field name="dni" colSpan="4" readonly="true"/>
+            <field name="dni" title="DNI" colSpan="4" readonly="true"/>
         </panel>
         <panel name="datos-falta" title="Datos de la Falta">
             <field name="dias" colSpan="1"/>
