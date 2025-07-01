@@ -5,6 +5,3 @@ plugins {
 group = 'com.educaflow.common'
 version = '0.0.1'
 
-dependencies {
-    implementation 'org.modelmapper:modelmapper:3.1.1'
-}

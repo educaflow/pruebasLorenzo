@@ -9,7 +9,7 @@
         <string name="apellidos" />
         <string name="nombre" />
         <string name="dni" />
-        <string name="dias" />
+        <string name="dias" pattern="^(\s*\b(?:[1-9]|[12][0-9]|3[01])\b\s*)(?:,\s*\b(?:[1-9]|[12][0-9]|3[01])\b\s*)*$" />
         <enum name="mes" ref="com.educaflow.apps.expedientes.db.MesJustificacionFaltaProfesorado" />
         <integer name="anyo" />
 
@@ -21,20 +21,24 @@
         <string name="otroMotivo"  />
         <string name="disconformidad"  />
         <string name="resolucion" />
-        <one-to-one name="justificante" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
-        <one-to-one name="justificanteFirmadoUsuario" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
-        <one-to-one name="justificanteFirmadoUsuarioDirector" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
+        <one-to-one name="justificante" title="Foto o PDF del justificante" ref="com.axelor.meta.db.MetaFile" />
+        <one-to-one name="documentoCompletoSinFirmar" title="Documento a firmar por el usuario" ref="com.axelor.meta.db.MetaFile" />
+        <one-to-one name="documentoCompletoFirmadoUsuario" title="Documento " ref="com.axelor.meta.db.MetaFile" />
+        <one-to-one name="documentoCompletoFirmadoUsuarioDirector" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
 
         <extra-code-model><![CDATA[
             public enum Estado {
                 ENTRADA_DATOS,
-                REVISION,
+                FIRMA_POR_USUARIO,
+                REVISION_Y_FIRMA_POR_RESPONSABLE,
                 ACEPTADO,
                 RECHAZADO;
             }
 
             public enum Evento {
                 PRESENTAR,
+                PRESENTAR_DOCUMENTOS_FIRMADOS,
+                BORRAR,
                 SUBSANAR,
                 ACEPTAR,
                 RECHAZAR;
@@ -64,17 +68,15 @@
         <item name="OTROS" value="Otros"/>
     </enum>
     <enum name="MesJustificacionFaltaProfesorado">
+        <item name="SEPTIEMBRE" value="Septiembre"/>
+        <item name="OCTUBRE" value="Octubre"/>
+        <item name="NOVIEMBRE" value="Noviembre"/>
+        <item name="DICIEMBRE" value="Diciembre"/>
         <item name="ENERO" value="Enero"/>
         <item name="FEBRERO" value="Febrero"/>
         <item name="MARZO" value="Marzo"/>
         <item name="ABRIL" value="Abril"/>
         <item name="MAYO" value="Mayo"/>
         <item name="JUNIO" value="Junio"/>
-        <item name="JULIO" value="Julio"/>
-        <item name="AGOSTO" value="Agosto"/>
-        <item name="SEPTIEMBRE" value="Septiembre"/>
-        <item name="OCTUBRE" value="Octubre"/>
-        <item name="NOVIEMBRE" value="Noviembre"/>
-        <item name="DICIEMBRE" value="Diciembre"/>
     </enum>
 </domain-models>

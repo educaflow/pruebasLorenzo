@@ -3,6 +3,7 @@ package com.educaflow.apps.expedientes.common;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
+import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.common.util.AxelorViewUtil;
 import com.educaflow.common.util.ReflectionUtil;
@@ -10,6 +11,7 @@ import com.google.common.base.CaseFormat;
 
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public abstract class EventManager<T extends Expediente, Estado extends Enum<Estado>, Evento extends Enum<Evento> > {
 
@@ -26,6 +28,8 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         this.modelClass = modelClass;
         this.stateClass = stateClass;
         this.eventClass = eventClass;
+
+        checkMethods();
     }
 
     public abstract Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext);
@@ -116,5 +120,66 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         return eventClass;
     }
 
+    private void checkMethods() {
+        StringBuilder messages = new StringBuilder();
 
+        for (Evento event : eventClass.getEnumConstants()) {
+            String methodName = "trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, event.name());
+            boolean hasMethod = ReflectionUtil.hasMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, EventContext.class});
+
+            if (hasMethod==false) {
+                messages.append("Falta el método '" + methodName + "' para el evento: " + event.name()+"\n");
+                messages.append("@WhenEvent\n");
+                messages.append("public void " + methodName + "(" + modelClass.getSimpleName() + " " + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,modelClass.getSimpleName()) + ", " + modelClass.getSimpleName() + " original, EventContext eventContext) {\n");
+                messages.append("\n");
+                messages.append("}\n");
+                messages.append("\n\n");
+            }
+        }
+
+        for (Method method : this.getClass().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(WhenEvent.class)) {
+                String methodName = method.getName();
+                boolean matches = Arrays.stream(eventClass.getEnumConstants())
+                        .anyMatch(event -> methodName.equals("trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, event.name())));
+                if (!matches) {
+                    messages.append("Sobra el método anotado con @WhenEvent: " + methodName);
+                    messages.append("\n\n");
+                }
+            }
+        }
+
+
+        for (Estado state : stateClass.getEnumConstants()) {
+            String methodName = "onEnter" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state.name());
+            boolean hasMethod = ReflectionUtil.hasMethod(this.getClass(), methodName, void.class, OnEnterState.class, new Class<?>[]{modelClass, EventContext.class});
+            if (hasMethod==false) {
+                messages.append("Falta el método '" + methodName + "' para el estado: " + state.name()+"\n");
+                messages.append("@OnEnterState\n");
+                messages.append("public void " + methodName + "(" + modelClass.getSimpleName() + " " + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,modelClass.getSimpleName()) + ", EventContext eventContext) {\n");
+                messages.append("\n");
+                messages.append("}\n");
+                messages.append("");
+                messages.append("");
+            }
+        }
+
+
+        for (Method method : this.getClass().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(OnEnterState.class)) {
+                String methodName = method.getName();
+                boolean matches = Arrays.stream(stateClass.getEnumConstants())
+                        .anyMatch(state -> methodName.equals("onEnter" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state.name())));
+                if (!matches) {
+                    messages.append("Sobra el método anotado con @OnEnterState: " + methodName);
+                    messages.append("\n\n");
+                }
+            }
+        }
+
+        if (messages.length()>0) {
+            System.out.println(messages.toString());
+            throw new RuntimeException(messages.toString());
+        }
+    }
 }

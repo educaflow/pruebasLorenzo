@@ -6,6 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReflectionUtil {
+
+
+    public static boolean hasMethod(Class<?> baseClass, String methodName, Class<?> returnClass, Class<? extends Annotation> annotation, Class<?>[] parameterTypes) {
+        try {
+            Method method=getMethod(baseClass, methodName, returnClass, annotation, parameterTypes);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+
+
+    }
+
     public static Method getMethod(Class<?> baseClass, String methodName, Class<?> returnClass, Class<? extends Annotation> annotation, Class<?>[] parameterTypes) {
         List<Method> matchingMethods = new ArrayList<>();
 

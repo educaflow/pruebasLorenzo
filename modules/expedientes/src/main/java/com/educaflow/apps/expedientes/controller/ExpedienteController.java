@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class ExpedienteController {
 
+    final static String EVENT_SPECIAL_BORRAR = "BORRAR";
 
     @Inject
     TipoExpedienteRepository tipoExpedienteRepository;
@@ -81,17 +82,23 @@ public class ExpedienteController {
             eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
             String newState = expediente.getCodeState();
 
-            if (newState.equals(originalState)==false) {
-                updateState(expediente,eventManager.getStateClass());
-                addHistorialEstado(expediente,eventName);
-                eventManager.onEnterState(expediente, eventContext);
+            if (eventName.equals(EVENT_SPECIAL_BORRAR)) {
+                removeExpediente(expedienteRepository,expediente);
+
+                response.setSignal("refresh-app",null);
+            } else {
+
+                if (newState.equals(originalState) == false) {
+                    updateState(expediente, eventManager.getStateClass());
+                    addHistorialEstado(expediente, eventName);
+                    eventManager.onEnterState(expediente, eventContext);
+                }
+
+                saveExpediente(expedienteRepository, expediente);
+
+                String viewName = eventManager.getViewName(expediente, eventContext);
+                AxelorViewUtil.doResponseViewForm(response, viewName, eventManager.getModelClass(), expediente, expediente.getName(), eventContext.getProfile().name());
             }
-
-            saveExpediente(expedienteRepository,expediente);
-
-            String viewName = eventManager.getViewName(expediente, eventContext);
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName(),eventContext.getProfile().name());
-
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -160,7 +167,7 @@ public class ExpedienteController {
     }
 
 
-    void assertValidState(Expediente expediente,Class<? extends Enum> enumClass) {
+    private void assertValidState(Expediente expediente,Class<? extends Enum> enumClass) {
         String stateCode=expediente.getCodeState();
         boolean isValid = Arrays.stream(enumClass.getEnumConstants()).anyMatch(enumConstant -> stateCode.equals(enumConstant.name()));
 

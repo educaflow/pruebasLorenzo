@@ -9,13 +9,19 @@
   <permission name="Expediente.all" object="com.educaflow.apps.expedientes.db.Expediente">
     <can create="true" read="true" write="true" remove="true" export="true"/>
   </permission>
+  <permission name="ExpedienteHistorialEstados.all" object="com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
+
+
   <permission name="Prueba.all" object="com.educaflow.apps.expedientes.db.Prueba">
     <can create="true" read="true" write="true" remove="true" export="true"/>
   </permission>
   <permission name="FormacionCentroTrabajo.all" object="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo">
     <can create="true" read="true" write="true" remove="true" export="true"/>
   </permission>
-  <permission name="ExpedienteHistorialEstados.all" object="com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados">
+
+  <permission name="JustificacionFaltaProfesorado.all" object="com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado">
     <can create="true" read="true" write="true" remove="true" export="true"/>
   </permission>
 
@@ -27,6 +33,7 @@
     <permission name="Prueba.all"/>
     <permission name="FormacionCentroTrabajo.all"/>
     <permission name="ExpedienteHistorialEstados.all"/>
+    <permission name="JustificacionFaltaProfesorado.all"/>
   </role>
 
   <group code="users">
