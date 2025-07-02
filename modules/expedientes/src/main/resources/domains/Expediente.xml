@@ -25,7 +25,7 @@
 
         <extra-code-model>
             <![CDATA[
-public void changeState(Enum estado) {
+public void updateState(Enum estado) {
     this.setCodeState(estado.name());
     this.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(estado.name()));
     this.setFechaUltimoEstado(java.time.LocalDateTime.now());

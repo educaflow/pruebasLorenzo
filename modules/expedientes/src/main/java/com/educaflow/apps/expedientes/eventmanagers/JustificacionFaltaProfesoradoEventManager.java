@@ -30,7 +30,7 @@ public class JustificacionFaltaProfesoradoEventManager extends EventManager<Just
     public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
         JustificacionFaltaProfesorado justificacionFaltaProfesorado = new JustificacionFaltaProfesorado();
         justificacionFaltaProfesorado.setTipoExpediente(tipoExpediente);
-        justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
         justificacionFaltaProfesorado.setAnyo(LocalDate.now().getYear());
         justificacionFaltaProfesorado.setNombre("Lorenzo");
         justificacionFaltaProfesorado.setApellidos("García García");
@@ -42,11 +42,11 @@ public class JustificacionFaltaProfesoradoEventManager extends EventManager<Just
     @WhenEvent
     public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
         appendDocuments(justificacionFaltaProfesorado);
-        justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.FIRMA_POR_USUARIO);
+        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.FIRMA_POR_USUARIO);
     }
     @WhenEvent
     public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
-        justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
         justificacionFaltaProfesorado.setTipoResolucion(TipoResolucionJustificacionFaltaProfesorado.ACEPTAR);
         justificacionFaltaProfesorado.setDisconformidad(null);
         justificacionFaltaProfesorado.setResolucion(null);
@@ -58,13 +58,13 @@ public class JustificacionFaltaProfesoradoEventManager extends EventManager<Just
 
         switch (tipoResolucion) {
             case ACEPTAR:
-                justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.ACEPTADO);
+                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.ACEPTADO);
                 break;
             case RECHAZAR:
-                justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.RECHAZADO);
+                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.RECHAZADO);
                 break;
             case SUBSANAR_DATOS:
-                justificacionFaltaProfesorado.changeState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
                 break;
             default:
                 throw new IllegalArgumentException("Tipo de resolución no reconocido: " + tipoResolucion);
@@ -84,19 +84,19 @@ public class JustificacionFaltaProfesoradoEventManager extends EventManager<Just
 
             switch (estado) {
                 case ENTRADA_DATOS:
-                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
                     break;
                 case FIRMA_POR_USUARIO:
-                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
                     break;
                 case REVISION_Y_FIRMA_POR_RESPONSABLE:
-                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
                     break;
                 case ACEPTADO:
-                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
                     break;
                 case RECHAZADO:
-                    justificacionFaltaProfesorado.changeState( JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
                     break;
                 default:
                     throw new IllegalArgumentException("Estado no reconocido: " + estado);

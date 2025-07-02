@@ -24,8 +24,8 @@ public enum Evento {
     RECHAZAR;
 }
 
-public void changeState(Estado estado) {
-    super.changeState(estado);
+public void updateState(Estado estado) {
+    super.updateState(estado);
 }
 		]]></extra-code-model>
 

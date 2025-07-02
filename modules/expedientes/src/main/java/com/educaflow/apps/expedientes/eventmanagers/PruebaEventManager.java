@@ -30,7 +30,7 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
     public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
         Prueba prueba=new Prueba();
         prueba.setTipoExpediente(tipoExpediente);
-        prueba.changeState(Prueba.Estado.ENTRADA_DATOS);
+        prueba.updateState(Prueba.Estado.ENTRADA_DATOS);
 
         return prueba;
     }
@@ -38,23 +38,23 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
 
     @WhenEvent
     public void triggerPresentar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
-        prueba.changeState(Prueba.Estado.REVISION);
+        prueba.updateState(Prueba.Estado.REVISION);
     }
 
 
     @WhenEvent
     public void triggerSubsanar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
-        prueba.changeState(Prueba.Estado.ENTRADA_DATOS);
+        prueba.updateState(Prueba.Estado.ENTRADA_DATOS);
     }
 
     @WhenEvent
     public void triggerAceptar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
-        prueba.changeState(Prueba.Estado.ACEPTADO);
+        prueba.updateState(Prueba.Estado.ACEPTADO);
     }
 
     @WhenEvent
     public void triggerRechazar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
-        prueba.changeState(Prueba.Estado.RECHAZADO);
+        prueba.updateState(Prueba.Estado.RECHAZADO);
     }
 
     @WhenEvent
