@@ -83,7 +83,7 @@
                     </>
                     ]]></viewer>
             </field>
-            <button name="Firmar"  colSpan="6"   title="Firmar digitalmente el documento" showIf="tipoResolucion == 'ACEPTAR'" onClick="js:signDocument('documentoCompletoFirmadoUsuario', 'documentoCompletoFirmadoUsuarioDirector', 'com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado', '_firmado_profesor',2)" />
+            <button name="Firmar"  colSpan="6"   title="Firmar digitalmente el documento" showIf="tipoResolucion == 'ACEPTAR'" onClick="js:signDocument('documentoCompletoFirmadoUsuario', 'documentoCompletoFirmadoUsuarioDirector', 'com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado', '_firmado_director',2)" />
             <button name="Refrescar" colSpan="6"  title="Ver documento firmado" icon="autorenew" onClick="action-event-view-expediente"  showIf="tipoResolucion == 'ACEPTAR'"/>
 
 

@@ -18,9 +18,9 @@
           editable="false" edit-icon="false" x-selector="none" canNew="false" canEdit="false" canDelete="false"
           canSave="false" orderBy="fecha"
     >
+        <field name="createdBy"/>
         <field name="nameEvent"/>
         <field name="nameState"/>
-        <field name="createdBy.name"/>
         <field name="fecha"/>
     </grid>
 

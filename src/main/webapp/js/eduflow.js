@@ -94,6 +94,7 @@ function firmarBase64(base64Pdf,tipoDocumento) {
 
 
 
+        var huella;
         if (tipoDocumento===1) {
             params += "\n" +
                 "signaturePositionOnPageLowerLeftX=300\n" +
@@ -101,6 +102,7 @@ function firmarBase64(base64Pdf,tipoDocumento) {
                 "signaturePositionOnPageUpperRightX=600\n" +
                 "signaturePositionOnPageUpperRightY=150\n" +
                 "signaturePage=1";
+            huella="92 EF 08 1C 58 C3 4F E2 EA AE E4 09 79 A0 66 99 50 83 31 DA"
 
         } else {
             params += "\n" +
@@ -109,11 +111,13 @@ function firmarBase64(base64Pdf,tipoDocumento) {
                 "signaturePositionOnPageUpperRightX=290\n" +
                 "signaturePositionOnPageUpperRightY=150\n" +
                 "signaturePage=1";
+
+            huella="8A 6B D4 08 D6 55 82 4E 86 31 D5 08 0A 83 7E 15 01 8E 05 34"
+
+
         }
 
-        var huella="F9:C4:78:01:59:65:C1:C9:27:9F:9E:81:8E:E5:03:19:C2:5C:7D:C0"
-
-        //params += "\nheadless=true\n;nonexpired:\nfilters=thumbprint:SHA1:" + huella;
+        params += "\nheadless=true\n;nonexpired:\nfilters=thumbprint:SHA1:" + huella;
 
         AutoScript.sign(
             base64Pdf,
@@ -134,7 +138,7 @@ function firmarBase64(base64Pdf,tipoDocumento) {
 
 async function subirAFCTComoMetaFile(base64Firmado, expedienteContext) {
     const blob = base64ToBlob(base64Firmado, "application/pdf");
-    const fileName = `${expedienteContext.source.fileName}${expedienteContext.sufijo}.pdf`;
+    const fileName = agregarSufijoAntesDeExtension(expedienteContext.source.fileName, expedienteContext.sufijo);
     const fileType = "application/pdf";
     const fileSize = blob.size;
 
@@ -235,4 +239,12 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
     return null;
+}
+
+function agregarSufijoAntesDeExtension(nombreArchivo, sufijo, extensionPorDefecto = ".pdf") {
+    const dotIndex = nombreArchivo.lastIndexOf(".");
+    const nombreSinExtension = dotIndex !== -1 ? nombreArchivo.substring(0, dotIndex) : nombreArchivo;
+    const extension = dotIndex !== -1 ? nombreArchivo.substring(dotIndex) : extensionPorDefecto;
+
+    return `${nombreSinExtension}${sufijo}${extension}`;
 }

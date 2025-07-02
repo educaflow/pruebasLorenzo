@@ -144,7 +144,7 @@ public class JustificacionFaltaProfesoradoEventManager extends EventManager<Just
 
 
     public void appendDocuments(JustificacionFaltaProfesorado justificacionFaltaProfesorado) {
-        String fileName = "documentoCompleto.pdf";
+        String fileName = "justificacion_falta_profesor.pdf";
         String resourcePath = "pdf-templates/" + fileName;
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
