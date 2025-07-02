@@ -63,11 +63,6 @@ public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba
     }
 
     @WhenEvent
-    public void triggerBack(Prueba prueba, Prueba original, EventContext eventContext) {
-
-    }
-
-    @WhenEvent
     public void triggerExit(Prueba prueba, Prueba original, EventContext eventContext) {
 
     }
