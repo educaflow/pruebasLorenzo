@@ -17,7 +17,7 @@
 
 
     <form name="exp-Prueba-CREADOR-ENTRADA_DATOS-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
                     <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
@@ -30,14 +30,14 @@
         <include target="panel-related[@name='fcts-panel']" />
     </form>
     <form name="exp-Prueba-RESPONSABLE-ENTRADA_DATOS-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
         </include>
 
         <include target="panel[@name='datos-solicitante']" readonly="true" />
         <include target="panel-related[@name='fcts-panel']" readonly="true" />
     </form>
     <form name="exp-Prueba-AUDITOR-ENTRADA_DATOS-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
         </include>
 
         <include target="panel[@name='datos-solicitante']" readonly="true" />
@@ -87,14 +87,14 @@
 
 
     <form name="exp-Prueba-CREADOR-REVISION-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
         </include>
 
         <include target="panel[@name='datos-solicitante']" readonly="true" />
         <include target="panel-related[@name='fcts-panel']" readonly="true" />
     </form>
     <form name="exp-Prueba-RESPONSABLE-REVISION-form"  include="exp-Prueba-form" title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
                     <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
@@ -108,7 +108,7 @@
         <include target="panel[@name='datos-resolucion']" />
     </form>
     <form name="exp-Prueba-AUDITOR-REVISION-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
         </include>
 
         <include target="panel[@name='datos-solicitante']" readonly="true" />
@@ -119,7 +119,7 @@
 
 
     <form name="exp-Prueba-CREADOR-ACEPTADO-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
         </include>
 
         <include target="panel[@name='datos-solicitante']" readonly="true" />
@@ -127,7 +127,7 @@
         <include target="panel[@name='datos-resolucion']" readonly="true" />
     </form>
     <form name="exp-Prueba-RESPONSABLE-ACEPTADO-form"  include="exp-Prueba-form" title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
                     <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
@@ -143,7 +143,7 @@
 
     </form>
     <form name="exp-Prueba-AUDITOR-ACEPTADO-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
         </include>
 
         <include target="panel[@name='datos-solicitante']" readonly="true" />
@@ -154,7 +154,7 @@
 
 
     <form name="exp-Prueba-CREADOR-RECHAZADO-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
         </include>
 
         <include target="panel[@name='datos-solicitante']" readonly="true" />
@@ -162,7 +162,7 @@
         <include target="panel[@name='datos-resolucion']" readonly="true" />
     </form>
     <form name="exp-Prueba-RESPONSABLE-RECHAZADO-form"  include="exp-Prueba-form" title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml">
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml">
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
                     <button name="SUBSANAR" title="Reabrir" outline="true" onClick="action-event-expediente"/>
@@ -175,7 +175,7 @@
         <include target="panel[@name='datos-resolucion']" readonly="true" />
     </form>
     <form name="exp-Prueba-AUDITOR-RECHAZADO-form" include="exp-Prueba-form"  >
-        <include target="panel[@name='head']" sourceFileName="../view-templates/template.xml" >
+        <include target="panel[@name='head-with-buttons']" sourceFileName="../view-templates/template.xml" >
         </include>
 
         <include target="panel[@name='datos-solicitante']" readonly="true" />

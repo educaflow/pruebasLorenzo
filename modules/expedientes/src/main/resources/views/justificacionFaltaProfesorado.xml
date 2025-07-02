@@ -17,8 +17,8 @@
             <field name="tipoJornadaFalta" colSpan="6" colOffset="9" widget="SwitchSelect"/>
             <field name="horaInicio" colSpan="3" showIf="tipoJornadaFalta == 'JORNADA_PARCIAL'"/>
             <field name="horaFin" colSpan="3" showIf="tipoJornadaFalta == 'JORNADA_PARCIAL'"/>
-            <field name="motivoFalta" colSpan="5" widget="SwitchSelect" x-direction="vertical"/>
-            <field name="otroMotivo" colSpan="7"  showIf="motivoFalta == 'OTROS'"/>
+            <field name="motivoFalta" colSpan="7" widget="SwitchSelect" x-direction="vertical" />
+            <field name="otroMotivo" colSpan="5"  showIf="motivoFalta == 'OTROS'"/>
         </panel>
         <panel name="datos-falta-view" title="Datos de la Falta">
             <field name="dias" colSpan="3" readonly="true"/>
@@ -27,8 +27,8 @@
             <field name="tipoJornadaFalta" colSpan="4" colOffset="3"  readonly="true"/>
             <field name="horaInicio" colSpan="4" showIf="tipoJornadaFalta == 'JORNADA_PARCIAL'" readonly="true"/>
             <field name="horaFin" colSpan="4" showIf="tipoJornadaFalta == 'JORNADA_PARCIAL'" readonly="true"/>
-            <field name="motivoFalta" colSpan="5"   readonly="true"/>
-            <field name="otroMotivo" colSpan="7"  showIf="motivoFalta == 'OTROS'" readonly="true"/>
+            <field name="motivoFalta" colSpan="6"   readonly="true"/>
+            <field name="otroMotivo" colSpan="6" colOffset="7"  showIf="motivoFalta == 'OTROS'" readonly="true"/>
         </panel>
 
         <panel name="botones">
@@ -36,6 +36,9 @@
 
         <panel name="justificante-upload" title="Adjuntar justificante">
             <field name="justificante" title="Foto o PDF del justificante" widget="binary-link" colSpan="4" />
+            <help variant="info" colSpan="6" colOffset="8" showIf="motivoFalta=='ENFERMEDAD_COMUN'">Es necesario aportar justificante médico a partir del segundo día</help>
+            <help variant="info" colSpan="6" colOffset="8" showIf="motivoFalta=='PERMISO_MEDICO_EDUCATIVO_ASISTENCIAL' || motivoFalta=='TRASLADO_DOMICILIO' || motivoFalta=='ASISTENCIA_PRUEBAS_EXAMENES' || motivoFalta=='FALLECIMIENTO_ENFERMEDAD_GRAVE_FAMILIAR' || motivoFalta=='DEBER_INEXCUSABLE' || motivoFalta=='FUNCIONES_REPRESENTATIVAS'">Es necesario aportar justificante</help>
+            <help variant="info" colSpan="6" colOffset="8" showIf="motivoFalta=='NACIMIENTO_ADOPCION_ACOGIMIENTO'">Es necesario aportar el libro de familia o justificante del médico</help>
         </panel>
         <panel name="justificante-view" title="Adjuntar justificante">
             <field name="justificante" title="Foto o PDF del justificante" widget="binary-link" colSpan="4" readonly="true"/>
@@ -54,9 +57,9 @@
 
         </panel>
         <panel name="justificante-firmar-director" title="Resolver expediente">
-            <field name="tipoResolucion" widget="SwitchSelect" colSpan="4" />
+            <field name="tipoResolucion" widget="SwitchSelect" colSpan="8" />
 
-            <field name="new" showTitle="false" readonly="true"  colSpan="12" showIf="tipoResolucion == 'ACEPTAR'">
+            <field name="new" showTitle="false" readonly="true"   colSpan="12" showIf="tipoResolucion == 'ACEPTAR'">
                 <viewer depends="documentoCompletoFirmadoUsuario" ><![CDATA[
                     <>
                     <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentoCompletoFirmadoUsuario.id}/content/download?inline=true&name=${documentoCompletoFirmadoUsuario.fileName}`} ></Box>
@@ -102,7 +105,7 @@
             <extend target=".">
                 <insert position="inside">
                     <button name="DELETE" colSpan="2" css="btn-danger" outline="true" title="Borrar" onClick="action-event-expediente" prompt="¿Está seguro que desea borrar el expediente?"/>
-                    <button name="PRESENTAR" colSpan="2" title="Guardar" onClick="action-event-expediente" colOffset="8"/>
+                    <button name="PRESENTAR" colSpan="2" title="Siguiente" onClick="action-event-expediente" colOffset="8"/>
                 </insert>
             </extend>
         </include>
@@ -115,8 +118,8 @@
         <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
             <extend target=".">
                 <insert position="inside-before">
-                    <button name="BACK" colSpan="2" css="btn-danger" outline="true" title="Atrás" onClick="action-event-expediente" />
-                    <button name="PRESENTAR_DOCUMENTOS_FIRMADOS" colSpan="3" colOffset="7" title="Presentar documentación" onClick="action-event-expediente"/>
+                    <button name="BACK" colSpan="2"  outline="true" title="Atrás" onClick="action-event-expediente" />
+                    <button name="PRESENTAR_DOCUMENTOS_FIRMADOS" colSpan="3" colOffset="7" title="Presentar documentación" onClick="action-event-expediente" prompt="¿Esta seguro que desea presentar la documentación?&lt;br&gt;No podrá deshacer esta acción"/>
                 </insert>
             </extend>
         </include>
@@ -207,7 +210,7 @@
         <include target="panel[@name='footer']" sourceFileName="../view-templates/template.xml">
             <extend target=".">
                 <insert position="inside-before">
-                    <button name="RESOLVER" colSpan="3" colOffset="9" title="Resolver el expediente" onClick="action-event-expediente" prompt="¿Esta seguro que desea resolver el expediente?&lt;br&gt;No podrá deshacer esta &lt;span style=&quot;color:red;&quot;&gt;acción&lt;/span&gt;&lt;script&gt;alert(&#x27;Hola mundo&#x27;);&lt;/script&gt;"/>
+                    <button name="RESOLVER" colSpan="3" colOffset="9" title="Resolver el expediente" onClick="action-event-expediente" prompt="¿Esta seguro que desea resolver el expediente?&lt;br&gt;No podrá deshacer esta acción"/>
                 </insert>
             </extend>
         </include>

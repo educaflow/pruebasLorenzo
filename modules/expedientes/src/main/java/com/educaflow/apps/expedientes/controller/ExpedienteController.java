@@ -56,7 +56,7 @@ public class ExpedienteController {
             saveExpediente(expedienteRepository,expediente);
 
             String viewName = eventManager.getViewName(expediente, eventContext);
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName(),eventContext.getProfile().name());
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,getTabName(expediente),eventContext.getProfile().name());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -85,8 +85,6 @@ public class ExpedienteController {
                 removeExpediente(expedienteRepository, expediente);
 
                 response.setSignal("refresh-app", null);
-            } else if (eventName.equals(CommonEvent.BACK.name())) {
-                //No se hace nada , lo tiene que gestionar el propio evento pero siempre tiene que estar.
             } else if (eventName.equals(CommonEvent.EXIT.name())) {
                 response.setSignal("refresh-app", null);
             } else {
@@ -100,7 +98,7 @@ public class ExpedienteController {
                 saveExpediente(expedienteRepository, expediente);
 
                 String viewName = eventManager.getViewName(expediente, eventContext);
-                AxelorViewUtil.doResponseViewForm(response, viewName, eventManager.getModelClass(), expediente, expediente.getName(), eventContext.getProfile().name());
+                AxelorViewUtil.doResponseViewForm(response, viewName, eventManager.getModelClass(), expediente, getTabName(expediente), eventContext.getProfile().name());
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -137,7 +135,7 @@ public class ExpedienteController {
 
             String viewName = eventManager.getViewName(expediente, eventContext);
 
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,expediente.getName(),eventContext.getProfile().name());
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,getTabName(expediente),eventContext.getProfile().name());
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -177,6 +175,10 @@ public class ExpedienteController {
         if (isValid==false) {
             throw new IllegalArgumentException("Invalid state code '" + stateCode + "'  "+enumClass.getSimpleName());
         }
+    }
+
+    private String getTabName(Expediente expediente) {
+        return expediente.getNumeroExpediente()+"-"+expediente.getTipoExpediente().getName();
     }
 
 

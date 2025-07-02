@@ -41,7 +41,8 @@
             public enum Evento {
                 PRESENTAR,
                 PRESENTAR_DOCUMENTOS_FIRMADOS,
-                RESOLVER
+                RESOLVER,
+                BACK
             }
 
             public void changeState(Estado estado) {
@@ -52,37 +53,37 @@
     </entity>
 
     <enum name="TipoJornadaFaltaJustificacionFaltaProfesorado">
-        <item name="TODA_LA_JORNADA" value="Toda la jornada"/>
-        <item name="JORNADA_PARCIAL" value="Jornada parcial"/>
+        <item name="TODA_LA_JORNADA" title="Toda la jornada"/>
+        <item name="JORNADA_PARCIAL" title="Jornada parcial"/>
     </enum>
 
     <enum name="MotivoFaltaJustificacionFaltaProfesorado">
-        <item name="ENFERMEDAD_COMUN" value="Enfermedad común"/>
-        <item name="PERMISO_MEDICO_EDUCATIVO_ASISTENCIAL" value="Permiso médico, educativo o asistencial"/>
-        <item name="TRASLADO_DOMICILIO" value="Traslado de domicilio"/>
-        <item name="ASISTENCIA_PRUEBAS_EXAMENES" value="Asistencia a pruebas selectivas y exámenes"/>
-        <item name="NACIMIENTO_ADOPCION_ACOGIMIENTO" value="Nacimiento, adopción o acogimiento"/>
-        <item name="FALLECIMIENTO_ENFERMEDAD_GRAVE_FAMILIAR" value="Fallecimiento o enfermedad grave de un familiar"/>
-        <item name="DEBER_INEXCUSABLE" value="Deber inexcusable"/>
-        <item name="FUNCIONES_REPRESENTATIVAS" value="Funciones representativas"/>
-        <item name="OTROS" value="Otros"/>
+        <item name="ENFERMEDAD_COMUN" title="Enfermedad común"/>
+        <item name="PERMISO_MEDICO_EDUCATIVO_ASISTENCIAL" title="Permiso médico, educativo o asistencial"/>
+        <item name="TRASLADO_DOMICILIO" title="Traslado de domicilio"/>
+        <item name="ASISTENCIA_PRUEBAS_EXAMENES" title="Asistencia a pruebas selectivas y exámenes"/>
+        <item name="NACIMIENTO_ADOPCION_ACOGIMIENTO" title="Nacimiento, adopción o acogimiento"/>
+        <item name="FALLECIMIENTO_ENFERMEDAD_GRAVE_FAMILIAR" title="Fallecimiento o enfermedad grave de un familiar"/>
+        <item name="DEBER_INEXCUSABLE" title="Deber inexcusable" help="Obligación pública o personal que genere alguna responsabilidad civil, social o administrativa"/>
+        <item name="FUNCIONES_REPRESENTATIVAS" title="Funciones representativas"/>
+        <item name="OTROS" title="Otros"/>
     </enum>
     <enum name="MesJustificacionFaltaProfesorado">
-        <item name="SEPTIEMBRE" value="Septiembre"/>
-        <item name="OCTUBRE" value="Octubre"/>
-        <item name="NOVIEMBRE" value="Noviembre"/>
-        <item name="DICIEMBRE" value="Diciembre"/>
-        <item name="ENERO" value="Enero"/>
-        <item name="FEBRERO" value="Febrero"/>
-        <item name="MARZO" value="Marzo"/>
-        <item name="ABRIL" value="Abril"/>
-        <item name="MAYO" value="Mayo"/>
-        <item name="JUNIO" value="Junio"/>
+        <item name="SEPTIEMBRE" title="Septiembre"/>
+        <item name="OCTUBRE" title="Octubre"/>
+        <item name="NOVIEMBRE" title="Noviembre"/>
+        <item name="DICIEMBRE" title="Diciembre"/>
+        <item name="ENERO" title="Enero"/>
+        <item name="FEBRERO" title="Febrero"/>
+        <item name="MARZO" title="Marzo"/>
+        <item name="ABRIL" title="Abril"/>
+        <item name="MAYO" title="Mayo"/>
+        <item name="JUNIO" title="Junio"/>
     </enum>
 
     <enum name="TipoResolucionJustificacionFaltaProfesorado">
-        <item name="ACEPTAR" value="Resolver positicamente"/>
-        <item name="RECHAZAR" value="Resolver negativamente(Rechazar)"/>
-        <item name="SUBSANAR_DATOS" value="Solicitar subsanación de datos"/>
+        <item name="ACEPTAR" title="Resolver positivamente"/>
+        <item name="RECHAZAR" title="Resolver negativamente(Rechazar)"/>
+        <item name="SUBSANAR_DATOS" title="Solicitar subsanación de datos"/>
     </enum>
 </domain-models>
