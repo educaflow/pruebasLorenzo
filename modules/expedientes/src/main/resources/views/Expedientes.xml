@@ -13,9 +13,6 @@
   <action-method name="action-event-view-expediente">
     <call class="com.educaflow.apps.expedientes.controller.ExpedienteController" method="viewExpediente"/>
   </action-method>
-  <action-method name="action-event-borrar-expediente">
-    <call class="com.educaflow.apps.expedientes.controller.ExpedienteController" method="borrarExpediente"/>
-  </action-method>
 
 
   <grid name="expediente-nuevo-grid" title="tipos de expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" groups="admins,users"

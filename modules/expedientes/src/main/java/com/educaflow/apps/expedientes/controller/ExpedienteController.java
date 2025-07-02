@@ -105,26 +105,6 @@ public class ExpedienteController {
         }
     }
 
-
-    @CallMethod
-    @Transactional
-    public void borrarExpediente(ActionRequest request, ActionResponse response) {
-        try {
-            EventContext eventContext = getEventContext(request);
-            Expedientes expedientes=getExpedientes(request,null, eventContext);
-            Expediente expediente=expedientes.getCurrentExpediente();
-
-            EventManager eventManager=getEventManager(expediente.getTipoExpediente());
-            JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
-
-            removeExpediente(expedienteRepository,expediente);
-
-            response.setSignal("refresh-app",null);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
     @CallMethod
     public void viewExpediente(ActionRequest request, ActionResponse response) {
         try {

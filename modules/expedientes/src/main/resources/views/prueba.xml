@@ -21,7 +21,7 @@
             <extend target="panel[@name='events']">
                 <insert position="inside-before">
                     <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
-                    <button name="Borrar" css="btn-danger" outline="true" title="Borrar" onClick="action-event-borrar-expediente"  prompt="¿Está seguro que desea borrar el expediente?"/>
+                    <button name="DELETE" css="btn-danger" outline="true" title="Borrar" onClick="action-event-expediente"  prompt="¿Está seguro que desea borrar el expediente?"/>
                 </insert>
             </extend>
         </include>

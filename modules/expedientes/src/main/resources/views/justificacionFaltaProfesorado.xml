@@ -43,23 +43,16 @@
         <panel name="justificante-view" title="Adjuntar justificante">
             <field name="justificante" title="Foto o PDF del justificante" widget="binary-link" colSpan="4" readonly="true"/>
         </panel>
-        <panel name="justificante-firmar-creador" title="Justificantes">
+        <panel name="justificante-firmar-creador" title="Justificante" >
 
-            <field name="new" showTitle="false" readonly="true" colSpan="12">
+            <field name="new" showTitle="false" readonly="true" colSpan="6">
                 <viewer depends="documentoCompletoSinFirmar" ><![CDATA[
                     <>
                     <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentoCompletoSinFirmar.id}/content/download?inline=true&name=${documentoCompletoSinFirmar.fileName}`} ></Box>
                     </>
                     ]]></viewer>
             </field>
-
-            <button name="Firmar" colSpan="4" colOffset="8" title="Firmar digitalmente el documento" onClick="js:signDocument('documentoCompletoSinFirmar', 'documentoCompletoFirmadoUsuario', 'com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado', '_firmado_profesor',1)" />
-
-        </panel>
-        <panel name="justificante-firmar-director" title="Resolver expediente">
-            <field name="tipoResolucion" widget="SwitchSelect" colSpan="8" />
-
-            <field name="new" showTitle="false" readonly="true"   colSpan="12" showIf="tipoResolucion == 'ACEPTAR'">
+            <field name="new2" showTitle="false" readonly="true" colSpan="6">
                 <viewer depends="documentoCompletoFirmadoUsuario" ><![CDATA[
                     <>
                     <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentoCompletoFirmadoUsuario.id}/content/download?inline=true&name=${documentoCompletoFirmadoUsuario.fileName}`} ></Box>
@@ -67,7 +60,33 @@
                     ]]></viewer>
             </field>
 
-            <button name="Firmar"  colSpan="4"  colOffset="8" title="Firmar digitalmente el documento" showIf="tipoResolucion == 'ACEPTAR'" onClick="js:signDocument('documentoCompletoFirmadoUsuario', 'documentoCompletoFirmadoUsuarioDirector', 'com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado', '_firmado_profesor',2)" />
+            <button name="Firmar" colSpan="6"  title="Firmar digitalmente el documento" onClick="js:signDocument('documentoCompletoSinFirmar', 'documentoCompletoFirmadoUsuario', 'com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado', '_firmado_profesor',1)" />
+            <button name="Refrescar" colSpan="6"  title="Ver documento firmado" icon="autorenew" onClick="action-event-view-expediente"/>
+        </panel>
+
+
+
+        <panel name="justificante-firmar-director" title="Resolver expediente">
+            <field name="tipoResolucion" widget="SwitchSelect" colSpan="8" />
+
+            <field name="new" showTitle="false" readonly="true"   colSpan="6" showIf="tipoResolucion == 'ACEPTAR'">
+                <viewer depends="documentoCompletoFirmadoUsuario" ><![CDATA[
+                    <>
+                    <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentoCompletoFirmadoUsuario.id}/content/download?inline=true&name=${documentoCompletoFirmadoUsuario.fileName}`} ></Box>
+                    </>
+                    ]]></viewer>
+            </field>
+            <field name="new2" showTitle="false" readonly="true"   colSpan="6" showIf="tipoResolucion == 'ACEPTAR'">
+                <viewer depends="documentoCompletoFirmadoUsuarioDirector" ><![CDATA[
+                    <>
+                    <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentoCompletoFirmadoUsuarioDirector.id}/content/download?inline=true&name=${documentoCompletoFirmadoUsuarioDirector.fileName}`} ></Box>
+                    </>
+                    ]]></viewer>
+            </field>
+            <button name="Firmar"  colSpan="6"   title="Firmar digitalmente el documento" showIf="tipoResolucion == 'ACEPTAR'" onClick="js:signDocument('documentoCompletoFirmadoUsuario', 'documentoCompletoFirmadoUsuarioDirector', 'com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado', '_firmado_profesor',2)" />
+            <button name="Refrescar" colSpan="6"  title="Ver documento firmado" icon="autorenew" onClick="action-event-view-expediente"  showIf="tipoResolucion == 'ACEPTAR'"/>
+
+
 
             <field name="disconformidad" colSpan="12" title="Explicar los datos a subsanar" showIf="tipoResolucion == 'SUBSANAR_DATOS'" />
             <field name="resolucion" colSpan="12" title="Motivo del rechazo" showIf="tipoResolucion == 'RECHAZAR'"/>
