@@ -64,7 +64,7 @@
         <item name="ASISTENCIA_PRUEBAS_EXAMENES" title="Asistencia a pruebas selectivas y exámenes"/>
         <item name="NACIMIENTO_ADOPCION_ACOGIMIENTO" title="Nacimiento, adopción o acogimiento"/>
         <item name="FALLECIMIENTO_ENFERMEDAD_GRAVE_FAMILIAR" title="Fallecimiento o enfermedad grave de un familiar"/>
-        <item name="DEBER_INEXCUSABLE" title="Deber inexcusable" help="Obligación pública o personal que genere alguna responsabilidad civil, social o administrativa"/>
+        <item name="DEBER_INEXCUSABLE" title="Deber inexcusable" data-description="Obligación pública o personal que genere alguna responsabilidad civil, social o administrativa"/>
         <item name="FUNCIONES_REPRESENTATIVAS" title="Funciones representativas"/>
         <item name="OTROS" title="Otros"/>
     </enum>
