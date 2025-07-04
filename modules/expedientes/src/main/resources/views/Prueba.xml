@@ -4,7 +4,7 @@
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
 
-    <form name="exp-Prueba-Base" title="hola"  model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" >
+    <form name="exp-Prueba-Base" width="large"  model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" >
         <panel name="datos-solicitante" title="Datos Solicitante">
             <field name="solicita" colSpan="9"/>
             <field name="justificante"  widget="binary-link" colSpan="3" x-accept=".pdf"/>
@@ -15,7 +15,9 @@
         </panel>
     </form>
 
-
+    <!-- ***************************************************************************************  -->
+    <!-- *************************************** CREADOR ***************************************  -->
+    <!-- ***************************************************************************************  -->
     <form role="CREADOR" state="ENTRADA_DATOS"   >
         <include-panels>
             datos-solicitante
@@ -28,6 +30,50 @@
             <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
         </right>
     </form>
+    <form role="CREADOR" state="REVISION"   >
+        <include-panels>
+            -datos-solicitante
+            -fcts-panel
+        </include-panels>
+        <left>
+
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+    <form role="CREADOR" state="ACEPTADO"   >
+        <include-panels>
+            -datos-solicitante
+            -fcts-panel
+        </include-panels>
+        <left>
+
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+    <form role="CREADOR" state="RECHAZADO"   >
+        <include-panels>
+            -datos-solicitante
+            -fcts-panel
+            -datos-resolucion
+        </include-panels>
+        <left>
+
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+
+
+
+
+    <!-- ***************************************************************************************  -->
+    <!-- ************************************* RESPONSABLE *************************************  -->
+    <!-- ***************************************************************************************  -->
     <form role="RESPONSABLE" state="ENTRADA_DATOS"   >
         <include-panels>
             -datos-solicitante
@@ -40,6 +86,52 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
+    <form role="RESPONSABLE" state="REVISION"   title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+        <include-panels>
+            -datos-solicitante
+            fcts-panel
+            datos-resolucion
+        </include-panels>
+        <left>
+            <button name="RECHAZAR" title="Rechazar" css="btn-danger" outline="true" onClick="action-event-expediente" prompt="¿Esta seguro que desea recharlo?"/>
+
+        </left>
+        <right>
+            <button name="SUBSANAR" title="Subsanar información" outline="true" onClick="action-event-expediente"/>
+            <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
+        </right>
+    </form>
+    <form role="RESPONSABLE" state="ACEPTADO"   title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+
+        <include-panels>
+            -datos-solicitante
+            -fcts-panel
+            -datos-resolucion
+        </include-panels>
+        <left>
+            <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+    <form role="RESPONSABLE" state="RECHAZADO"   title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+        <include-panels>
+            -datos-solicitante
+            -fcts-panel
+            -datos-resolucion
+        </include-panels>
+        <left>
+            <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+
+    <!-- ***************************************************************************************  -->
+    <!-- *************************************** AUDITOR ***************************************  -->
+    <!-- ***************************************************************************************  -->
     <form role="AUDITOR" state="ENTRADA_DATOS"   >
         <include-panels>
             -datos-solicitante
@@ -52,6 +144,50 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
+    <form role="AUDITOR" state="REVISION"   >
+        <include-panels>
+            -datos-solicitante
+            -fcts-panel
+        </include-panels>
+        <left>
+
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+    <form role="AUDITOR" state="ACEPTADO"   >
+        <include-panels>
+            -datos-solicitante
+            -fcts-panel
+            -datos-resolucion
+        </include-panels>
+        <left>
+
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+    <form role="AUDITOR" state="RECHAZADO"   >
+        <include-panels>
+            -datos-solicitante
+            -fcts-panel
+            -datos-resolucion
+        </include-panels>
+        <left>
+
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+
+
+
+
+
+
 
 
     <grid name="fct-grid" title="FCTs" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" canEdit="false" edit-icon="false" >
@@ -94,136 +230,6 @@
     </form>
 
 
-
-    <form role="CREADOR" state="REVISION"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-        </include-panels>
-        <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form role="RESPONSABLE" state="REVISION"   title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-        <include-panels>
-            -datos-solicitante
-            fcts-panel
-            datos-resolucion
-        </include-panels>
-        <left>
-            <button name="RECHAZAR" title="Rechazar" css="btn-danger" outline="true" onClick="action-event-expediente" prompt="¿Esta seguro que desea recharlo?"/>
-
-        </left>
-        <right>
-            <button name="SUBSANAR" title="Subsanar información" outline="true" onClick="action-event-expediente"/>
-            <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form role="AUDITOR" state="REVISION"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-        </include-panels>
-        <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-
-
-
-
-    <form role="CREADOR" state="ACEPTADO"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-        </include-panels>
-        <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form role="RESPONSABLE" state="ACEPTADO"   title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-            <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-
-
-
-
-
-    </form>
-    <form role="AUDITOR" state="ACEPTADO"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-
-
-
-    <form role="CREADOR" state="RECHAZADO"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form role="RESPONSABLE" state="RECHAZADO"   title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-            <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form role="AUDITOR" state="RECHAZADO"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
 
 
 </object-views>
