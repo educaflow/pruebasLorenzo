@@ -8,7 +8,7 @@ public class ExpedientesModule extends AxelorModule {
 
     @Override
     protected void configure() {
-
+        bind(StartUp.class);
     }
 
 

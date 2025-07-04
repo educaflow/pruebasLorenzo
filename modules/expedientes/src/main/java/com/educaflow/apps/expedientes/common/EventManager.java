@@ -29,7 +29,6 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         this.stateClass = stateClass;
         this.eventClass = eventClass;
 
-        checkMethods();
     }
 
     public abstract Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext);
@@ -126,7 +125,7 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         return eventClass;
     }
 
-    private void checkMethods() {
+    public void validateExpediente() {
         StringBuilder messagesFaltanMetodosEventos = new StringBuilder();
         StringBuilder messagesSobranMetodosEventos = new StringBuilder();
         StringBuilder messagesFaltanMetodosEstados = new StringBuilder();
