@@ -1,7 +1,0 @@
-plugins {
-    id 'com.axelor.app'
-}
-
-group = 'com.educaflow.common'
-version = '0.0.1'
-

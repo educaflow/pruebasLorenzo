@@ -28,7 +28,9 @@ allprojects {
             languageVersion = JavaLanguageVersion.of(11)
         }
     }
-
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
+    }
     afterEvaluate {
         configurations {
             // Remove Junit4, only keep Junit5 provided by AOP
@@ -43,11 +45,50 @@ allprojects {
         }
     }
 }
-
+configurations {
+    educaFlowBuildToolsDependency
+}
 
 dependencies {
-    implementation project('modules:common')
-    implementation project('modules:expedientes')
+    educaFlowBuildToolsDependency 'com.educaflow:EducaFlowBuildTools:1.0-SNAPSHOT'
+}
+
+tasks.register('viewProcessorTask', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo después de procesar los recursos.'
+    group = 'build'
+
+    mainClass = 'com.educaflow.common.buildtools.viewprocessor.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    classpath += sourceSets.main.runtimeClasspath
+
+    args './src/main/resources/views', './build/resources/main/views'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('processResources') {
+    finalizedBy 'viewProcessorTask'
+}
+
+tasks.register('deleteMetaTask', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo para borrar las tablas "meta_".'
+    group = 'build'
+
+    mainClass = 'com.educaflow.common.buildtools.deletemeta.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    classpath += sourceSets.main.runtimeClasspath
+
+    args './src/main/resources/axelor-config.properties'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('build') {
+    finalizedBy 'deleteMetaTask'
 }
 
 

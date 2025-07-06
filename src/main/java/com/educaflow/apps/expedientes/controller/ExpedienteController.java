@@ -1,0 +1,314 @@
+package com.educaflow.apps.expedientes.controller;
+
+import com.axelor.db.JPA;
+import com.axelor.db.JpaRepository;
+import com.axelor.inject.Beans;
+import com.axelor.meta.CallMethod;
+import com.axelor.rpc.*;
+import com.educaflow.apps.expedientes.common.CommonEvent;
+import com.educaflow.apps.expedientes.common.EventContext;
+import com.educaflow.apps.expedientes.common.EventManager;
+import com.educaflow.apps.expedientes.db.Expediente;
+import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
+import com.educaflow.apps.expedientes.db.TipoExpediente;
+import com.educaflow.apps.expedientes.db.repo.TipoExpedienteRepository;
+import com.educaflow.common.mapper.BeanMapperModel;
+import com.educaflow.common.util.AxelorDBUtil;
+import com.educaflow.common.util.AxelorViewUtil;
+import com.educaflow.common.util.TextUtil;
+import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Map;
+
+
+public class ExpedienteController {
+
+    @Inject
+    TipoExpedienteRepository tipoExpedienteRepository;
+
+
+    public ExpedienteController() {;
+
+    }
+
+    @CallMethod
+    @Transactional
+    public void triggerInitialEvent(ActionRequest request, ActionResponse response) {
+        try {
+            TipoExpediente tipoExpediente = getTipoExpediente(request);
+            EventManager eventManager=getEventManager(tipoExpediente);
+            EventContext eventContext = getEventContext(eventManager,request);
+            JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+
+
+            Expediente expediente=eventManager.triggerInitialEvent(tipoExpediente, eventContext);
+            expediente.setTipoExpediente(tipoExpediente);
+            if (expediente.getCodeState()==null) {
+                throw new RuntimeException("El estado del expediente no puede ser null");
+            }
+            updateState(expediente,eventManager.getStateClass());
+            updateName(expediente);
+            addHistorialEstado(expediente,null);
+            eventManager.onEnterState(expediente, eventContext);
+
+
+            saveExpediente(expedienteRepository,expediente);
+
+            String viewName = eventManager.getViewName(expediente, eventContext);
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,getTabName(expediente),eventContext.getProfile().name());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    @CallMethod
+    @Transactional
+    public void triggerEvent(ActionRequest request, ActionResponse response) {
+        try {
+            String eventName=getEventName(request);
+            Expediente expediente=getExpedienteFromDB(request);
+            Expediente expedienteOriginal=(Expediente) BeanMapperModel.getEntityCloned(expediente.getClass(), expediente);
+            EventManager eventManager=getEventManager(expediente.getTipoExpediente());
+            EventContext eventContext = getEventContext(eventManager,request);
+
+            //Pasamos los datos del ActionRequest al expediente
+            populateExpedienteFromActionRequest(expediente,request,eventName,eventContext);
+
+            JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+
+
+            String originalState =  expedienteOriginal.getCodeState();
+            eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
+            String newState = expediente.getCodeState();
+
+            if (eventName.equals(CommonEvent.DELETE.name())) {
+                removeExpediente(expedienteRepository, expediente);
+
+                response.setSignal("refresh-app", null);
+            } else if (eventName.equals(CommonEvent.EXIT.name())) {
+                response.setSignal("refresh-app", null);
+            } else {
+                //Es un evento "normal" del expediente
+                if (newState.equals(originalState) == false) {
+                    updateState(expediente, eventManager.getStateClass());
+                    addHistorialEstado(expediente, eventName);
+                    eventManager.onEnterState(expediente, eventContext);
+                }
+
+                saveExpediente(expedienteRepository, expediente);
+
+                String viewName = eventManager.getViewName(expediente, eventContext);
+                AxelorViewUtil.doResponseViewForm(response, viewName, eventManager.getModelClass(), expediente, getTabName(expediente), eventContext.getProfile().name());
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @CallMethod
+    public void viewExpediente(ActionRequest request, ActionResponse response) {
+        try {
+            Expediente expediente=getExpedienteFromDB(request);
+            Expediente expedienteOriginal=(Expediente) BeanMapperModel.getEntityCloned(expediente.getClass(), expediente);
+            EventManager eventManager=getEventManager(expediente.getTipoExpediente());
+            EventContext eventContext = getEventContext(eventManager,request);
+            String viewName = eventManager.getViewName(expediente, eventContext);
+
+            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,getTabName(expediente),eventContext.getProfile().name());
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    /*******************************************************************/
+    /********************** Funciones de Negocio  **********************/
+    /*******************************************************************/
+
+    private static void addHistorialEstado(Expediente expediente, String eventName) {
+        ExpedienteHistorialEstados historialEstado = new ExpedienteHistorialEstados();
+        historialEstado.setCodeState(expediente.getCodeState());
+        historialEstado.setNameState(TextUtil.getHumanCaseFromScreamingSnakeCase(expediente.getCodeState()));
+        historialEstado.setCodeEvent((eventName!=null)?eventName:"");
+        historialEstado.setNameEvent((eventName!=null)?TextUtil.getHumanCaseFromScreamingSnakeCase(eventName):"");
+        historialEstado.setFecha(LocalDateTime.now());
+        expediente.addHistorialEstado(historialEstado);
+    }
+
+    private void updateState(Expediente expediente,Class<? extends Enum> enumClass) {
+        assertValidState(expediente,enumClass);
+
+
+        expediente.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(expediente.getCodeState()));
+        expediente.setFechaUltimoEstado(java.time.LocalDateTime.now());
+    }
+
+    private void updateName(Expediente expediente) {
+        expediente.setName(expediente.getTipoExpediente().getName());
+    }
+
+
+    private void assertValidState(Expediente expediente,Class<? extends Enum> enumClass) {
+        String stateCode=expediente.getCodeState();
+        boolean isValid = Arrays.stream(enumClass.getEnumConstants()).anyMatch(enumConstant -> stateCode.equals(enumConstant.name()));
+
+        if (isValid==false) {
+            throw new IllegalArgumentException("Invalid state code '" + stateCode + "'  "+enumClass.getSimpleName());
+        }
+    }
+
+    private String getTabName(Expediente expediente) {
+        return expediente.getNumeroExpediente()+"-"+expediente.getTipoExpediente().getName();
+    }
+
+
+    /*******************************************************************/
+    /*************** Obtener los datos del ActionRequest ***************/
+    /*******************************************************************/
+
+    private TipoExpediente getTipoExpediente(ActionRequest request) {
+        long id=objectToLong(getActionRequestContext(request).get("id"));
+
+        TipoExpediente tipoExpediente=findTipoExpediente(tipoExpedienteRepository,id);
+
+        return tipoExpediente;
+    }
+
+
+
+    private Expediente getExpedienteFromDB(ActionRequest request) {
+        long id=objectToLong(getActionRequestContext(request).get("id"));
+
+        JpaRepository<Expediente> expedienteRepository =getJpaRepository(id);
+
+        Expediente expediente=findExpediente(expedienteRepository,id);
+
+        if (expediente==null) {
+            throw new RuntimeException("No existe el expediente con id: " + id);
+        }
+
+        return expediente;
+    }
+
+
+
+
+    /**
+     * Esta es la funcion más importante ya que pasa los datos del GUI al modelo
+     * Y hay que comprobar que se puede pasar y que no se puede.
+     */
+    private void populateExpedienteFromActionRequest(Expediente expediente, ActionRequest request,String eventName, EventContext eventContext) {
+        if (eventName!=null) {
+            BeanMapperModel.copyMapToEntity(expediente.getClass(), getActionRequestContext(request), expediente);
+        }
+    }
+
+
+    private String getEventName(ActionRequest request) {
+
+        String eventName=(String)getActionRequestContext(request).get("_signal");
+
+        if (eventName==null) {
+            throw new RuntimeException("eventName is null");
+        }
+
+        return eventName;
+    }
+
+
+    public <T extends Enum<T>> EventContext<T> getEventContext(EventManager eventManager, ActionRequest request) {
+        try {
+            String profileName = (String) getActionRequestContext(request).get("_profile");
+            if (profileName == null) {
+                throw new RuntimeException("profileName is null");
+            }
+
+            Enum profile = Enum.valueOf(eventManager.getProfileClass(), profileName);
+            return new EventContext<>(profile);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /*******************************************************************/
+    /******************* Funciones de Acceso a datos *******************/
+    /*******************************************************************/
+
+
+    private <T extends Expediente> void saveExpediente(JpaRepository<T> jpaRepository, T expediente) {
+        jpaRepository.save(expediente);
+    }
+
+    private <T extends Expediente> void removeExpediente(JpaRepository<T> jpaRepository, T expediente) {
+        jpaRepository.remove(expediente);
+    }
+
+    private <T extends Expediente> T findExpediente(JpaRepository<T> jpaRepository, long id) {
+        return jpaRepository.find(id);
+    }
+
+    private <T extends TipoExpediente> T findTipoExpediente(JpaRepository<T> jpaRepository, long id) {
+        return jpaRepository.find(id);
+    }
+
+
+    /*******************************************************************/
+    /********************** Funciones de Utilidad **********************/
+    /*******************************************************************/
+
+    private static  EventManager getEventManager(TipoExpediente tipoExpediente) {
+        try {
+            if (tipoExpediente == null) {
+                throw new RuntimeException("No existe el tipo del expediente a crear.");
+            }
+            String fqcnEventManager = tipoExpediente.getFqcnEventManager();
+            if (fqcnEventManager == null || fqcnEventManager.isEmpty()) {
+                throw new RuntimeException("No existe el fqcnEventManager para el tipo de expediente: " + tipoExpediente.getName());
+            }
+            Class<EventManager> eventManagerClass = (Class<EventManager>) Class.forName(tipoExpediente.getFqcnEventManager());
+
+            EventManager eventManager = (EventManager) Beans.get(eventManagerClass);
+
+            return eventManager;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private Map<String,Object> getActionRequestContext(ActionRequest request) {
+         Map<String,Object> requestcontext=(Map<String,Object>) request.getData().get("context");
+
+         if (requestcontext == null) {
+             throw new RuntimeException("requestcontext es null");
+         }
+         return (Map<String,Object>) requestcontext;
+    }
+
+
+    /**
+     * Obtiene el Repository de un expediente en función del id del expediente.
+     * Se usa este método porque de otra forma se retornaría el Repositorio de Expediente y no del expdiente en concreto.
+     * @param idExpediente
+     * @return
+     */
+    private JpaRepository<Expediente> getJpaRepository(long idExpediente) {
+        JpaRepository<Expediente> onlyExpedienteRepository = AxelorDBUtil.getRepository(Expediente.class);
+        Expediente expediente=onlyExpedienteRepository.find(idExpediente);
+        EventManager eventManager=getEventManager(expediente.getTipoExpediente());
+        JpaRepository<Expediente> realExpedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+        JPA.em().detach(expediente);
+
+        return realExpedienteRepository;
+    }
+
+
+    private long objectToLong(Object obj) {
+        return ((Number)obj).longValue();
+    }
+
+
+}
