@@ -4,7 +4,7 @@
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
     <menuitem name="profesores-menu" title="Profesor" groups="admins,users" order="200" />
-    <menuitem name="profesores-nuevo-menu" parent="profesores-menu" title="Nuevo Expediente" action="profesores-nuevo-action" groups="admins,users" icon="list_alt_add"/>
+    <menuitem name="profesores-nuevo-menu" parent="profesores-menu" title="Nuevo" action="profesores-nuevo-action" groups="admins,users" icon="list_alt_add"/>
     <menuitem name="profesores-pendiente-menu" parent="profesores-menu" title="Pendiente" action="profesores-pendiente-action" groups="admins,users"  />
     <menuitem name="profesores-esperando-menu" parent="profesores-menu" title="Esperando" action="profesores-esperando-action" groups="admins,users"/>
     <menuitem name="profesores-cerrado-menu" parent="profesores-menu" title="Cerrado" action="profesores-cerrado-action" groups="admins,users"/>

@@ -4,7 +4,7 @@
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
     <menuitem name="alumnos-menu" title="Alumno" groups="admins,users" order="100" tag-style="default" tag-get='com.educaflow.apps.expedientes.controller.ExpedienteTagController:getTag("")'/>
-    <menuitem name="alumnos-nuevo-menu" parent="alumnos-menu" title="Nuevo Expediente" action="alumnos-nuevo-action" groups="admins,users" icon="list_alt_add"/>
+    <menuitem name="alumnos-nuevo-menu" parent="alumnos-menu" title="Nuevo" action="alumnos-nuevo-action" groups="admins,users" icon="list_alt_add"/>
     <menuitem name="alumnos-pendiente-menu" parent="alumnos-menu" title="Pendiente" action="alumnos-pendiente-action" groups="admins,users"/>
     <menuitem name="alumnos-esperando-menu" parent="alumnos-menu" title="Esperando" action="alumnos-esperando-action" groups="admins,users"/>
     <menuitem name="alumnos-cerrado-menu" parent="alumnos-menu" title="Cerrado" action="alumnos-cerrado-action" groups="admins,users"/>
