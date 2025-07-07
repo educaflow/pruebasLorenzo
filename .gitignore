@@ -42,6 +42,6 @@ bin/
 .DS_Store
 
 #Mis cosas
-.java_pid*.hprof
+java_pid*.hprof
 .kotlin/**
 .idea/**
