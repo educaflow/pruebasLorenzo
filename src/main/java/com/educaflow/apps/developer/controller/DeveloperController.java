@@ -4,9 +4,14 @@ import com.axelor.meta.CallMethod;
 import com.axelor.rpc.ActionRequest;
 import com.axelor.rpc.ActionResponse;
 import com.educaflow.apps.developer.db.DevInfo;
+import com.google.common.reflect.ClassPath;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DeveloperController {
 
@@ -21,14 +26,8 @@ public class DeveloperController {
         map.put("info4", "Hhgfhola Mundo");
         map.put("info5", "Hofhgfhgfla Mundo");
 
-    DevInfo a = new DevInfo();
 
         response.setErrors(map);
-
-
-    }
-    @CallMethod
-    public void ok(ActionRequest request, ActionResponse response) {
 
         ErrorMessajes errors = new ErrorMessajes();
         errors.addErroMessaje("Provincia", "El valor no existe");
@@ -38,5 +37,44 @@ public class DeveloperController {
         errors.storeInActionResponse(response);
 
     }
+    @CallMethod
+    public void ok(ActionRequest request, ActionResponse response) {
 
+        response.setValue("info", "Hola Mundo");
+
+        StringBuilder sb=new StringBuilder();
+        List<URL> xmlFiles=findXmlFilesOnClasspath();
+        for (URL url : xmlFiles) {
+            sb.append(url.toString()).append("\n");
+        }
+
+        response.setValue("info2", sb);
+    }
+
+    public List<URL> findXmlFilesOnClasspath()  {
+
+        try {
+            ClassPath classPath = ClassPath.from(getClass().getClassLoader());
+
+            return classPath.getResources().stream()
+                    .filter(resourceInfo -> resourceInfo.getResourceName().endsWith(".xml"))
+                    .map(ClassPath.ResourceInfo::url)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public List<URL> findXmlFilesOnClasspath2()  {
+
+        try {
+            ClassPath classPath = ClassPath.from(getClass().getClassLoader());
+
+            return classPath.getResources().stream()
+                    .filter(resourceInfo -> resourceInfo.getResourceName().endsWith(".xml"))
+                    .map(ClassPath.ResourceInfo::url)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

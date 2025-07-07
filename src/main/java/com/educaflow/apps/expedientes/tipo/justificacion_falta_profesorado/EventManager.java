@@ -1,8 +1,7 @@
-package com.educaflow.apps.expedientes.eventmanagers;
+package com.educaflow.apps.expedientes.tipo.justificacion_falta_profesorado;
 
 import com.axelor.inject.Beans;
 import com.educaflow.apps.expedientes.common.EventContext;
-import com.educaflow.apps.expedientes.common.EventManager;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.*;
@@ -14,25 +13,27 @@ import java.io.InputStream;
 import java.time.LocalDate;
 
 
-public class JustificacionFaltaProfesoradoEventManager extends EventManager<JustificacionFaltaProfesorado, JustificacionFaltaProfesorado.Estado, JustificacionFaltaProfesorado.Evento,JustificacionFaltaProfesorado.Profile> {
+public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<JustificacionFaltaProfesorado, JustificacionFaltaProfesorado.Estado, JustificacionFaltaProfesorado.Evento,JustificacionFaltaProfesorado.Profile> {
 
     private final JustificacionFaltaProfesoradoRepository repository;
 
     @Inject
-    public JustificacionFaltaProfesoradoEventManager(JustificacionFaltaProfesoradoRepository repository) {
+    public EventManager(JustificacionFaltaProfesoradoRepository repository) {
         super(JustificacionFaltaProfesorado.class, JustificacionFaltaProfesorado.Estado.class, JustificacionFaltaProfesorado.Evento.class,JustificacionFaltaProfesorado.Profile.class);
         this.repository = repository;
     }
 
     @Override
     public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
+        PruebaKotlin pruebaKotlin = new PruebaKotlin();
+
         JustificacionFaltaProfesorado justificacionFaltaProfesorado = new JustificacionFaltaProfesorado();
         justificacionFaltaProfesorado.setTipoExpediente(tipoExpediente);
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
         justificacionFaltaProfesorado.setAnyo(LocalDate.now().getYear());
         justificacionFaltaProfesorado.setNombre("Lorenzo");
         justificacionFaltaProfesorado.setApellidos("García García");
-        justificacionFaltaProfesorado.setDni("12345678Z");
+        justificacionFaltaProfesorado.setDni(pruebaKotlin.helloFromKotlin());
         //justificacionFaltaProfesorado.setPrueba("Está vivo!!!!!!!");
 
         return justificacionFaltaProfesorado;

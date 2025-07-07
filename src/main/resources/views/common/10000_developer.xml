@@ -18,8 +18,8 @@
             <field name="info" large="true" colSpan="12" high="12"/>
             <field name="info2" large="true" colSpan="12" high="12"/>
             <field name="info3" large="true" colSpan="12" high="12"/>
-            <button name="check"  colSpan="12" onClick="check-expedientes-developer-method-ok-action" title="Check Expedientes" icon="check_circle" />
-            <button name="check"  colSpan="12" onClick="check-expedientes-developer-method-errors-action" title="Check Expedientes" icon="check_circle" />
+            <button name="check"  colSpan="12" onClick="check-expedientes-developer-method-ok-action" title="OK" icon="check_circle" />
+            <button name="check"  colSpan="12" onClick="check-expedientes-developer-method-errors-action" title="Errores" icon="check_circle" />
             <field name="new" showTitle="false" readonly="true" colSpan="12">
                 <viewer depends="mensajes" ><![CDATA[
                     <>

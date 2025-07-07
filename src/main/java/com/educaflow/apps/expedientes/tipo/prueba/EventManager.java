@@ -1,8 +1,6 @@
-package com.educaflow.apps.expedientes.eventmanagers;
+package com.educaflow.apps.expedientes.tipo.prueba;
 
-import com.axelor.inject.Beans;
 import com.educaflow.apps.expedientes.common.EventContext;
-import com.educaflow.apps.expedientes.common.EventManager;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
@@ -12,12 +10,12 @@ import com.educaflow.apps.expedientes.db.repo.PruebaRepository;
 import com.google.inject.Inject;
 
 
-public class PruebaEventManager extends EventManager<Prueba,Prueba.Estado,Prueba.Evento,Prueba.Profile> {
+public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<Prueba,Prueba.Estado,Prueba.Evento,Prueba.Profile> {
 
     private final PruebaRepository pruebaRepository;
 
     @Inject
-    public PruebaEventManager(PruebaRepository pruebaRepository) {
+    public EventManager(PruebaRepository pruebaRepository) {
         super(Prueba.class, Prueba.Estado.class, Prueba.Evento.class,Prueba.Profile.class);
         this.pruebaRepository = pruebaRepository;
     }

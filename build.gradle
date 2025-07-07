@@ -9,6 +9,20 @@ buildscript {
 
 plugins {
     id 'com.axelor.app'
+    id("org.jetbrains.kotlin.jvm") version "2.2.0"
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDirs = ['src/main/java']
+        }
+    }
+    test {
+        kotlin {
+            srcDirs = ['src/test/java']
+        }
+    }
 }
 
 axelor {
@@ -45,11 +59,23 @@ allprojects {
         }
     }
 }
+
+
+kotlin {
+    compilerOptions {
+        jvmTarget =  org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+    }
+}
+
 configurations {
     educaFlowBuildToolsDependency
 }
 
 dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8' // O kotlin-stdlib-jdk7 o kotlin-stdlib
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit' // O la que uses para testing (ej. kotlin-test-testng)
+
     educaFlowBuildToolsDependency 'com.educaflow:EducaFlowBuildTools:1.0-SNAPSHOT'
 }
 
@@ -64,7 +90,7 @@ tasks.register('viewProcessorTask', JavaExec) {
 
     classpath += sourceSets.main.runtimeClasspath
 
-    args './src/main/resources/views', './build/resources/main/views'
+    args './src/main/java', './build/resources/main/views'
 
     workingDir = layout.projectDirectory.dir('.')
 }

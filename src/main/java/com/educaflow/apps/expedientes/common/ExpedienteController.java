@@ -1,13 +1,10 @@
-package com.educaflow.apps.expedientes.controller;
+package com.educaflow.apps.expedientes.common;
 
 import com.axelor.db.JPA;
 import com.axelor.db.JpaRepository;
 import com.axelor.inject.Beans;
 import com.axelor.meta.CallMethod;
 import com.axelor.rpc.*;
-import com.educaflow.apps.expedientes.common.CommonEvent;
-import com.educaflow.apps.expedientes.common.EventContext;
-import com.educaflow.apps.expedientes.common.EventManager;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
 import com.educaflow.apps.expedientes.db.TipoExpediente;

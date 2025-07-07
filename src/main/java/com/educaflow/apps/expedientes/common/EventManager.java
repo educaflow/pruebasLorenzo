@@ -68,7 +68,7 @@ public abstract class EventManager<T extends Expediente, Estado extends Enum<Est
         String viewName=getDefaultViewName(expediente.getTipoExpediente().getCode(), eventContext.getProfile(),(Estado)ReflectionUtil.getEnumConstant(stateClass,expediente.getCodeState()));
 
         if (existsView(viewName)==false) {
-            throw new RuntimeException("No existe la vista" + expediente + "---" + eventContext);
+            throw new RuntimeException("No existe la vista:" + viewName + "en el expediente:" + expediente + " en el contexto:" + eventContext);
         }
 
         return viewName;
