@@ -39,16 +39,6 @@
 
     </input>
 
-    <input file="TiposExpedientes.xml" root="datos">
-
-        <bind node="tiposExpedientes/tipoExpediente" type="com.educaflow.apps.expedientes.db.TipoExpediente" search="self.code = :code"  create="true" update="true">
-            <bind node="@code" to="code" />
-            <bind node="@name" to="name" />
-            <bind node="@versionExpediente" to="versionExpediente" />
-            <bind node="@fqcnEventManager" to="fqcnEventManager" />
-
-        </bind>
-    </input>
 
     <input file="Profiles.xml" root="datos">
 
