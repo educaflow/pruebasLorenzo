@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tipoExpediente >
+
+    <name>Comisión de servicio</name>
+    <code>ComisionServicio</code>
+    <states>
+        <state name="ENTRADA_DATOS"/>
+        <state name="FIRMA_POR_USUARIO"/>
+        <state name="ACEPTAR_REALIZAR_COMISON"/>
+        <state name="ENTREGA_TICKETS"/>
+        <state name="ACEPTADA"/>
+        <state name="RECHAZADA"/>
+    </states>
+    <events>
+        <event name="PRESENTAR"/>
+        <event name="PRESENTAR_DOCUMENTOS_FIRMADOS"/>
+        <event name="ENTREGAR_TICKETS"/>
+        <event name="ACEPTAR"/>
+        <event name="RECHAZAR"/>
+    </events>
+    <profiles>
+        <profile name="CREADOR"/>
+        <profile name="RESPONSABLE"/>
+        <profile name="DIRECTOR"/>
+        <profile name="SECRETARIO"/>
+        <profile name="AUDITOR"/>
+    </profiles>
+</tipoExpediente>
+

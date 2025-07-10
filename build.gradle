@@ -136,6 +136,39 @@ tasks.named('build') {
     finalizedBy 'copyInitData'
 }
 
+tasks.register('RichDomainClassTask', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo para añadir código al modelo con los enumerados de estados, eventos y profiles.'
+    group = 'build'
+
+    mainClass = 'com.educaflow.common.buildtools.richdomainclass.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    args './src/main/java', './build/src-gen/java'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('generateCode') {
+    finalizedBy tasks.RichDomainClassTask
+}
+
+tasks.register('CreateFilesTask', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo para generar o validar los ficheros de un tipo de expediente.'
+    group = 'build'
+
+    mainClass = 'com.educaflow.common.buildtools.createfiles.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    args './src/main/java'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('generateCode') {
+    dependsOn tasks.CreateFilesTask
+}
 
 
 war {

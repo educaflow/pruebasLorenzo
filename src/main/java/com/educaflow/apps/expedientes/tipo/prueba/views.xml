@@ -4,7 +4,7 @@
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
 
-    <form name="exp-Prueba-Base" width="large"  model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" >
+    <form name="exp-Prueba-Base" width="large" title="Prueba" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users" >
         <panel name="datos-solicitante" title="Datos Solicitante">
             <field name="solicita" colSpan="9"/>
             <field name="justificante"  widget="binary-link" colSpan="3" x-accept=".pdf"/>
@@ -18,7 +18,7 @@
     <!-- ***************************************************************************************  -->
     <!-- *************************************** CREADOR ***************************************  -->
     <!-- ***************************************************************************************  -->
-    <form role="CREADOR" state="ENTRADA_DATOS"   >
+    <form profile="CREADOR" state="ENTRADA_DATOS"   >
         <include-panels>
             datos-solicitante
             fcts-panel
@@ -30,7 +30,7 @@
             <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="CREADOR" state="REVISION"   >
+    <form profile="CREADOR" state="REVISION"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -42,7 +42,7 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="CREADOR" state="ACEPTADO"   >
+    <form profile="CREADOR" state="ACEPTADO"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -54,7 +54,7 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="CREADOR" state="RECHAZADO"   >
+    <form profile="CREADOR" state="RECHAZADO"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -74,7 +74,7 @@
     <!-- ***************************************************************************************  -->
     <!-- ************************************* RESPONSABLE *************************************  -->
     <!-- ***************************************************************************************  -->
-    <form role="RESPONSABLE" state="ENTRADA_DATOS"   >
+    <form profile="RESPONSABLE" state="ENTRADA_DATOS"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -86,7 +86,7 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="RESPONSABLE" state="REVISION"   title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <form profile="RESPONSABLE" state="REVISION"   title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
         <include-panels>
             -datos-solicitante
             fcts-panel
@@ -101,7 +101,7 @@
             <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="RESPONSABLE" state="ACEPTADO"   title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <form profile="RESPONSABLE" state="ACEPTADO"   title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
 
         <include-panels>
             -datos-solicitante
@@ -115,7 +115,7 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="RESPONSABLE" state="RECHAZADO"   title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <form profile="RESPONSABLE" state="RECHAZADO"   title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -132,7 +132,7 @@
     <!-- ***************************************************************************************  -->
     <!-- *************************************** AUDITOR ***************************************  -->
     <!-- ***************************************************************************************  -->
-    <form role="AUDITOR" state="ENTRADA_DATOS"   >
+    <form profile="AUDITOR" state="ENTRADA_DATOS"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -144,7 +144,7 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="AUDITOR" state="REVISION"   >
+    <form profile="AUDITOR" state="REVISION"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -156,7 +156,7 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="AUDITOR" state="ACEPTADO"   >
+    <form profile="AUDITOR" state="ACEPTADO"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -169,7 +169,7 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form role="AUDITOR" state="RECHAZADO"   >
+    <form profile="AUDITOR" state="RECHAZADO"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel

@@ -29,37 +29,6 @@
         <one-to-one name="documentoCompletoFirmadoUsuario" title="Documento " ref="com.axelor.meta.db.MetaFile" />
         <one-to-one name="documentoCompletoFirmadoUsuarioDirector" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
 
-        <extra-code-model><![CDATA[
-            public enum Estado {
-                ENTRADA_DATOS,
-                FIRMA_POR_USUARIO,
-                REVISION_Y_FIRMA_POR_RESPONSABLE,
-                ACEPTADO,
-                RECHAZADO;
-            }
-
-            public enum Evento {
-                PRESENTAR,
-                PRESENTAR_DOCUMENTOS_FIRMADOS,
-                RESOLVER,
-                BACK
-            }
-
-            public enum Profile {
-                CREADOR,
-                RESPONSABLE,
-                AUDITOR
-            }
-
-            public void updateState(Estado estado) {
-                super.updateState(estado);
-            }
-
-            public void setCurrentActionProfiles(Profile...profiles) {
-                super.setCurrentActionProfiles(profiles);
-            }
-
-		]]></extra-code-model>
 
     </entity>
 
