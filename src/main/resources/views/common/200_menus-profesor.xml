@@ -9,7 +9,7 @@
     <menuitem name="profesores-esperando-menu" parent="profesores-menu" title="Esperando" action="profesores-esperando-action" groups="admins,users"/>
     <menuitem name="profesores-cerrado-menu" parent="profesores-menu" title="Cerrado" action="profesores-cerrado-action" groups="admins,users"/>
 
-    <action-view name="profesores-nuevo-action" title="Crear un nuevo expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" >
+    <action-view name="profesores-nuevo-action" home="true" title="Crear un nuevo expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" >
         <view type="grid" name="expediente-nuevo-grid"  />
         <context name="_profile" expr="CREADOR"/>
     </action-view>
