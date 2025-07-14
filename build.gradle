@@ -15,7 +15,7 @@ plugins {
 sourceSets {
     main {
         kotlin {
-            srcDirs = ['src/main/java']
+            srcDirs = ['src/main/java','build/src-gen/java']
         }
     }
     test {
@@ -28,6 +28,7 @@ sourceSets {
 axelor {
     title = 'Pruebas Lorenzo'
 }
+
 
 
 allprojects {
@@ -77,6 +78,9 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit' // O la que uses para testing (ej. kotlin-test-testng)
 
     educaFlowBuildToolsDependency 'com.educaflow:EducaFlowBuildTools:1.0-SNAPSHOT'
+}
+tasks.named("compileKotlin").configure {
+    dependsOn generateCode
 }
 
 tasks.register('viewProcessorTask', JavaExec) {
