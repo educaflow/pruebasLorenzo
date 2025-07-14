@@ -4,7 +4,10 @@ import com.axelor.inject.Beans;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
-import com.educaflow.apps.expedientes.db.*;
+import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
+import com.educaflow.apps.expedientes.db.TipoExpediente;
+import com.educaflow.apps.expedientes.db.Expediente;
+import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.repo.JustificacionFaltaProfesoradoRepository;
 import com.google.inject.Inject;
 
@@ -25,7 +28,7 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
 
     @Override
     public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
-        PruebaKotlin pruebaKotlin = new PruebaKotlin();
+        //PruebaKotlin pruebaKotlin = new PruebaKotlin();
 
         JustificacionFaltaProfesorado justificacionFaltaProfesorado = new JustificacionFaltaProfesorado();
         justificacionFaltaProfesorado.setTipoExpediente(tipoExpediente);
@@ -33,7 +36,7 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
         justificacionFaltaProfesorado.setAnyo(LocalDate.now().getYear());
         justificacionFaltaProfesorado.setNombre("Lorenzo");
         justificacionFaltaProfesorado.setApellidos("García García");
-        justificacionFaltaProfesorado.setDni(pruebaKotlin.helloFromKotlin());
+        justificacionFaltaProfesorado.setDni("12345678A");
         //justificacionFaltaProfesorado.setPrueba("Está vivo!!!!!!!");
 
         return justificacionFaltaProfesorado;
