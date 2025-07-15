@@ -12,18 +12,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "2.2.0"
 }
 
-sourceSets {
-    main {
-        kotlin {
-            srcDirs = ['src/main/java','build/src-gen/java']
-        }
-    }
-    test {
-        kotlin {
-            srcDirs = ['src/test/java']
-        }
-    }
-}
+
 
 axelor {
     title = 'Pruebas Lorenzo'
@@ -74,6 +63,7 @@ configurations {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8' // O kotlin-stdlib-jdk7 o kotlin-stdlib
+    implementation "org.jetbrains.kotlin:kotlin-reflect:2.2.0"
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit' // O la que uses para testing (ej. kotlin-test-testng)
 
@@ -92,8 +82,6 @@ tasks.register('viewProcessorTask', JavaExec) {
     classpath = configurations.educaFlowBuildToolsDependency
 
 
-    classpath += sourceSets.main.runtimeClasspath
-
     args './src/main/java', './build/resources/main/views'
 
     workingDir = layout.projectDirectory.dir('.')
@@ -111,8 +99,6 @@ tasks.register('deleteMetaTask', JavaExec) {
     classpath = configurations.educaFlowBuildToolsDependency
 
 
-    classpath += sourceSets.main.runtimeClasspath
-
     args './src/main/resources/axelor-config.properties'
 
     workingDir = layout.projectDirectory.dir('.')
@@ -129,8 +115,6 @@ tasks.register('copyInitData', JavaExec) {
 
     classpath = configurations.educaFlowBuildToolsDependency
 
-
-    classpath += sourceSets.main.runtimeClasspath
 
     args './src/main/java/com/educaflow/apps/expedientes/tipo', './build/resources/main/data-init-expedientes', 'data_init', 'data-init'
 
@@ -178,5 +162,10 @@ tasks.named('generateCode') {
 war {
     archiveFileName = 'pruebaslorenzo.war'
 }
-
+jar {
+    enabled = false
+}
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    destinationDirectory.set(file("build/classes/java/main"))
+}
 apply from: 'gradle/style.gradle'
