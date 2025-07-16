@@ -6,15 +6,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Date
 
-private fun toLocalDateOrNull(date: Any?): LocalDate? {
-    return when (date) {
-        is LocalDate ->  date
-        is LocalDateTime ->  date.toLocalDate()
-        is Date ->  date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-        else ->  null
-    }
-}
-
 class Past : ValidationRule {
     override fun validate(value: Any?, bean: Any): String? {
         val date = toLocalDateOrNull(value) ?: return null
@@ -44,5 +35,15 @@ class FutureOrToday : ValidationRule {
         val date = toLocalDateOrNull(value) ?: return null
         val today = LocalDate.now()
         return if (date.isBefore(today)) "La fecha debe ser hoy o en el futuro" else null
+    }
+}
+
+
+private fun toLocalDateOrNull(date: Any?): LocalDate? {
+    return when (date) {
+        is LocalDate ->  date
+        is LocalDateTime ->  date.toLocalDate()
+        is Date ->  date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+        else ->  null
     }
 }

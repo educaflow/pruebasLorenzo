@@ -4,18 +4,17 @@ import com.educaflow.apps.expedientes.common.StateEventValidator
 import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent
 import com.educaflow.apps.expedientes.db.MotivoFaltaJustificacionFaltaProfesorado
 import com.educaflow.apps.expedientes.db.TipoJornadaFaltaJustificacionFaltaProfesorado
+import com.educaflow.common.validation.dsl.If
 import com.educaflow.common.validation.dsl.rules
 import com.educaflow.common.validation.engine.BeanValidationRules
 import com.educaflow.common.validation.rules.FileMaxSize
 import com.educaflow.common.validation.rules.FileType
 import com.educaflow.common.validation.rules.GreaterThan
-import com.educaflow.common.validation.rules.GreaterThanIf
 import com.educaflow.common.validation.rules.MaxValue
 import com.educaflow.common.validation.rules.MinValue
 import com.educaflow.common.validation.rules.NoAllUpperCase
 import com.educaflow.common.validation.rules.Required
 import com.educaflow.common.validation.rules.Pattern
-import com.educaflow.common.validation.rules.RequiredIf
 import com.educaflow.common.validation.rules.SizeUnit
 import java.time.LocalDate
 import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado as model
@@ -41,18 +40,24 @@ class StateEventValidator: StateEventValidator {
                 +Required()
             }
             field(model::getHoraInicio) {
-                +RequiredIf(model::getTipoJornadaFalta, TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL)
+                +If(model::getTipoJornadaFalta, TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL) {
+                    +Required()
+                }
             }
             field(model::getHoraFin) {
-                +RequiredIf(model::getTipoJornadaFalta, TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL)
-                +GreaterThanIf(model::getHoraInicio, model::getTipoJornadaFalta, TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL)
+                +If(model::getTipoJornadaFalta, TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL) {
+                    +Required()
+                    +GreaterThan(model::getHoraInicio)
+                }
             }
             field(model::getMotivoFalta) {
                 +Required()
             }
             field(model::getOtroMotivo) {
-                +RequiredIf(model::getMotivoFalta, MotivoFaltaJustificacionFaltaProfesorado.OTROS)
-                +NoAllUpperCase()
+                +If(model::getMotivoFalta, MotivoFaltaJustificacionFaltaProfesorado.OTROS) {
+                    +Required()
+                    +NoAllUpperCase()
+                }
             }
             field(model::getJustificante) {
                 +Required()

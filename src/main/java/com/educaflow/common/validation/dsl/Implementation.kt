@@ -3,13 +3,44 @@ package com.educaflow.common.validation.dsl
 import com.educaflow.common.validation.engine.BeanValidationRules
 import com.educaflow.common.validation.engine.FieldValidationRules
 import com.educaflow.common.validation.engine.ValidationRule
+import com.educaflow.common.validation.rules.IfRule
 import kotlin.reflect.KFunction
 
 @DslMarker
 annotation class BeanValidationDSL
 
+@BeanValidationDSL
+class IfBuilder(private val dependField: KFunction<*>,private val dependValue:Any?) {
+    private val rules = mutableListOf<ValidationRule>()
+
+    /**
+     * Construye y devuelve el objeto [FieldValidationRules].
+     */
+    fun build(): IfRule {
+        return IfRule(dependField, dependValue, rules)
+    }
+
+    @BeanValidationDSL
+    operator fun ValidationRule.unaryPlus() {
+        rules += this
+    }
+}
 
 
+/**
+ * Función de nivel superior para iniciar la construcción de una regla condicional 'If'.
+ * Esta función permite definir reglas anidadas que solo se aplican si se cumple una condición.
+ * @param dependField La función getter del campo de dependencia.
+ * @param dependValue El valor del campo de dependencia que activa la condición.
+ * @param setup Lambda con el receptor [IfBuilder] para definir las reglas anidadas.
+ * @return Un objeto [IfRule] que contiene las reglas condicionales.
+ */
+@BeanValidationDSL
+fun If(dependField: KFunction<*>, dependValue: Any?, setup: IfBuilder.() -> Unit): IfRule {
+    val builder = IfBuilder(dependField, dependValue)
+    builder.setup()
+    return builder.build()
+}
 
 @BeanValidationDSL
 class FieldValidationRulesBuilder(private val property: KFunction<*>) {
@@ -26,6 +57,8 @@ class FieldValidationRulesBuilder(private val property: KFunction<*>) {
     operator fun ValidationRule.unaryPlus() {
         rules += this
     }
+
+
 }
 
 /**
