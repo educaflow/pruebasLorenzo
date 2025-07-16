@@ -7,34 +7,34 @@ import java.time.ZoneId
 import java.util.Date
 
 class Past : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val date = toLocalDateOrNull(value) ?: return null
         val today = LocalDate.now()
-        return if (!date.isBefore(today)) "La fecha debe ser anterior a hoy" else null
+        return if (!date.isBefore(today)) listOf("La fecha debe ser anterior a hoy") else null
     }
 }
 
 class PastOrToday : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val date = toLocalDateOrNull(value) ?: return null
         val today = LocalDate.now()
-        return if (date.isAfter(today)) "La fecha debe ser hoy o en el pasado" else null
+        return if (date.isAfter(today)) listOf("La fecha debe ser hoy o en el pasado") else null
     }
 }
 
 class Future : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val date = toLocalDateOrNull(value) ?: return null
         val today = LocalDate.now()
-        return if (!date.isAfter(today)) "La fecha debe ser posterior a hoy" else null
+        return if (!date.isAfter(today)) listOf("La fecha debe ser posterior a hoy") else null
     }
 }
 
 class FutureOrToday : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val date = toLocalDateOrNull(value) ?: return null
         val today = LocalDate.now()
-        return if (date.isBefore(today)) "La fecha debe ser hoy o en el futuro" else null
+        return if (date.isBefore(today)) listOf("La fecha debe ser hoy o en el futuro") else null
     }
 }
 

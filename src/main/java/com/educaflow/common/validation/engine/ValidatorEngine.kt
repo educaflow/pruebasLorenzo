@@ -14,13 +14,15 @@ class ValidatorEngine {
             val methodField= fieldValidationRule.methodField
             for( validationRule in fieldValidationRule.validationRules) {
                 val value=methodField.call(bean)
-                val message = validationRule.validate( value ,bean)
-                if (message!=null) {
+                val messages = validationRule.validate( value ,bean)
+                if ((messages!=null) && (messages.size>0)) {
                     val fieldName= fieldValidationRule.getFieldName();
                     val type = validationRule::class.simpleName ?: "Unknown"
                     val label = getLabel(bean.javaClass, fieldName);
 
-                    businessMessages.add(BusinessMessage(fieldName, message,type,label))
+                    for(message in messages) {
+                        businessMessages.add(BusinessMessage(fieldName, message, type, label))
+                    }
                 }
             }
         }

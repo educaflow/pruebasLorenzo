@@ -82,14 +82,18 @@ public class ExpedienteController {
             JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
             StateEventValidator stateEventValidator = getStateEventValidation(expediente.getTipoExpediente());
 
-            //Pasamos los datos del ActionRequest al expediente
-            populateExpedienteFromActionRequest(expediente, request, eventName, eventContext);
 
 
-            BusinessMessages businessMessages = validateExpediente(stateEventValidator, expediente, eventName);
-            if (businessMessages.isValid()==false) {
-                AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
-                return;
+
+            if (((eventName.equals(CommonEvent.DELETE.name()))==false) && (eventName.equals(CommonEvent.EXIT.name())==false)) {
+                //Pasamos los datos del ActionRequest al expediente
+                populateExpedienteFromActionRequest(expediente, request, eventName, eventContext);
+
+                BusinessMessages businessMessages = validateExpediente(stateEventValidator, expediente, eventName);
+                if (businessMessages.isValid()==false) {
+                    AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
+                    return;
+                }
             }
 
 

@@ -4,7 +4,7 @@ import com.educaflow.common.validation.engine.ValidationRule
 import kotlin.reflect.KFunction
 
 data class GreaterThan<T : Comparable<T>>(val comparableAnotherField:KFunction<T?>) : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val comparableAnotherValue=comparableAnotherField.call(bean);
         if (value == null) {
             return null
@@ -17,7 +17,7 @@ data class GreaterThan<T : Comparable<T>>(val comparableAnotherField:KFunction<T
             @Suppress("UNCHECKED_CAST")
             val comparableValue = value as T
             return if (comparableValue.compareTo(comparableAnotherValue) > 0) null
-            else "El valor debe ser mayor que $comparableAnotherValue"
+            else listOf("El valor debe ser mayor que $comparableAnotherValue")
         }
 
         return null
@@ -25,59 +25,59 @@ data class GreaterThan<T : Comparable<T>>(val comparableAnotherField:KFunction<T
 }
 
 data class GreaterThanOrEqual<T : Comparable<T>>(val comparableAnotherField: KFunction<T?>) : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val anotherValue = comparableAnotherField.call(bean) ?: return null
         if (value == null) return null
         if (value is Comparable<*>) {
             @Suppress("UNCHECKED_CAST")
             val comparableValue = value as T
             return if (comparableValue.compareTo(anotherValue) >= 0) null
-            else "El valor debe ser mayor o igual que $anotherValue"
+            else listOf("El valor debe ser mayor o igual que $anotherValue")
         }
         return null
     }
 }
 
 data class LessThan<T : Comparable<T>>(val comparableAnotherField: KFunction<T?>) : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val anotherValue = comparableAnotherField.call(bean) ?: return null
         if (value == null) return null
         if (value is Comparable<*>) {
             @Suppress("UNCHECKED_CAST")
             val comparableValue = value as T
             return if (comparableValue.compareTo(anotherValue) < 0) null
-            else "El valor debe ser menor que $anotherValue"
+            else listOf("El valor debe ser menor que $anotherValue")
         }
         return null
     }
 }
 
 data class LessThanOrEqual<T : Comparable<T>>(val comparableAnotherField: KFunction<T?>) : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val anotherValue = comparableAnotherField.call(bean) ?: return null
         if (value == null) return null
         if (value is Comparable<*>) {
             @Suppress("UNCHECKED_CAST")
             val comparableValue = value as T
             return if (comparableValue.compareTo(anotherValue) <= 0) null
-            else "El valor debe ser menor o igual que $anotherValue"
+            else listOf("El valor debe ser menor o igual que $anotherValue")
         }
         return null
     }
 }
 
 data class EqualTo<T>(val anotherField: KFunction<T?>) : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val anotherValue = anotherField.call(bean)
         return if (value == anotherValue) null
-        else "El valor debe ser igual a $anotherValue"
+        else listOf("El valor debe ser igual a $anotherValue")
     }
 }
 
 data class NotEqualTo<T>(val anotherField: KFunction<T?>) : ValidationRule {
-    override fun validate(value: Any?, bean: Any): String? {
+    override fun validate(value: Any?, bean: Any): List<String>? {
         val anotherValue = anotherField.call(bean)
         return if (value != anotherValue) null
-        else "El valor no debe ser igual a $anotherValue"
+        else listOf("El valor no debe ser igual a $anotherValue")
     }
 }

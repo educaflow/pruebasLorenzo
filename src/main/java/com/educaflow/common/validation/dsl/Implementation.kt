@@ -3,21 +3,22 @@ package com.educaflow.common.validation.dsl
 import com.educaflow.common.validation.engine.BeanValidationRules
 import com.educaflow.common.validation.engine.FieldValidationRules
 import com.educaflow.common.validation.engine.ValidationRule
-import com.educaflow.common.validation.rules.IfRule
+import com.educaflow.common.validation.rules.IfNotValue
+import com.educaflow.common.validation.rules.IfValue
 import kotlin.reflect.KFunction
 
 @DslMarker
 annotation class BeanValidationDSL
 
 @BeanValidationDSL
-class IfBuilder(private val dependField: KFunction<*>,private val dependValue:Any?) {
+class IfBuilder(private val dependField: KFunction<*>,private val dependValues:List<Any>) {
     private val rules = mutableListOf<ValidationRule>()
 
     /**
      * Construye y devuelve el objeto [FieldValidationRules].
      */
-    fun build(): IfRule {
-        return IfRule(dependField, dependValue, rules)
+    fun build(): IfValue {
+        return IfValue(dependField, dependValues, rules)
     }
 
     @BeanValidationDSL
@@ -27,17 +28,41 @@ class IfBuilder(private val dependField: KFunction<*>,private val dependValue:An
 }
 
 
+@BeanValidationDSL
+class IfNotBuilder(private val dependField: KFunction<*>,private val dependValues:List<Any>) {
+    private val rules = mutableListOf<ValidationRule>()
+
+    /**
+     * Construye y devuelve el objeto [FieldValidationRules].
+     */
+    fun build(): IfNotValue {
+        return IfNotValue(dependField, dependValues, rules)
+    }
+
+    @BeanValidationDSL
+    operator fun ValidationRule.unaryPlus() {
+        rules += this
+    }
+}
+
 /**
- * Función de nivel superior para iniciar la construcción de una regla condicional 'If'.
+ * Función de nivel superior para iniciar la construcción de una regla condicional 'IfValue'.
  * Esta función permite definir reglas anidadas que solo se aplican si se cumple una condición.
  * @param dependField La función getter del campo de dependencia.
  * @param dependValue El valor del campo de dependencia que activa la condición.
  * @param setup Lambda con el receptor [IfBuilder] para definir las reglas anidadas.
- * @return Un objeto [IfRule] que contiene las reglas condicionales.
+ * @return Un objeto [IfValue] que contiene las reglas condicionales.
  */
 @BeanValidationDSL
-fun If(dependField: KFunction<*>, dependValue: Any?, setup: IfBuilder.() -> Unit): IfRule {
-    val builder = IfBuilder(dependField, dependValue)
+fun ifValue(dependField: KFunction<*>, dependValues: List<Any>, setup: IfBuilder.() -> Unit): IfValue {
+    val builder = IfBuilder(dependField, dependValues)
+    builder.setup()
+    return builder.build()
+}
+
+@BeanValidationDSL
+fun ifNotValue(dependField: KFunction<*>, dependValues: List<Any>, setup: IfNotBuilder.() -> Unit): IfNotValue {
+    val builder = IfNotBuilder(dependField, dependValues)
     builder.setup()
     return builder.build()
 }

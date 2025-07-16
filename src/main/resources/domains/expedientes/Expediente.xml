@@ -56,6 +56,6 @@ public void updateState(Enum estado) {
         </extra-code-model>
     </entity>
 
-    <sequence name="expediente.seq" initial="1" increment="1" padding="5" />
+    <sequence name="expediente.seq" initial="1" increment="1" padding="8" />
 
 </domain-models>
