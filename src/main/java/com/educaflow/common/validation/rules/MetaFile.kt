@@ -4,11 +4,11 @@ import com.axelor.meta.db.MetaFile
 import com.educaflow.common.validation.engine.ValidationRule
 import java.util.regex.Pattern
 
-data class FileMaxSize(val max: Int) : ValidationRule {
+data class FileMaxSize(val max: Int,val unit: SizeUnit) : ValidationRule {
 
     override fun validate(value: Any?,bean: Any): String? {
         if (value is MetaFile) {
-            if (value.fileSize<=max) {
+            if (value.fileSize<=max*unit.multiplier) {
                 return null
             } else {
                 return "El tamaño del archivo debe ser como máximo de ${max / 1024} KB pero tiene un tamaño de ${value.fileSize / 1024} KB"
@@ -16,6 +16,13 @@ data class FileMaxSize(val max: Int) : ValidationRule {
         }
         return null
     }
+}
+
+enum class SizeUnit(val multiplier: Long) {
+    B(1),
+    KB(1024),
+    MB(1024 * 1024),
+    GB(1024 * 1024 * 1024)
 }
 
 data class FileType(val fileTypes: List<String>) : ValidationRule {
