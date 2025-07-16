@@ -9,7 +9,7 @@
         <string name="apellidos" />
         <string name="nombre" />
         <string name="dni" />
-        <string name="dias" pattern="^(\s*\b(?:[1-9]|[12][0-9]|3[01])\b\s*)(?:,\s*\b(?:[1-9]|[12][0-9]|3[01])\b\s*)*$" />
+        <string name="dias"  />
         <enum name="mes" ref="com.educaflow.apps.expedientes.db.MesJustificacionFaltaProfesorado" />
         <integer name="anyo" />
 

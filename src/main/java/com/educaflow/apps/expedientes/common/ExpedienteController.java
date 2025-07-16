@@ -4,7 +4,9 @@ import com.axelor.db.JPA;
 import com.axelor.db.JpaRepository;
 import com.axelor.inject.Beans;
 import com.axelor.meta.CallMethod;
-import com.axelor.rpc.*;
+import com.axelor.rpc.ActionRequest;
+import com.axelor.rpc.ActionResponse;
+import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
@@ -12,10 +14,16 @@ import com.educaflow.apps.expedientes.db.repo.TipoExpedienteRepository;
 import com.educaflow.common.mapper.BeanMapperModel;
 import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.util.AxelorViewUtil;
+import com.educaflow.common.util.ReflectionUtil;
 import com.educaflow.common.util.TextUtil;
+import com.educaflow.common.validation.engine.BeanValidationRules;
+import com.educaflow.common.validation.engine.ValidatorEngine;
+import com.educaflow.common.validation.messages.BusinessMessages;
+import com.google.common.base.CaseFormat;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
@@ -71,11 +79,18 @@ public class ExpedienteController {
             Expediente expedienteOriginal=(Expediente) BeanMapperModel.getEntityCloned(expediente.getClass(), expediente);
             EventManager eventManager=getEventManager(expediente.getTipoExpediente());
             EventContext eventContext = getEventContext(eventManager,request);
+            JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+            StateEventValidator stateEventValidator = getStateEventValidation(expediente.getTipoExpediente());
 
             //Pasamos los datos del ActionRequest al expediente
-            populateExpedienteFromActionRequest(expediente,request,eventName,eventContext);
+            populateExpedienteFromActionRequest(expediente, request, eventName, eventContext);
 
-            JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+
+            BusinessMessages businessMessages = validateExpediente(stateEventValidator, expediente, eventName);
+            if (businessMessages.isValid()==false) {
+                AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
+                return;
+            }
 
 
             String originalState =  expedienteOriginal.getCodeState();
@@ -159,6 +174,16 @@ public class ExpedienteController {
 
     private String getTabName(Expediente expediente) {
         return expediente.getNumeroExpediente()+"-"+expediente.getTipoExpediente().getName();
+    }
+
+
+    private BusinessMessages validateExpediente(StateEventValidator stateEventValidator,Expediente expediente, String eventName) {
+        String state = expediente.getCodeState();
+        BeanValidationRules beanValidationRules = getBeanValidationRules(stateEventValidator, state, eventName);
+        ValidatorEngine validatorEngine = new ValidatorEngine();
+        BusinessMessages businessMessages = validatorEngine.validate(expediente, beanValidationRules);
+
+        return businessMessages;
     }
 
 
@@ -305,6 +330,55 @@ public class ExpedienteController {
 
     private long objectToLong(Object obj) {
         return ((Number)obj).longValue();
+    }
+
+
+    private StateEventValidator getStateEventValidation(TipoExpediente tipoExpediente) {
+        try {
+            if (tipoExpediente == null) {
+                throw new RuntimeException("No existe el tipo del expediente a crear.");
+            }
+            String fqcnEventManager = tipoExpediente.getFqcnEventManager();
+            if (fqcnEventManager == null || fqcnEventManager.isEmpty()) {
+                throw new RuntimeException("No existe el fqcnEventManager para el tipo de expediente: " + tipoExpediente.getName());
+            }
+
+            int ultimoPunto = fqcnEventManager.lastIndexOf('.');
+            if (ultimoPunto == -1) {
+                throw new RuntimeException("El fqcnEventManager no tiene un punto: " + tipoExpediente.getFqcnEventManager());
+            }
+
+            String fqcnStateEventValidation = fqcnEventManager.substring(0, ultimoPunto) + ".StateEventValidator";
+
+            Class<StateEventValidator> stateEventValidationClass = (Class<StateEventValidator>) Class.forName(fqcnStateEventValidation);
+
+            StateEventValidator stateEventValidator = Beans.get(stateEventValidationClass);
+
+            return stateEventValidator;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private BeanValidationRules getBeanValidationRules(StateEventValidator stateEventValidator, String state, String eventName) {
+        try {
+            String methodName = "getFor" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state) + "In" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, eventName);
+            Method method = ReflectionUtil.getMethod(stateEventValidator.getClass(), methodName, BeanValidationRules.class, BeanValidationRulesForStateAndEvent.class, new Class<?>[]{});
+            if (method==null) {
+                throw new RuntimeException("No se ha encontrado el método: " + methodName + " en la clase: " + stateEventValidator.getClass().getName());
+            }
+            Object result = method.invoke(stateEventValidator);
+            if (result == null) {
+                throw new RuntimeException("No se han encontrado las reglas de validación para el estado: " + state + " y el evento: " + eventName);
+            }
+
+
+            BeanValidationRules beanValidationRules = (BeanValidationRules) result;
+
+            return beanValidationRules;
+        } catch (Exception ex) {
+            throw new RuntimeException("Error al obtener las reglas de validación para el estado: " + state + " y el evento: " + eventName + " en " + stateEventValidator.getClass().getName(), ex);
+        }
     }
 
 

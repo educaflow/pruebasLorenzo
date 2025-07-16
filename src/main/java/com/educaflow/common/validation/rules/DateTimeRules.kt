@@ -1,0 +1,48 @@
+package com.educaflow.common.validation.rules
+
+import com.educaflow.common.validation.engine.ValidationRule
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Date
+
+private fun toLocalDateOrNull(date: Any?): LocalDate? {
+    return when (date) {
+        is LocalDate ->  date
+        is LocalDateTime ->  date.toLocalDate()
+        is Date ->  date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+        else ->  null
+    }
+}
+
+class Past : ValidationRule {
+    override fun validate(value: Any?, bean: Any): String? {
+        val date = toLocalDateOrNull(value) ?: return null
+        val today = LocalDate.now()
+        return if (!date.isBefore(today)) "La fecha debe ser anterior a hoy" else null
+    }
+}
+
+class PastOrToday : ValidationRule {
+    override fun validate(value: Any?, bean: Any): String? {
+        val date = toLocalDateOrNull(value) ?: return null
+        val today = LocalDate.now()
+        return if (date.isAfter(today)) "La fecha debe ser hoy o en el pasado" else null
+    }
+}
+
+class Future : ValidationRule {
+    override fun validate(value: Any?, bean: Any): String? {
+        val date = toLocalDateOrNull(value) ?: return null
+        val today = LocalDate.now()
+        return if (!date.isAfter(today)) "La fecha debe ser posterior a hoy" else null
+    }
+}
+
+class FutureOrToday : ValidationRule {
+    override fun validate(value: Any?, bean: Any): String? {
+        val date = toLocalDateOrNull(value) ?: return null
+        val today = LocalDate.now()
+        return if (date.isBefore(today)) "La fecha debe ser hoy o en el futuro" else null
+    }
+}

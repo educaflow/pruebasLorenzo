@@ -4,16 +4,11 @@ import com.axelor.inject.Beans;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
-import com.educaflow.apps.expedientes.common.validation.BeanValidationRules;
-import com.educaflow.apps.expedientes.common.validation.engine.PruebaKotlin;
-import com.educaflow.apps.expedientes.common.validation.engine.ValidationEngine;
 import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.repo.JustificacionFaltaProfesoradoRepository;
-import com.educaflow.common.messages.BusinessMessage;
-import com.educaflow.common.messages.BusinessMessages;
 import com.google.inject.Inject;
 
 import java.io.IOException;
@@ -33,7 +28,6 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
 
     @Override
     public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
-        PruebaKotlin pruebaKotlin = new PruebaKotlin();
 
         JustificacionFaltaProfesorado justificacionFaltaProfesorado = new JustificacionFaltaProfesorado();
         justificacionFaltaProfesorado.setTipoExpediente(tipoExpediente);
@@ -41,7 +35,7 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
         justificacionFaltaProfesorado.setAnyo(LocalDate.now().getYear());
         justificacionFaltaProfesorado.setNombre("Lorenzo");
         justificacionFaltaProfesorado.setApellidos("García García");
-        justificacionFaltaProfesorado.setDni(pruebaKotlin.getDatos(justificacionFaltaProfesorado));
+        justificacionFaltaProfesorado.setDni("12345678Z");
 
         return justificacionFaltaProfesorado;
     }
@@ -51,13 +45,6 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
         appendDocuments(justificacionFaltaProfesorado);
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.FIRMA_POR_USUARIO);
 
-        BeanValidationRules beanValidationRules = (new Validation()).getExampleValidationRules();
-
-        ValidationEngine validationEngine=new ValidationEngine();
-        BusinessMessages businessMessages=validationEngine.validate(justificacionFaltaProfesorado, beanValidationRules);
-        for(BusinessMessage businessMessage : businessMessages) {
-            System.out.println(businessMessage.getFieldName()+": " + businessMessage.getMessage());
-        }
 
     }
     @WhenEvent

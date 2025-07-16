@@ -26,16 +26,20 @@
                     <Box>
                         <h3>Detalles de Errores:</h3>
                         {mensajes.length > 0 ? (
-                        <ul>
+                        <div className="alert alert-danger  alert-dismissible fade show">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        <ul >
                             {mensajes.map((error, index) => (
                             // Accedemos a fieldName y value de cada objeto 'error'
                             <li key={index}>
                                 <strong>{error.fieldName}</strong>: {error.value}
                             </li>
                             ))}
-                        </ul>
+                        </ul></div>
                         ) : (
-                        <p>No se encontraron errores detallados.</p>
+                        <span></span>
                         )}
                     </Box>
                     </>

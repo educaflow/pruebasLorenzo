@@ -24,3 +24,6 @@ TomcatServer: Es la clase que ejecuta Tomcat finalmente
 En las view-action añadir el atributo home="true"
 Luego en el grupo hay un atributo llamado "homeAction" que hay que poner alguna de las acciones que tengan el atributo home="true"
 
+# TypeScript
+/src/view-containers/action/executor.ts
+

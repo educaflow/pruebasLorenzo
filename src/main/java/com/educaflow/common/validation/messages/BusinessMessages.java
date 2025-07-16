@@ -1,4 +1,4 @@
-package com.educaflow.common.messages;
+package com.educaflow.common.validation.messages;
 
 import java.util.ArrayList;
 
