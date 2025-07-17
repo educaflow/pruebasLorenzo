@@ -5,10 +5,10 @@
 
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
     <entity name="Prueba" extends="Expediente" >
-        <string name="solicita" />
-        <string name="motivo" />
-        <one-to-one name="justificante" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
-        <one-to-many name="formacionesCentrosTrabajo" ref="FormacionCentroTrabajo" mappedBy="prueba" cascade="all" orphanRemoval="true" />
+        <string name="solicita" title="Solicita" />
+        <string name="motivo" title="Motivo" />
+        <one-to-one name="justificante"  ref="com.axelor.meta.db.MetaFile" title="Justificante" />
+        <one-to-many name="formacionesCentrosTrabajo" title="Formaciones en Centros de Trabajo" ref="FormacionCentroTrabajo" mappedBy="prueba" cascade="all" orphanRemoval="true" />
 
 
 

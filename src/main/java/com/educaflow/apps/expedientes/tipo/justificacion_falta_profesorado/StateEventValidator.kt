@@ -4,7 +4,7 @@ import com.educaflow.apps.expedientes.common.StateEventValidator
 import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent
 import com.educaflow.apps.expedientes.db.MotivoFaltaJustificacionFaltaProfesorado
 import com.educaflow.apps.expedientes.db.TipoJornadaFaltaJustificacionFaltaProfesorado
-import com.educaflow.common.validation.dsl.ifValue
+import com.educaflow.common.validation.dsl.ifValueIn
 import com.educaflow.common.validation.dsl.rules
 import com.educaflow.common.validation.engine.BeanValidationRules
 import com.educaflow.common.validation.rules.FileMaxSize
@@ -24,7 +24,7 @@ import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado as model
 class StateEventValidator: StateEventValidator {
 
     @BeanValidationRulesForStateAndEvent
-    public fun getForEntradaDatosInPresentar(): BeanValidationRules {
+    public fun getForStateEntradaDatosInEventPresentar(): BeanValidationRules {
         return rules {
             field(model::getDias) {
                 +Required()
@@ -42,12 +42,12 @@ class StateEventValidator: StateEventValidator {
                 +Required()
             }
             field(model::getHoraInicio) {
-                +ifValue(model::getTipoJornadaFalta, listOf(TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL)) {
+                +ifValueIn(model::getTipoJornadaFalta, listOf(TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL)) {
                     +Required()
                 }
             }
             field(model::getHoraFin) {
-                +ifValue(model::getTipoJornadaFalta, listOf(TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL)) {
+                +ifValueIn(model::getTipoJornadaFalta, listOf(TipoJornadaFaltaJustificacionFaltaProfesorado.JORNADA_PARCIAL)) {
                     +Required()
                     +GreaterThan(model::getHoraInicio)
                 }
@@ -56,7 +56,7 @@ class StateEventValidator: StateEventValidator {
                 +Required()
             }
             field(model::getOtroMotivo) {
-                +ifValue(model::getMotivoFalta, listOf(MotivoFaltaJustificacionFaltaProfesorado.OTROS)) {
+                +ifValueIn(model::getMotivoFalta, listOf(MotivoFaltaJustificacionFaltaProfesorado.OTROS)) {
                     +Required()
                     +NoAllUpperCase()
                     +MinLength(5)
@@ -72,19 +72,19 @@ class StateEventValidator: StateEventValidator {
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForFirmaPorUsuarioInBack():BeanValidationRules {
+    fun getForStateFirmaPorUsuarioInEventBack():BeanValidationRules {
         return rules {
         }
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForFirmaPorUsuarioInPresentarDocumentosFirmados():BeanValidationRules {
+    fun getForStateFirmaPorUsuarioInEventPresentarDocumentosFirmados():BeanValidationRules {
         return rules {
         }
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForRevisionYFirmaPorResponsableInResolver():BeanValidationRules {
+    fun getForStateRevisionYFirmaPorResponsableInEventResolver():BeanValidationRules {
         return rules {
         }
     }

@@ -180,7 +180,7 @@ public class BeanMapperModel {
                                 copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, mappedByRelation, entityDest);
                             }
                             for (int i = 0; i < modelListCompare.getTargetWhereOnlyTarget().size(); i++) {
-                                Model itemValue = modelListCompare.getTargetWhereSourceAndTarget().get(i);
+                                Model itemValue = modelListCompare.getTargetWhereOnlyTarget().get(i);
                                 listTarget.remove(itemValue);
                             }
 

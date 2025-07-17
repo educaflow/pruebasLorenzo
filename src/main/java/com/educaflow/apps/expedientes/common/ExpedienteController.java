@@ -140,6 +140,22 @@ public class ExpedienteController {
             throw new RuntimeException(ex);
         }
     }
+
+    @CallMethod
+    public void validateChild(ActionRequest request, ActionResponse response) {
+        try {
+            System.out.println("Hola desde validateChild");
+
+            BusinessMessages businessMessages=new BusinessMessages();
+            //businessMessages.add(new BusinessMessage("Campo","Este es un mensaje de validación de prueba para el child"+(new Date()),"dsds","fsfsf"));
+            AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
     /*******************************************************************/
     /********************** Funciones de Negocio  **********************/
     /*******************************************************************/
@@ -366,7 +382,7 @@ public class ExpedienteController {
 
     private BeanValidationRules getBeanValidationRules(StateEventValidator stateEventValidator, String state, String eventName) {
         try {
-            String methodName = "getFor" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state) + "In" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, eventName);
+            String methodName = "getForState" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state) + "InEvent" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, eventName);
             Method method = ReflectionUtil.getMethod(stateEventValidator.getClass(), methodName, BeanValidationRules.class, BeanValidationRulesForStateAndEvent.class, new Class<?>[]{});
             if (method==null) {
                 throw new RuntimeException("No se ha encontrado el método: " + methodName + " en la clase: " + stateEventValidator.getClass().getName());

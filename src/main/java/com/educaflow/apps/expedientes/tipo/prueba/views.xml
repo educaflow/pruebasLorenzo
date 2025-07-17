@@ -193,12 +193,39 @@
     <grid name="fct-grid" title="FCTs" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" canEdit="false" edit-icon="false" >
         <field name="alumno" />
     </grid>
-    <form name="fct-details" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" >
+    <form name="fct-details" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" onValidate="action-validate-on-save-child" validateSignal="misenyal">
         <panel colSpan="12">
-            <field name="alumno" title="Nombre" colSpan="6"  />
+            <field name="alumno" title="Nombre" colSpan="6"   />
             <field name="a2" title="Anexo A2" widget="binary-link" colSpan="6" colOffset="6"/>
             <field name="a3" title="Anexo A3" widget="binary-link" colSpan="6"/>
         </panel>
+        <panel colSpan="12">
+            <field name="errorMessajesField" showTitle="false" readonly="true" colSpan="12">
+                <viewer depends="errorMensajes" ><![CDATA[
+                    <>
+                    <Box>
+                        {errorMensajes.length > 0 ? (
+                        <div className="alert alert-danger  alert-dismissible fade show">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <ul >
+                                {errorMensajes.map((errorMensaje, index) => (
+                                <li key={index}>
+                                    {errorMensaje.label ? (<strong>{errorMensaje.label}:&nbsp;&nbsp;</strong>) : null}
+                                    {errorMensaje.message}
+                                </li>
+                                ))}
+                            </ul></div>
+                        ) : (
+                        <span></span>
+                        )}
+                    </Box>
+                    </>
+                    ]]></viewer>
+            </field>
+        </panel>
+
     </form>
     <form name="fct-details-firma" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" >
         <panel colSpan="12">

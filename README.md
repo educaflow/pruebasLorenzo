@@ -26,4 +26,5 @@ Luego en el grupo hay un atributo llamado "homeAction" que hay que poner alguna 
 
 # TypeScript
 /src/view-containers/action/executor.ts
+/src/hooks/use-relation/use-editor.tsx#handleConfirm   El botoón OK de las ventanas Popup
 

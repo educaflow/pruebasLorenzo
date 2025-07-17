@@ -7,10 +7,10 @@ import com.axelor.meta.schema.views.AbstractView;
 import com.axelor.rpc.ActionResponse;
 import com.educaflow.common.validation.messages.BusinessMessage;
 import com.educaflow.common.validation.messages.BusinessMessages;
-import com.oracle.truffle.api.profiles.Profile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AxelorViewUtil {
@@ -54,7 +54,7 @@ public class AxelorViewUtil {
 
     public static void doResponseBusinessMessages(ActionResponse response, BusinessMessages businessMessages) {
 
-
+/***
         Map<String, String> mapErrors = new HashMap<>();
         for(BusinessMessage businessMessage : businessMessages) {
             String fieldName = businessMessage.getFieldName();
@@ -65,37 +65,29 @@ public class AxelorViewUtil {
                 mapErrors.put(fieldName, message);
             }
         }
-        //response.setErrors(mapErrors);
+        response.setErrors(mapErrors);
+***/
 
-        ErrorMessajes errors = new ErrorMessajes();
+        storeBusinessMessagesInActionResponse(response, businessMessages);
+
+    }
+
+    private static void storeBusinessMessagesInActionResponse(ActionResponse response, BusinessMessages businessMessages) {
+        List<Map<String,String>> errors=new ArrayList<>();
         for(BusinessMessage businessMessage : businessMessages) {
             String fieldName = businessMessage.getFieldName();
             String message = businessMessage.getMessage();
-            String type = businessMessage.getType();
             String label = businessMessage.getLabel();
-            errors.addErroMessaje(fieldName,message,type,label);
-        }
-        errors.storeInActionResponse(response);
 
+            Map<String,String> error=new HashMap<>();
+            error.put("fieldName", fieldName);
+            error.put("message", message);
+            error.put("label", label);
+            errors.add(error);
+        }
+        response.setValue("errorMensajes",errors);
     }
 
 
-    private static class ErrorMessajes extends ArrayList {
-
-        public void addErroMessaje(String fieldName, String message, String type, String label) {
-            Map<String,String> messaje=new HashMap<>();
-            messaje.put("fieldName", fieldName);
-            messaje.put("message", message);
-            messaje.put("type", type);
-            messaje.put("label", label);
-            this.add(messaje);
-        }
-
-
-        public void storeInActionResponse(ActionResponse response) {
-            response.setValue("errorMensajes",this);
-        }
-
-    }
 
 }

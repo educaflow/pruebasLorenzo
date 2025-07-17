@@ -13,7 +13,9 @@
   <action-method name="action-event-view-expediente">
     <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="viewExpediente"/>
   </action-method>
-
+  <action-method name="action-validate-on-save-child">
+    <call class="com.educaflow.apps.expedientes.common.ExpedienteController" method="validateChild"/>
+  </action-method>
 
   <grid name="expediente-nuevo-grid" title="tipos de expediente" model="com.educaflow.apps.expedientes.db.TipoExpediente" groups="admins,users"
         editable="false" edit-icon="false" x-selector="none" canNew="false"  canEdit="false"  canDelete="false" canSave="false"
