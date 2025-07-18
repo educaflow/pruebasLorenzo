@@ -2,6 +2,7 @@ package com.educaflow.apps.expedientes.common;
 
 import com.axelor.db.JPA;
 import com.axelor.db.JpaRepository;
+import com.axelor.db.Model;
 import com.axelor.inject.Beans;
 import com.axelor.meta.CallMethod;
 import com.axelor.rpc.ActionRequest;
@@ -17,6 +18,8 @@ import com.educaflow.common.util.AxelorViewUtil;
 import com.educaflow.common.util.ReflectionUtil;
 import com.educaflow.common.util.TextUtil;
 import com.educaflow.common.validation.engine.BeanValidationRules;
+import com.educaflow.common.validation.engine.FieldValidationRules;
+import com.educaflow.common.validation.engine.ValidationRule;
 import com.educaflow.common.validation.engine.ValidatorEngine;
 import com.educaflow.common.validation.messages.BusinessMessages;
 import com.google.common.base.CaseFormat;
@@ -25,7 +28,9 @@ import com.google.inject.persist.Transactional;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -144,11 +149,51 @@ public class ExpedienteController {
     @CallMethod
     public void validateChild(ActionRequest request, ActionResponse response) {
         try {
-            System.out.println("Hola desde validateChild");
+            Map<String,Object> context = getActionRequestContext(request);
+            Class<? extends Model> beanClass =(Class<? extends Model>) Class.forName((String)context.get("_model"));
 
-            BusinessMessages businessMessages=new BusinessMessages();
-            //businessMessages.add(new BusinessMessage("Campo","Este es un mensaje de validación de prueba para el child"+(new Date()),"dsds","fsfsf"));
+            Model bean;
+            if (context.get("id")==null) {
+                bean=beanClass.getConstructor().newInstance();
+            } else {
+                String fqcnRepositoryClass="com.educaflow.apps.expedientes.db.repo."+beanClass.getSimpleName()+"Repository";
+                Class<? extends JpaRepository> repositoryClass = (Class<? extends JpaRepository>) Class.forName(fqcnRepositoryClass);
+                JpaRepository<?> repository = Beans.get(repositoryClass);
+                bean=repository.find(objectToLong(context.get("id")));
+            }
+
+            BeanMapperModel.copyMapToEntity(beanClass, context, bean);
+
+
+
+            String validateProperty=(String)((Map<String,Object>) context.get("_parent")).get("_source");
+            String methodName="get"+TextUtil.toFirstsLetterToUpperCase(validateProperty);
+            Expediente expediente=getExpedienteParentFromDB(request);
+            TipoExpediente tipoExpediente=expediente.getTipoExpediente();
+
+            StateEventValidator stateEventValidator = getStateEventValidation(tipoExpediente);
+            List<BeanValidationRules> beansValidationRules = getBeanValidationRules(stateEventValidator, expediente.getCodeState());
+
+
+            List<FieldValidationRules> fieldsValidationRules=new ArrayList<>();
+            for(BeanValidationRules rules:beansValidationRules) {
+                for(FieldValidationRules fieldValidationRules:rules.getFieldValidationRules()) {
+                    if (fieldValidationRules.getMethodField().getName().equals(methodName)) {
+                        for(ValidationRule validationRule:fieldValidationRules.getValidationRules()) {
+                            if ((validationRule instanceof FieldValidationRules)) {
+                                fieldsValidationRules.add((FieldValidationRules)validationRule);
+                            }
+                        }
+                    }
+                }
+            }
+
+            ValidatorEngine validatorEngine = new ValidatorEngine();
+            BusinessMessages businessMessages = validatorEngine.validate(bean, fieldsValidationRules);
+
             AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
+
+
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -223,6 +268,20 @@ public class ExpedienteController {
 
     private Expediente getExpedienteFromDB(ActionRequest request) {
         long id=objectToLong(getActionRequestContext(request).get("id"));
+
+        JpaRepository<Expediente> expedienteRepository =getJpaRepository(id);
+
+        Expediente expediente=findExpediente(expedienteRepository,id);
+
+        if (expediente==null) {
+            throw new RuntimeException("No existe el expediente con id: " + id);
+        }
+
+        return expediente;
+    }
+
+    private Expediente getExpedienteParentFromDB(ActionRequest request) {
+        long id=objectToLong(((Map<String,Object>)(getActionRequestContext(request).get("_parent"))).get("id"));
 
         JpaRepository<Expediente> expedienteRepository =getJpaRepository(id);
 
@@ -400,6 +459,36 @@ public class ExpedienteController {
             throw new RuntimeException("Error al obtener las reglas de validación para el estado: " + state + " y el evento: " + eventName + " en " + stateEventValidator.getClass().getName(), ex);
         }
     }
+
+    private List<BeanValidationRules> getBeanValidationRules(StateEventValidator stateEventValidator, String state) {
+        try {
+            List<BeanValidationRules> beansValidationRules=new ArrayList<>();
+            String methodName = "getForState" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state) + "InEvent";
+
+
+            for (Method method : stateEventValidator.getClass().getDeclaredMethods()) {
+                if (method.getName().startsWith(methodName)) {
+                    if (method.isAnnotationPresent(BeanValidationRulesForStateAndEvent.class)) {
+                        BeanValidationRules beanValidationRules=(BeanValidationRules)method.invoke(stateEventValidator);
+                        if (beanValidationRules == null) {
+                            throw new RuntimeException("El método retorno null:" + method.getName());
+                        }
+                        beansValidationRules.add(beanValidationRules);
+                    }
+                }
+            }
+
+            if (beansValidationRules.isEmpty()) {
+                throw new RuntimeException("No se han encontrado las reglas de validación para el estado: " + state);
+            }
+
+            return beansValidationRules;
+
+        } catch (Exception ex) {
+            throw new RuntimeException("Error al obtener las reglas de validación para el estado: " + state + " en " + stateEventValidator.getClass().getName(), ex);
+        }
+    }
+
 
 
 }

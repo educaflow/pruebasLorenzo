@@ -73,19 +73,23 @@ public class AxelorViewUtil {
     }
 
     private static void storeBusinessMessagesInActionResponse(ActionResponse response, BusinessMessages businessMessages) {
-        List<Map<String,String>> errors=new ArrayList<>();
-        for(BusinessMessage businessMessage : businessMessages) {
-            String fieldName = businessMessage.getFieldName();
-            String message = businessMessage.getMessage();
-            String label = businessMessage.getLabel();
+        List<Map<String,String>> errorMensajes=new ArrayList<>();
 
-            Map<String,String> error=new HashMap<>();
-            error.put("fieldName", fieldName);
-            error.put("message", message);
-            error.put("label", label);
-            errors.add(error);
+        if (businessMessages!=null)  {
+            for (BusinessMessage businessMessage : businessMessages) {
+                String fieldName = businessMessage.getFieldName();
+                String message = businessMessage.getMessage();
+                String label = businessMessage.getLabel();
+
+                Map<String, String> errorMensaje = new HashMap<>();
+                errorMensaje.put("fieldName", fieldName);
+                errorMensaje.put("message", message);
+                errorMensaje.put("label", label);
+                errorMensajes.add(errorMensaje);
+            }
         }
-        response.setValue("errorMensajes",errors);
+        response.setValue("errorMensajes",errorMensajes);
+
     }
 
 
