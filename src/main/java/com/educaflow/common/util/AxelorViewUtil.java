@@ -76,7 +76,7 @@ public class AxelorViewUtil {
         List<Map<String,String>> errorMensajes=new ArrayList<>();
 
         if (businessMessages!=null)  {
-            for (BusinessMessage businessMessage : businessMessages) {
+            for (BusinessMessage businessMessage : businessMessages.removeDuplicates()) {
                 String fieldName = businessMessage.getFieldName();
                 String message = businessMessage.getMessage();
                 String label = businessMessage.getLabel();

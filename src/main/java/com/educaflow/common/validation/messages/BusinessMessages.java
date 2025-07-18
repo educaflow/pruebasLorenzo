@@ -1,6 +1,8 @@
 package com.educaflow.common.validation.messages;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BusinessMessages extends ArrayList<BusinessMessage> {
 
@@ -9,7 +11,17 @@ public class BusinessMessages extends ArrayList<BusinessMessage> {
     }
 
 
+    public BusinessMessages removeDuplicates() {
+        BusinessMessages uniqueMessages = new BusinessMessages();
+        Set<BusinessMessage> seenMessages = new HashSet<>();
 
+        for (BusinessMessage message : this) {
+            if (seenMessages.add(message)) {
+                uniqueMessages.add(message);
+            }
+        }
+        return uniqueMessages;
+    }
 
 
     static public BusinessMessages single(String message) {
