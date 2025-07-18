@@ -11,14 +11,7 @@ import java.util.Map;
 
 public class BeanMapperModel {
 
-    public static Object getEntityCloned(Class<? extends Model> clazz, Model entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        return getEntityCloned(clazz, entity, null, null);
-    }
-
+    public static Object getEntityCloned(Class<? extends Model> clazz, Model entity) { return getEntityCloned(clazz, entity, null, null); }
     public static Object getEntityCloned(Class<? extends Model> clazz, Model entity, String mappedBy, Model mappedByModel) {
         try {
             if (entity == null) {
@@ -27,7 +20,7 @@ public class BeanMapperModel {
 
 
             Model entityDest = clazz.getDeclaredConstructor().newInstance();
-            copyEntityToEntity(clazz, entity, entityDest, mappedBy, mappedByModel);
+            copyEntityToEntity(clazz, entity, entityDest, null, mappedBy, mappedByModel);
 
             return entityDest;
         } catch (Exception e) {
@@ -35,11 +28,8 @@ public class BeanMapperModel {
         }
     }
 
-    public static void copyEntityToEntity(Class<? extends Model> clazz, Model entity, Model entityDest) {
-        copyEntityToEntity(clazz, entity, entityDest, null, null);
-    }
-
-    public static void copyEntityToEntity(Class<? extends Model> clazz, Model entity, Model entityDest, String mappedBy, Model mappedByModel) {
+    public static void copyEntityToEntity(Class<? extends Model> clazz, Model entity, Model entityDest, Map<String,Object> allowProperties) { copyEntityToEntity(clazz, entity, entityDest, allowProperties, null, null); }
+    public static void copyEntityToEntity(Class<? extends Model> clazz, Model entity, Model entityDest, Map<String,Object> allowProperties, String mappedBy, Model mappedByModel) {
         try {
             PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
 
@@ -54,6 +44,12 @@ public class BeanMapperModel {
                 if (propertyDescriptor.getName().equals(mappedBy)) {
                     PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), mappedByModel);
                     continue;
+                }
+
+                if (allowProperties != null) {
+                    if (allowProperties.containsKey(propertyDescriptor.getName()) == false) {
+                        continue;
+                    }
                 }
 
                 if (ScalarMapper.isScalarType(propertyDescriptor.getPropertyType())) {
@@ -89,11 +85,10 @@ public class BeanMapperModel {
         }
     }
 
-    public static void copyMapToEntity(Class<? extends Model> clazz, Map<String, Object> entityMap, Model entityDest) {
-        copyMapToEntity(clazz, entityMap, entityDest, null, null);
+    public static void copyMapToEntity(Class<? extends Model> clazz, Map<String, Object> entityMap, Model entityDest, Map<String,Object> allowProperties) {
+        copyMapToEntity(clazz, entityMap, entityDest, allowProperties, null, null);
     }
-
-    public static void copyMapToEntity(Class<? extends Model> clazz, Map<String, Object> entityMap, Model entityDest, String mappedBy, Model mappedByModel) {
+    public static void copyMapToEntity(Class<? extends Model> clazz, Map<String, Object> entityMap, Model entityDest, Map<String,Object> allowProperties, String mappedBy, Model mappedByModel) {
         try {
             PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
 
@@ -116,6 +111,11 @@ public class BeanMapperModel {
                         continue;
                     }
 
+                    if (allowProperties != null) {
+                        if (allowProperties.containsKey(propertyDescriptor.getName()) == false) {
+                            continue;
+                        }
+                    }
 
                     if (ScalarMapper.isScalarType(propertyDescriptor.getPropertyType())) {
                         Object rawValue = entityMap.get(propertyDescriptor.getName());
@@ -140,10 +140,10 @@ public class BeanMapperModel {
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), null);
                         } else if ((rawValue != null) && (valueDest == null)) {
                             valueDest = ((Class<? extends Model>) propertyDescriptor.getPropertyType()).getDeclaredConstructor().newInstance();
-                            copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest);
+                            copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()));
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), valueDest);
                         } else if ((rawValue != null) && (valueDest != null)) {
-                            copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest);
+                            copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()));
                         } else {
                             throw new RuntimeException("Error de lógica");
                         }
@@ -162,7 +162,7 @@ public class BeanMapperModel {
                             List<Model> listValues = new ArrayList<>();
                             for (Object rawValue : listSource) {
                                 Model itemValue = ((Class<? extends Model>) tipoListaClass).getDeclaredConstructor().newInstance();
-                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, mappedByRelation, entityDest);
+                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()), mappedByRelation, entityDest);
                                 listValues.add(itemValue);
                             }
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), listValues);
@@ -171,13 +171,13 @@ public class BeanMapperModel {
 
                             for (Object rawValue : modelListCompare.getSourceWhereOnlySource()) {
                                 Model itemValue = tipoListaClass.getDeclaredConstructor().newInstance();
-                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, mappedByRelation, entityDest);
+                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()), mappedByRelation, entityDest);
                                 listTarget.add(itemValue);
                             }
                             for (int i = 0; i < modelListCompare.getTargetWhereSourceAndTarget().size(); i++) {
                                 Model itemValue = modelListCompare.getTargetWhereSourceAndTarget().get(i);
                                 Object rawValue = modelListCompare.getSourceWhereSourceAndTarget().get(i);
-                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, mappedByRelation, entityDest);
+                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()), mappedByRelation, entityDest);
                             }
                             for (int i = 0; i < modelListCompare.getTargetWhereOnlyTarget().size(); i++) {
                                 Model itemValue = modelListCompare.getTargetWhereOnlyTarget().get(i);
@@ -204,19 +204,18 @@ public class BeanMapperModel {
         }
     }
 
-    private static void copyValueToEntityAndNoChangeId(Class<? extends Model> clazz, Object rawValue, Model valueDest) {
-        copyValueToEntityAndNoChangeId(clazz, rawValue, valueDest, null, null);
+    private static void copyValueToEntityAndNoChangeId(Class<? extends Model> clazz, Object rawValue, Model valueDest, Map<String,Object> allowProperties) {
+        copyValueToEntityAndNoChangeId(clazz, rawValue, valueDest, allowProperties, null, null);
     }
-
-    private static void copyValueToEntityAndNoChangeId(Class<? extends Model> clazz, Object rawValue, Model valueDest, String mappedBy, Model mappedByModel) {
+    private static void copyValueToEntityAndNoChangeId(Class<? extends Model> clazz, Object rawValue, Model valueDest, Map<String,Object> allowProperties, String mappedBy, Model mappedByModel) {
         Long originalId = valueDest.getId();
 
         if (rawValue instanceof Model) {
             Model rawValueModel = (Model) rawValue;
-            copyEntityToEntity(clazz, rawValueModel, valueDest, mappedBy, mappedByModel);
+            copyEntityToEntity(clazz, rawValueModel, valueDest, allowProperties, mappedBy, mappedByModel);
         } else if (rawValue instanceof Map) {
             Map<String, Object> rawValueMap = (Map<String, Object>) rawValue;
-            copyMapToEntity(clazz, rawValueMap, valueDest, mappedBy, mappedByModel);
+            copyMapToEntity(clazz, rawValueMap, valueDest, allowProperties, mappedBy, mappedByModel);
         } else {
             throw new RuntimeException("Unsupported property type: " + rawValue.getClass());
         }

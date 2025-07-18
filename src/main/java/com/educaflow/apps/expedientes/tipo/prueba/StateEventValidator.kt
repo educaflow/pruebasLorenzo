@@ -49,19 +49,19 @@ class StateEventValidator : StateEventValidator {
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForStateRevisionInRechazar(): BeanValidationRules {
+    fun getForStateRevisionInEventRechazar(): BeanValidationRules {
         return rules {
         }
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForStateRevisionInSubsanar(): BeanValidationRules {
+    fun getForStateRevisionInEventSubsanar(): BeanValidationRules {
         return rules {
         }
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForStateRevisionInAceptar(): BeanValidationRules {
+    fun getForStateRevisionInEventAceptar(): BeanValidationRules {
         return rules {
         }
     }
