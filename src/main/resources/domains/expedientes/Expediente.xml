@@ -5,13 +5,13 @@
 
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
     <entity name="Expediente" strategy="JOINED" jsonAttrs="false">
-        <many-to-one name="tipoExpediente" title="Tipo de Expediente" ref="com.educaflow.apps.expedientes.db.TipoExpediente" />
+        <many-to-one name="tipoExpediente" title="Tipo de Expediente" ref="com.educaflow.apps.expedientes.db.TipoExpediente" required="true"/>
         <string name="name" namecolumn="true" />
-        <string name="numeroExpediente" sequence="expediente.seq" />
+        <string name="numeroExpediente" sequence="expediente.seq"  />
         <string name="codeState" />
         <string name="nameState" />
         <datetime name="fechaUltimoEstado" />
-        <boolean name="abierto" defaultValue="true" />
+        <boolean name="closed"  />
         <one-to-many name="historialEstados" ref="ExpedienteHistorialEstados" mappedBy="expediente" />
         <many-to-one name="currentActionProfile" ref="com.educaflow.apps.expedientes.db.Profile" />
 
@@ -20,17 +20,39 @@
                 import java.util.ArrayList;
                 import com.axelor.inject.Beans;
                 import com.educaflow.apps.expedientes.db.repo.ProfileRepository;
+                import com.educaflow.apps.expedientes.common.StateEnum;
             ]]>
         </extra-imports-model>
 
         <extra-code-model>
             <![CDATA[
-public void updateState(Enum estado) {
-    this.setCodeState(estado.name());
-    this.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(estado.name()));
-    this.setFechaUltimoEstado(java.time.LocalDateTime.now());
-}
+  public void updateState(Enum state) {
+      if (state==null) {
+          throw new IllegalArgumentException("El state no puede ser nulo.");
+      }
+      String currentCodeState = this.getCodeState();
 
+      StateEnum stateEnum = new StateEnum(state);
+      if ((currentCodeState!=null) && (currentCodeState.equals(stateEnum.getCodeState()))) {
+          return;
+      }
+
+      this.setCodeState(stateEnum.getCodeState());
+      this.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(stateEnum.getCodeState()));
+      this.setFechaUltimoEstado(java.time.LocalDateTime.now());
+      this.setClosed(stateEnum.isClosed());
+      this.setCurrentActionProfile(getProfile(stateEnum.getProfileCode()));
+  }
+
+  public Profile getProfile(String profileCode) {
+    ProfileRepository profileRepository = Beans.get(ProfileRepository.class);
+
+    Profile profile = profileRepository.findByCode(profileCode);
+    if (profile == null) {
+      throw new IllegalArgumentException("El Profile con código '" + profileCode + "' no existe.");
+    }
+    return profile;
+  }
 
 
 ]]>

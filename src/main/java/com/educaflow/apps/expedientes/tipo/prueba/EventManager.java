@@ -21,60 +21,56 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
     }
 
     @Override
-    public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
-        Prueba prueba=new Prueba();
-        prueba.setTipoExpediente(tipoExpediente);
-        prueba.updateState(Prueba.State.ENTRADA_DATOS);
+    public void triggerInitialEvent(Prueba prueba, EventContext<Prueba.Profile> eventContext) {
 
-        return prueba;
     }
 
 
     @WhenEvent
-    public void triggerPresentar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
+    public void triggerPresentar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) {
         prueba.updateState(Prueba.State.REVISION);
     }
 
 
     @WhenEvent
-    public void triggerSubsanar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
+    public void triggerSubsanar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) {
         prueba.updateState(Prueba.State.ENTRADA_DATOS);
     }
 
     @WhenEvent
-    public void triggerAceptar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
+    public void triggerAceptar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) {
         prueba.updateState(Prueba.State.ACEPTADO);
     }
 
     @WhenEvent
-    public void triggerRechazar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
+    public void triggerRechazar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) {
         prueba.updateState(Prueba.State.RECHAZADO);
     }
 
     @WhenEvent
-    public void triggerDelete(Prueba prueba, Prueba original, EventContext eventContext) {
-        //prueba.updateState(Prueba.Estado.);
+    public void triggerDelete(Prueba prueba, Prueba original, EventContext<Prueba.Profile> eventContext) {
+
     }
 
 
     @OnEnterState
-    public void onEnterEntradaDatos(Prueba prueba, EventContext eventContext) {
+    public void onEnterEntradaDatos(Prueba prueba, EventContext<Prueba.Profile> eventContext) {
 
     }
 
     @OnEnterState
-    public void onEnterRevision(Prueba prueba, EventContext eventContext) {
+    public void onEnterRevision(Prueba prueba, EventContext<Prueba.Profile> eventContext) {
 
     }
 
     @OnEnterState
-    public void onEnterAceptado(Prueba prueba, EventContext eventContext) {
-        prueba.setAbierto(false);
+    public void onEnterAceptado(Prueba prueba, EventContext<Prueba.Profile> eventContext) {
+
     }
 
     @OnEnterState
-    public void onEnterRechazado(Prueba prueba, EventContext eventContext) {
-        prueba.setAbierto(false);
+    public void onEnterRechazado(Prueba prueba, EventContext<Prueba.Profile> eventContext) {
+
     }
 
 

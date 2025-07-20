@@ -52,16 +52,16 @@ public class ExpedienteController {
             EventManager eventManager=getEventManager(tipoExpediente);
             EventContext eventContext = getEventContext(eventManager,request);
             JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+            Enum initialEvent=getInitialState(eventManager.getStateClass());
 
-
-            Expediente expediente=eventManager.triggerInitialEvent(tipoExpediente, eventContext);
+            Expediente expediente=(Expediente)eventManager.getModelClass().getDeclaredConstructor().newInstance();
             expediente.setTipoExpediente(tipoExpediente);
-            expediente.updateState(getInitialState(eventManager.getStateClass()));
             updateName(expediente);
+
+            eventManager.triggerInitialEvent(expediente, eventContext);
+            expediente.updateState(initialEvent);
             addHistorialEstado(expediente,null);
             eventManager.onEnterState(expediente, eventContext);
-
-
             saveExpediente(expedienteRepository,expediente);
 
             String viewName = eventManager.getViewName(expediente, eventContext);
@@ -113,23 +113,15 @@ public class ExpedienteController {
 
             String originalState = expedienteOriginal.getCodeState();
             eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
-            String newState = expediente.getCodeState();
-            StateEnum newStateEnum = new StateEnum(ReflectionUtil.getEnumConstant(eventManager.getStateClass(), newState));
-            expediente.setAbierto(!newStateEnum.isClosed());
-            expediente.setCurrentActionProfile(getProfile(newStateEnum.getProfileName()));
-
             if (eventName.equals(CommonEvent.DELETE.name())) {
                 removeExpediente(expedienteRepository, expediente);
-
                 response.setSignal("refresh-app", null);
             } else {
-                //Es un evento "normal" del expediente
+                String newState = expediente.getCodeState();
                 if (newState.equals(originalState) == false) {
-                    updateState(expediente, eventManager.getStateClass());
                     addHistorialEstado(expediente, eventName);
                     eventManager.onEnterState(expediente, eventContext);
                 }
-
                 saveExpediente(expedienteRepository, expediente);
 
                 String viewName = eventManager.getViewName(expediente, eventContext);
@@ -199,13 +191,6 @@ public class ExpedienteController {
         expediente.addHistorialEstado(historialEstado);
     }
 
-    private void updateState(Expediente expediente,Class<? extends Enum> enumClass) {
-        assertValidState(expediente,enumClass);
-
-
-        expediente.setNameState(com.educaflow.common.util.TextUtil.getHumanCaseFromScreamingSnakeCase(expediente.getCodeState()));
-        expediente.setFechaUltimoEstado(java.time.LocalDateTime.now());
-    }
 
     private void updateName(Expediente expediente) {
         expediente.setName(expediente.getTipoExpediente().getName());
@@ -585,39 +570,5 @@ public class ExpedienteController {
 
         return initialState;
     }
-
-    private class StateEnum {
-
-        private final Enum state;
-
-        public StateEnum(Enum state) {
-            this.state = state;
-        }
-
-        public String getProfileName() {
-            return ((Enum<?>)ReflectionUtil.getFieldValue(state, "profile")).name();
-        }
-
-        public List<String> getEvents() {
-            List<Enum<?>>  events= (List<Enum<?>>)ReflectionUtil.getFieldValue(state, "events");
-
-            ArrayList<String> eventsString= new ArrayList<>(events.size());
-            for (Enum<?> event:events) {
-                eventsString.add(event.name());
-            }
-
-            return eventsString;
-        }
-
-        public boolean isInitial() {
-            return (Boolean)ReflectionUtil.getFieldValue(state, "initial");
-        }
-
-        public boolean isClosed() {
-            return (Boolean)ReflectionUtil.getFieldValue(state, "closed");
-        }
-    }
-
-
 
 }

@@ -27,16 +27,14 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
     }
 
     @Override
-    public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
+    public void triggerInitialEvent(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
 
-        JustificacionFaltaProfesorado justificacionFaltaProfesorado = new JustificacionFaltaProfesorado();
-        justificacionFaltaProfesorado.setTipoExpediente(tipoExpediente);
+
         justificacionFaltaProfesorado.setAnyo(LocalDate.now().getYear());
         justificacionFaltaProfesorado.setNombre("Lorenzo");
         justificacionFaltaProfesorado.setApellidos("García García");
         justificacionFaltaProfesorado.setDni("12345678Z");
 
-        return justificacionFaltaProfesorado;
     }
 
     @WhenEvent
@@ -123,7 +121,6 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
 
     @OnEnterState
     public void onEnterAceptado(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
-        justificacionFaltaProfesorado.setAbierto(false);
     }
 
     @OnEnterState

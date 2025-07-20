@@ -23,12 +23,8 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
     }
 
     @Override
-    public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
+    public void triggerInitialEvent(ComisionServicio comisionServicio, EventContext eventContext) {
 
-        ComisionServicio comisionServicio = new ComisionServicio();
-        comisionServicio.setTipoExpediente(tipoExpediente);
-
-        return comisionServicio;
     }
 
 

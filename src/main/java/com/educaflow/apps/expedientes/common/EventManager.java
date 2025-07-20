@@ -28,7 +28,7 @@ public abstract class EventManager<T extends Expediente, State extends Enum<Stat
         this.profileClass = profileClass;
     }
 
-    public abstract Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext<Profile> eventContext);
+    public abstract void triggerInitialEvent(T expediente, EventContext<Profile> eventContext);
 
 
     public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, EventContext<Profile> eventContext) {
