@@ -65,4 +65,17 @@ class StateEventValidator : StateEventValidator {
         return rules {
         }
     }
+
+    @BeanValidationRulesForStateAndEvent
+    fun getForStateAceptadoInEventSubsanar(): BeanValidationRules {
+        return rules {
+        }
+    }
+    @BeanValidationRulesForStateAndEvent
+    fun getForStateRechazadoInEventSubsanar(): BeanValidationRules {
+        return rules {
+        }
+    }
+
+
 }

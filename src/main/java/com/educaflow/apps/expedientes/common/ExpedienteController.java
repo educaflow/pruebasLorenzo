@@ -10,7 +10,9 @@ import com.axelor.rpc.ActionResponse;
 import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
+import com.educaflow.apps.expedientes.db.Profile;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
+import com.educaflow.apps.expedientes.db.repo.ProfileRepository;
 import com.educaflow.apps.expedientes.db.repo.TipoExpedienteRepository;
 import com.educaflow.common.mapper.BeanMapperModel;
 import com.educaflow.common.util.AxelorDBUtil;
@@ -54,10 +56,7 @@ public class ExpedienteController {
 
             Expediente expediente=eventManager.triggerInitialEvent(tipoExpediente, eventContext);
             expediente.setTipoExpediente(tipoExpediente);
-            if (expediente.getCodeState()==null) {
-                throw new RuntimeException("El estado del expediente no puede ser null");
-            }
-            updateState(expediente,eventManager.getStateClass());
+            expediente.updateState(getInitialState(eventManager.getStateClass()));
             updateName(expediente);
             addHistorialEstado(expediente,null);
             eventManager.onEnterState(expediente, eventContext);
@@ -84,11 +83,19 @@ public class ExpedienteController {
             EventContext eventContext = getEventContext(eventManager,request);
             JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
             StateEventValidator stateEventValidator = getStateEventValidator(expediente.getTipoExpediente());
+            StateEnum stateEnum = new StateEnum(ReflectionUtil.getEnumConstant(eventManager.getStateClass(), expediente.getCodeState()));
+
+            if (eventName.equals(CommonEvent.EXIT.name())) {
+                response.setSignal("refresh-app", null);
+                return;
+            }
+
+            if ((stateEnum.getEvents().contains(eventName)==false)) {
+                throw new RuntimeException("El evento '" + eventName + "' no es válido para el estado '" + expediente.getCodeState() + "'");
+            }
 
 
-
-
-            if (((eventName.equals(CommonEvent.DELETE.name()))==false) && (eventName.equals(CommonEvent.EXIT.name())==false)) {
+            if (((eventName.equals(CommonEvent.DELETE.name()))==false) ) {
                 BeanValidationRules beanValidationRules = getBeansValidationRules(stateEventValidator, expediente.getCodeState(), eventName);
 
                 Map<String,Object> allowProperties = getAllowProperties(beanValidationRules.getFieldValidationRules());
@@ -104,15 +111,16 @@ public class ExpedienteController {
             }
 
 
-            String originalState =  expedienteOriginal.getCodeState();
+            String originalState = expedienteOriginal.getCodeState();
             eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
             String newState = expediente.getCodeState();
+            StateEnum newStateEnum = new StateEnum(ReflectionUtil.getEnumConstant(eventManager.getStateClass(), newState));
+            expediente.setAbierto(!newStateEnum.isClosed());
+            expediente.setCurrentActionProfile(getProfile(newStateEnum.getProfileName()));
 
             if (eventName.equals(CommonEvent.DELETE.name())) {
                 removeExpediente(expedienteRepository, expediente);
 
-                response.setSignal("refresh-app", null);
-            } else if (eventName.equals(CommonEvent.EXIT.name())) {
                 response.setSignal("refresh-app", null);
             } else {
                 //Es un evento "normal" del expediente
@@ -335,6 +343,16 @@ public class ExpedienteController {
         }
     }
 
+    public Profile getProfile(String profileName) {
+        ProfileRepository profileRepository = Beans.get(ProfileRepository.class);
+
+        Profile profile = profileRepository.findByCode(profileName);
+        if (profile == null) {
+            throw new IllegalArgumentException("El Profile con nombre '" + profileName + "' no existe.");
+        }
+        return profile;
+    }
+
 
     /*********************************************************************/
     /********************** Funciones de Validación **********************/
@@ -546,7 +564,59 @@ public class ExpedienteController {
     }
 
 
+    private Enum<?> getInitialState(Class<? extends Enum> stateEnumClass) {
+        Enum<?> initialState=null;
+        Enum<?>[] states = stateEnumClass.getEnumConstants();
 
+        for (Enum<?> state : states) {
+            StateEnum stateEnum=new StateEnum(state);
+
+            if (stateEnum.isInitial()) {
+                if (initialState != null) {
+                    throw new RuntimeException("Hay más de un estado inicial en la clase: " + stateEnumClass.getName());
+                }
+                initialState=state;
+            }
+        }
+
+        if (initialState == null) {
+            throw new RuntimeException("No se ha encontrado el estado inicial en la clase: " + stateEnumClass.getName());
+        }
+
+        return initialState;
+    }
+
+    private class StateEnum {
+
+        private final Enum state;
+
+        public StateEnum(Enum state) {
+            this.state = state;
+        }
+
+        public String getProfileName() {
+            return ((Enum<?>)ReflectionUtil.getFieldValue(state, "profile")).name();
+        }
+
+        public List<String> getEvents() {
+            List<Enum<?>>  events= (List<Enum<?>>)ReflectionUtil.getFieldValue(state, "events");
+
+            ArrayList<String> eventsString= new ArrayList<>(events.size());
+            for (Enum<?> event:events) {
+                eventsString.add(event.name());
+            }
+
+            return eventsString;
+        }
+
+        public boolean isInitial() {
+            return (Boolean)ReflectionUtil.getFieldValue(state, "initial");
+        }
+
+        public boolean isClosed() {
+            return (Boolean)ReflectionUtil.getFieldValue(state, "closed");
+        }
+    }
 
 
 

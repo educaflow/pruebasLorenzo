@@ -16,13 +16,13 @@ import java.io.InputStream;
 import java.time.LocalDate;
 
 
-public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<JustificacionFaltaProfesorado, JustificacionFaltaProfesorado.Estado, JustificacionFaltaProfesorado.Evento,JustificacionFaltaProfesorado.Profile> {
+public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<JustificacionFaltaProfesorado, JustificacionFaltaProfesorado.State, JustificacionFaltaProfesorado.Event,JustificacionFaltaProfesorado.Profile> {
 
     private final JustificacionFaltaProfesoradoRepository repository;
 
     @Inject
     public EventManager(JustificacionFaltaProfesoradoRepository repository) {
-        super(JustificacionFaltaProfesorado.class, JustificacionFaltaProfesorado.Estado.class, JustificacionFaltaProfesorado.Evento.class,JustificacionFaltaProfesorado.Profile.class);
+        super(JustificacionFaltaProfesorado.class, JustificacionFaltaProfesorado.State.class, JustificacionFaltaProfesorado.Event.class,JustificacionFaltaProfesorado.Profile.class);
         this.repository = repository;
     }
 
@@ -31,7 +31,6 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
 
         JustificacionFaltaProfesorado justificacionFaltaProfesorado = new JustificacionFaltaProfesorado();
         justificacionFaltaProfesorado.setTipoExpediente(tipoExpediente);
-        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
         justificacionFaltaProfesorado.setAnyo(LocalDate.now().getYear());
         justificacionFaltaProfesorado.setNombre("Lorenzo");
         justificacionFaltaProfesorado.setApellidos("García García");
@@ -43,13 +42,13 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
     @WhenEvent
     public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
         appendDocuments(justificacionFaltaProfesorado);
-        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.FIRMA_POR_USUARIO);
+        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.FIRMA_POR_USUARIO);
 
 
     }
     @WhenEvent
     public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
-        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
         justificacionFaltaProfesorado.setTipoResolucion(TipoResolucionJustificacionFaltaProfesorado.ACEPTAR);
         justificacionFaltaProfesorado.setDisconformidad(null);
         justificacionFaltaProfesorado.setResolucion(null);
@@ -61,13 +60,13 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
 
         switch (tipoResolucion) {
             case ACEPTAR:
-                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.ACEPTADO);
+                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.ACEPTADO);
                 break;
             case RECHAZAR:
-                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.RECHAZADO);
+                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.RECHAZADO);
                 break;
             case SUBSANAR_DATOS:
-                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.ENTRADA_DATOS);
                 break;
             default:
                 throw new IllegalArgumentException("Tipo de resolución no reconocido: " + tipoResolucion);
@@ -75,62 +74,50 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
     }
 
 
-
-    @WhenEvent
-    public void triggerDelete(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
-
-    }
-
     @WhenEvent
     public void triggerBack(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
-            JustificacionFaltaProfesorado.Estado estado=JustificacionFaltaProfesorado.Estado.valueOf(justificacionFaltaProfesorado.getCodeState());
+            JustificacionFaltaProfesorado.State state=JustificacionFaltaProfesorado.State.valueOf(justificacionFaltaProfesorado.getCodeState());
 
-            switch (estado) {
+            switch (state) {
                 case ENTRADA_DATOS:
-                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.ENTRADA_DATOS);
                     break;
                 case FIRMA_POR_USUARIO:
-                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.ENTRADA_DATOS);
                     break;
                 case REVISION_Y_FIRMA_POR_RESPONSABLE:
-                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.ENTRADA_DATOS);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.ENTRADA_DATOS);
                     break;
                 case ACEPTADO:
-                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
                     break;
                 case RECHAZADO:
-                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.Estado.REVISION_Y_FIRMA_POR_RESPONSABLE);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
                     break;
                 default:
-                    throw new IllegalArgumentException("Estado no reconocido: " + estado);
+                    throw new IllegalArgumentException("State no reconocido: " + state);
             }
 
     }
 
+
     @WhenEvent
-    public void triggerExit(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
-
+    public void triggerDelete(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+        //justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.);
     }
-
 
 
     @OnEnterState
     public void onEnterEntradaDatos(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
-        justificacionFaltaProfesorado.setCurrentActionProfiles(JustificacionFaltaProfesorado.Profile.CREADOR);
-        justificacionFaltaProfesorado.setAbierto(true);
     }
 
 
     @OnEnterState
     public void onEnterFirmaPorUsuario(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
-        justificacionFaltaProfesorado.setCurrentActionProfiles(JustificacionFaltaProfesorado.Profile.CREADOR);
-        justificacionFaltaProfesorado.setAbierto(true);
     }
 
     @OnEnterState
     public void onEnterRevisionYFirmaPorResponsable(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
-        justificacionFaltaProfesorado.setCurrentActionProfiles(JustificacionFaltaProfesorado.Profile.RESPONSABLE);
-        justificacionFaltaProfesorado.setAbierto(true);
     }
 
 
@@ -141,7 +128,6 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
 
     @OnEnterState
     public void onEnterRechazado(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
-        justificacionFaltaProfesorado.setAbierto(false);
     }
 
 

@@ -10,13 +10,13 @@ import com.educaflow.apps.expedientes.db.repo.PruebaRepository;
 import com.google.inject.Inject;
 
 
-public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<Prueba,Prueba.Estado,Prueba.Evento,Prueba.Profile> {
+public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<Prueba,Prueba.State,Prueba.Event,Prueba.Profile> {
 
     private final PruebaRepository pruebaRepository;
 
     @Inject
     public EventManager(PruebaRepository pruebaRepository) {
-        super(Prueba.class, Prueba.Estado.class, Prueba.Evento.class,Prueba.Profile.class);
+        super(Prueba.class, Prueba.State.class, Prueba.Event.class,Prueba.Profile.class);
         this.pruebaRepository = pruebaRepository;
     }
 
@@ -24,7 +24,7 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
     public Expediente triggerInitialEvent(TipoExpediente tipoExpediente, EventContext eventContext) {
         Prueba prueba=new Prueba();
         prueba.setTipoExpediente(tipoExpediente);
-        prueba.updateState(Prueba.Estado.ENTRADA_DATOS);
+        prueba.updateState(Prueba.State.ENTRADA_DATOS);
 
         return prueba;
     }
@@ -32,46 +32,39 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
 
     @WhenEvent
     public void triggerPresentar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
-        prueba.updateState(Prueba.Estado.REVISION);
+        prueba.updateState(Prueba.State.REVISION);
     }
 
 
     @WhenEvent
     public void triggerSubsanar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
-        prueba.updateState(Prueba.Estado.ENTRADA_DATOS);
+        prueba.updateState(Prueba.State.ENTRADA_DATOS);
     }
 
     @WhenEvent
     public void triggerAceptar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
-        prueba.updateState(Prueba.Estado.ACEPTADO);
+        prueba.updateState(Prueba.State.ACEPTADO);
     }
 
     @WhenEvent
     public void triggerRechazar(Prueba prueba,Prueba pruebaOriginal, EventContext eventContext) {
-        prueba.updateState(Prueba.Estado.RECHAZADO);
+        prueba.updateState(Prueba.State.RECHAZADO);
     }
 
     @WhenEvent
     public void triggerDelete(Prueba prueba, Prueba original, EventContext eventContext) {
-
+        //prueba.updateState(Prueba.Estado.);
     }
 
-    @WhenEvent
-    public void triggerExit(Prueba prueba, Prueba original, EventContext eventContext) {
-
-    }
 
     @OnEnterState
     public void onEnterEntradaDatos(Prueba prueba, EventContext eventContext) {
-        prueba.setCurrentActionProfiles(Prueba.Profile.CREADOR);
 
-        prueba.setAbierto(true);
     }
 
     @OnEnterState
     public void onEnterRevision(Prueba prueba, EventContext eventContext) {
-        prueba.setCurrentActionProfiles(Prueba.Profile.RESPONSABLE);
-        prueba.setAbierto(true);
+
     }
 
     @OnEnterState

@@ -66,6 +66,12 @@ public class BeanMapperModel {
                 } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     List<? extends Model> rawValue = (List<? extends Model>) PropertyUtils.getProperty(entity, propertyDescriptor.getName());
                     String mappedByRelation = BeanMapperUtil.getMappedByInOneToMany(clazz, propertyDescriptor.getName());
+                    Map<String,Object> innerAllowProperties;
+                    if (allowProperties != null) {
+                        innerAllowProperties = (Map<String,Object>)allowProperties.get(propertyDescriptor.getName());
+                    } else {
+                        innerAllowProperties = null;
+                    }
 
                     Class<? extends Model> tipoListaClass = (Class<? extends Model>) ((ParameterizedType) propertyDescriptor.getReadMethod().getGenericReturnType()).getActualTypeArguments()[0];
                     List value = new ArrayList();
@@ -132,7 +138,12 @@ public class BeanMapperModel {
 
                         Object rawValue = entityMap.get(propertyDescriptor.getName());
                         Model valueDest = (Model) PropertyUtils.getProperty(entityDest, propertyDescriptor.getName());
-
+                        Map<String,Object> innerAllowProperties;
+                        if (allowProperties != null) {
+                            innerAllowProperties = (Map<String,Object>)allowProperties.get(propertyDescriptor.getName());
+                        } else {
+                            innerAllowProperties = null;
+                        }
 
                         if ((rawValue == null) && (valueDest == null)) {
                             //No hacer nada
@@ -140,10 +151,10 @@ public class BeanMapperModel {
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), null);
                         } else if ((rawValue != null) && (valueDest == null)) {
                             valueDest = ((Class<? extends Model>) propertyDescriptor.getPropertyType()).getDeclaredConstructor().newInstance();
-                            copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()));
+                            copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest, innerAllowProperties);
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), valueDest);
                         } else if ((rawValue != null) && (valueDest != null)) {
-                            copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()));
+                            copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest, innerAllowProperties);
                         } else {
                             throw new RuntimeException("Error de lógica");
                         }
@@ -152,7 +163,12 @@ public class BeanMapperModel {
                         List<Model> listTarget = (List<Model>) PropertyUtils.getProperty(entityDest, propertyDescriptor.getName());
                         Class<? extends Model> tipoListaClass = (Class<? extends Model>) ((ParameterizedType) propertyDescriptor.getReadMethod().getGenericReturnType()).getActualTypeArguments()[0];
                         String mappedByRelation = BeanMapperUtil.getMappedByInOneToMany(clazz, propertyDescriptor.getName());
-
+                        Map<String,Object> innerAllowProperties;
+                        if (allowProperties != null) {
+                            innerAllowProperties = (Map<String,Object>)allowProperties.get(propertyDescriptor.getName());
+                        } else {
+                            innerAllowProperties = null;
+                        }
                         if ((listSource == null) && (listTarget == null)) {
                             //No hacer nada
 
@@ -162,7 +178,7 @@ public class BeanMapperModel {
                             List<Model> listValues = new ArrayList<>();
                             for (Object rawValue : listSource) {
                                 Model itemValue = ((Class<? extends Model>) tipoListaClass).getDeclaredConstructor().newInstance();
-                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()), mappedByRelation, entityDest);
+                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, innerAllowProperties, mappedByRelation, entityDest);
                                 listValues.add(itemValue);
                             }
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), listValues);
@@ -171,13 +187,13 @@ public class BeanMapperModel {
 
                             for (Object rawValue : modelListCompare.getSourceWhereOnlySource()) {
                                 Model itemValue = tipoListaClass.getDeclaredConstructor().newInstance();
-                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()), mappedByRelation, entityDest);
+                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, innerAllowProperties, mappedByRelation, entityDest);
                                 listTarget.add(itemValue);
                             }
                             for (int i = 0; i < modelListCompare.getTargetWhereSourceAndTarget().size(); i++) {
                                 Model itemValue = modelListCompare.getTargetWhereSourceAndTarget().get(i);
                                 Object rawValue = modelListCompare.getSourceWhereSourceAndTarget().get(i);
-                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, (Map<String,Object>)allowProperties.get(propertyDescriptor.getName()), mappedByRelation, entityDest);
+                                copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, innerAllowProperties, mappedByRelation, entityDest);
                             }
                             for (int i = 0; i < modelListCompare.getTargetWhereOnlyTarget().size(); i++) {
                                 Model itemValue = modelListCompare.getTargetWhereOnlyTarget().get(i);

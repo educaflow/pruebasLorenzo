@@ -13,7 +13,7 @@
         <datetime name="fechaUltimoEstado" />
         <boolean name="abierto" defaultValue="true" />
         <one-to-many name="historialEstados" ref="ExpedienteHistorialEstados" mappedBy="expediente" />
-        <one-to-many name="currentActionProfiles" ref="ExpedienteProfile" mappedBy="expediente" />
+        <many-to-one name="currentActionProfile" ref="com.educaflow.apps.expedientes.db.Profile" />
 
         <extra-imports-model>
             <![CDATA[
@@ -31,25 +31,6 @@ public void updateState(Enum estado) {
     this.setFechaUltimoEstado(java.time.LocalDateTime.now());
 }
 
-    public void setCurrentActionProfiles(Enum[] profiles) {
-        if (this.getCurrentActionProfiles()==null) {
-            this.setCurrentActionProfiles(new ArrayList<ExpedienteProfile>());
-        } else {
-            this.getCurrentActionProfiles().clear();
-        }
-        ProfileRepository profileRepository = Beans.get(ProfileRepository.class);
-
-        for (Enum profileEnum : profiles) {
-            ExpedienteProfile expedienteProfile=new ExpedienteProfile();
-            expedienteProfile.setExpediente(this);
-            Profile profile = profileRepository.findByCode(profileEnum.name());
-            if (profile == null) {
-                throw new IllegalArgumentException("El Profile con nombre '" + profileEnum.name() + "' no existe.");
-            }
-            expedienteProfile.setProfile(profile);
-            this.addCurrentActionProfile(expedienteProfile);
-        }
-    }
 
 
 ]]>

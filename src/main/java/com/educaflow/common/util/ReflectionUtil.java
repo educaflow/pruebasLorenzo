@@ -1,6 +1,7 @@
 package com.educaflow.common.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,18 @@ public class ReflectionUtil {
             throw new RuntimeException("No enum constant " + enumClass.getName() + "." + constantName, e);
         }
     }
+
+
+    public static Object getFieldValue(Object obj, String fieldName) {
+        try {
+            Field profileField = obj.getClass().getDeclaredField(fieldName);
+            profileField.setAccessible(true);
+            return profileField.get(obj);
+        } catch (Exception ex) {
+            throw new RuntimeException("No se pudo acceder al campo '" + fieldName + "' del objeto " + obj, ex);
+        }
+    }
+
 
 
 }

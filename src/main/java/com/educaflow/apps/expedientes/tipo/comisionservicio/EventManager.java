@@ -12,13 +12,13 @@ import com.google.inject.Inject;
 
 
 
-public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<ComisionServicio, ComisionServicio.Estado, ComisionServicio.Evento,ComisionServicio.Profile> {
+public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<ComisionServicio, ComisionServicio.State, ComisionServicio.Event,ComisionServicio.Profile> {
 
     private final ComisionServicioRepository repository;
 
     @Inject
     public EventManager(ComisionServicioRepository repository) {
-        super(ComisionServicio.class, ComisionServicio.Estado.class, ComisionServicio.Evento.class,ComisionServicio.Profile.class);
+        super(ComisionServicio.class, ComisionServicio.State.class, ComisionServicio.Event.class,ComisionServicio.Profile.class);
         this.repository = repository;
     }
 
@@ -27,12 +27,9 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
 
         ComisionServicio comisionServicio = new ComisionServicio();
         comisionServicio.setTipoExpediente(tipoExpediente);
-        //comisionServicio.updateState(ComisionServicio.Estado.);
-
 
         return comisionServicio;
     }
-
 
 
 
@@ -40,86 +37,52 @@ public class EventManager extends com.educaflow.apps.expedientes.common.EventMan
     public void triggerPresentar(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
         //comisionServicio.updateState(ComisionServicio.Estado.);
     }
-
-
-
+    @WhenEvent
+    public void triggerBack(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
+        //comisionServicio.updateState(ComisionServicio.Estado.);
+    }
     @WhenEvent
     public void triggerPresentarDocumentosFirmados(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
         //comisionServicio.updateState(ComisionServicio.Estado.);
     }
-
-
-
     @WhenEvent
-    public void triggerEntregarTickets(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
+    public void triggerResolver(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
         //comisionServicio.updateState(ComisionServicio.Estado.);
     }
-
-
-
-    @WhenEvent
-    public void triggerAceptar(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
-        //comisionServicio.updateState(ComisionServicio.Estado.);
-    }
-
-
-
-    @WhenEvent
-    public void triggerRechazar(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
-        //comisionServicio.updateState(ComisionServicio.Estado.);
-    }
-
-
-
-
 
     @WhenEvent
     public void triggerDelete(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
-
+        //comisionServicio.updateState(ComisionServicio.Estado.);
     }
 
-    @WhenEvent
-    public void triggerExit(ComisionServicio comisionServicio, ComisionServicio original, EventContext eventContext) {
 
-    }
+
 
 
 
     @OnEnterState
     public void onEnterEntradaDatos(ComisionServicio comisionServicio, EventContext eventContext) {
-        comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.CREADOR);
-        comisionServicio.setAbierto(true);
+        //comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.);
     }
-
     @OnEnterState
     public void onEnterFirmaPorUsuario(ComisionServicio comisionServicio, EventContext eventContext) {
-        comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.CREADOR);
-        comisionServicio.setAbierto(true);
+        //comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.);
     }
-
     @OnEnterState
-    public void onEnterAceptarRealizarComison(ComisionServicio comisionServicio, EventContext eventContext) {
-        comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.CREADOR);
-        comisionServicio.setAbierto(true);
+    public void onEnterResolverPermitirComision(ComisionServicio comisionServicio, EventContext eventContext) {
+        //comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.);
     }
-
     @OnEnterState
     public void onEnterEntregaTickets(ComisionServicio comisionServicio, EventContext eventContext) {
-        comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.CREADOR);
-        comisionServicio.setAbierto(true);
+        //comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.);
+    }
+    @OnEnterState
+    public void onEnterAceptado(ComisionServicio comisionServicio, EventContext eventContext) {
+        //comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.);
     }
 
-    @OnEnterState
-    public void onEnterAceptada(ComisionServicio comisionServicio, EventContext eventContext) {
-        comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.CREADOR);
-        comisionServicio.setAbierto(true);
-    }
 
-    @OnEnterState
-    public void onEnterRechazada(ComisionServicio comisionServicio, EventContext eventContext) {
-        comisionServicio.setCurrentActionProfiles(ComisionServicio.Profile.CREADOR);
-        comisionServicio.setAbierto(true);
-    }
+
 
 
 

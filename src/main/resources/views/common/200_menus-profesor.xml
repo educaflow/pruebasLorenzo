@@ -15,12 +15,12 @@
     </action-view>
     <action-view name="profesores-pendiente-action" title="Listado de expedientes pendientes de que realices la tarea"  model="com.educaflow.apps.expedientes.db.Expediente">
         <view type="grid" name="expediente-ver-grid-creador"/>
-        <domain>self.abierto=true AND EXISTS(SELECT 1 FROM ExpedienteProfile ep WHERE ep.expediente.id = self.id AND ep.profile.code='CREADOR')</domain>
+        <domain>self.abierto=true AND self.currentActionProfile.code='CREADOR'</domain>
         <context name="_profile" expr="CREADOR"/>
     </action-view>
     <action-view name="profesores-esperando-action" title="Expedientes esperando a que otra persona realice una tarea"  model="com.educaflow.apps.expedientes.db.Expediente" >
         <view type="grid" name="expediente-ver-grid-creador"  />
-        <domain>self.abierto=true AND NOT EXISTS(SELECT 1 FROM ExpedienteProfile ep WHERE ep.expediente.id = self.id AND ep.profile.code='CREADOR')</domain>
+        <domain>self.abierto=true AND self.currentActionProfile.code!='CREADOR'</domain>
         <context name="_profile" expr="CREADOR"/>
     </action-view>
     <action-view name="profesores-cerrado-action"  title="Expedientes cerrados" model="com.educaflow.apps.expedientes.db.Expediente">
