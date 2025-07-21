@@ -3,7 +3,7 @@
               xmlns="http://axelor.com/xml/ns/object-views"
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
-    <form name="exp-ComisionServicio-Base" title=""  width="large"  model="com.educaflow.apps.expedientes.db.ComisionServicio" groups="admins,users">
+    <form name="exp-ComisionServicio-Base" title="Comisión de servicio"  width="large"  model="com.educaflow.apps.expedientes.db.ComisionServicio" groups="admins,users">
 
 
     </form>
@@ -19,11 +19,12 @@
 
 
 
-    <!-- ***************************************************************************************  -->
-    <!-- *************************************** CREADOR ***************************************  -->
-    <!-- ***************************************************************************************  -->
 
-    <form profile="CREADOR" state="ENTRADA_DATOS">
+    <!-- *********************************************************************************************  -->
+    <!-- *************************************** ENTRADA_DATOS ***************************************  -->
+    <!-- *********************************************************************************************  -->
+    
+    <form state="ENTRADA_DATOS" profile="CREADOR">
         <include-panels>
 
         </include-panels>
@@ -35,7 +36,25 @@
         </right>
     </form>
 
-    <form profile="CREADOR" state="FIRMA_POR_USUARIO">
+    <form state="ENTRADA_DATOS" >
+        <include-panels>
+
+        </include-panels>
+        <left>
+            
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+
+
+
+    <!-- *************************************************************************************************  -->
+    <!-- *************************************** FIRMA_POR_USUARIO ***************************************  -->
+    <!-- *************************************************************************************************  -->
+    
+    <form state="FIRMA_POR_USUARIO" profile="CREADOR">
         <include-panels>
 
         </include-panels>
@@ -47,7 +66,25 @@
         </right>
     </form>
 
-    <form profile="CREADOR" state="ACEPTAR_REALIZAR_COMISON">
+    <form state="FIRMA_POR_USUARIO" >
+        <include-panels>
+
+        </include-panels>
+        <left>
+            
+        </left>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+
+
+
+    <!-- **********************************************************************************************************  -->
+    <!-- *************************************** RESOLVER_PERMITIR_COMISION ***************************************  -->
+    <!-- **********************************************************************************************************  -->
+    
+    <form state="RESOLVER_PERMITIR_COMISION" profile="RESPONSABLE">
         <include-panels>
 
         </include-panels>
@@ -59,7 +96,7 @@
         </right>
     </form>
 
-    <form profile="CREADOR" state="ENTREGA_TICKETS">
+    <form state="RESOLVER_PERMITIR_COMISION" >
         <include-panels>
 
         </include-panels>
@@ -67,11 +104,17 @@
             
         </left>
         <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
 
-    <form profile="CREADOR" state="ACEPTADA">
+
+
+    <!-- ***********************************************************************************************  -->
+    <!-- *************************************** ENTREGA_TICKETS ***************************************  -->
+    <!-- ***********************************************************************************************  -->
+
+    <form state="ENTREGA_TICKETS" >
         <include-panels>
 
         </include-panels>
@@ -79,127 +122,17 @@
             
         </left>
         <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-
-    <form profile="CREADOR" state="RECHAZADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- *******************************************************************************************  -->
-    <!-- *************************************** RESPONSABLE ***************************************  -->
-    <!-- *******************************************************************************************  -->
-
-    <form profile="RESPONSABLE" state="ENTRADA_DATOS">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="RESPONSABLE" state="FIRMA_POR_USUARIO">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="RESPONSABLE" state="ACEPTAR_REALIZAR_COMISON">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="RESPONSABLE" state="ENTREGA_TICKETS">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="RESPONSABLE" state="ACEPTADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="RESPONSABLE" state="RECHAZADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-
-
-
-
-
-
-
-
-
 
 
 
     <!-- ****************************************************************************************  -->
-    <!-- *************************************** DIRECTOR ***************************************  -->
+    <!-- *************************************** ACEPTADO ***************************************  -->
     <!-- ****************************************************************************************  -->
 
-    <form profile="DIRECTOR" state="ENTRADA_DATOS">
+    <form state="ACEPTADO" >
         <include-panels>
 
         </include-panels>
@@ -207,246 +140,9 @@
             
         </left>
         <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-
-    <form profile="DIRECTOR" state="FIRMA_POR_USUARIO">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="DIRECTOR" state="ACEPTAR_REALIZAR_COMISON">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="DIRECTOR" state="ENTREGA_TICKETS">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="DIRECTOR" state="ACEPTADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="DIRECTOR" state="RECHAZADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- ******************************************************************************************  -->
-    <!-- *************************************** SECRETARIO ***************************************  -->
-    <!-- ******************************************************************************************  -->
-
-    <form profile="SECRETARIO" state="ENTRADA_DATOS">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="SECRETARIO" state="FIRMA_POR_USUARIO">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="SECRETARIO" state="ACEPTAR_REALIZAR_COMISON">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="SECRETARIO" state="ENTREGA_TICKETS">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="SECRETARIO" state="ACEPTADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="SECRETARIO" state="RECHAZADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- ***************************************************************************************  -->
-    <!-- *************************************** AUDITOR ***************************************  -->
-    <!-- ***************************************************************************************  -->
-
-    <form profile="AUDITOR" state="ENTRADA_DATOS">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="AUDITOR" state="FIRMA_POR_USUARIO">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="AUDITOR" state="ACEPTAR_REALIZAR_COMISON">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="AUDITOR" state="ENTREGA_TICKETS">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="AUDITOR" state="ACEPTADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
-    <form profile="AUDITOR" state="RECHAZADA">
-        <include-panels>
-
-        </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
-    </form>
-
 
 
 

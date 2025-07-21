@@ -111,10 +111,10 @@
 
     </form>
 
-    <!-- ***************************************************************************************  -->
-    <!-- *************************************** CREADOR ***************************************  -->
-    <!-- ***************************************************************************************  -->
-    <form profile="CREADOR" state="ENTRADA_DATOS">
+    <!-- *********************************************************************************************  -->
+    <!-- *************************************** ENTRADA_DATOS ***************************************  -->
+    <!-- *********************************************************************************************  -->
+    <form state="ENTRADA_DATOS" profile="CREADOR" >
         <include-panels>
             -datos-profesor
             -disconformidad-view
@@ -128,7 +128,23 @@
             <button name="PRESENTAR" colSpan="2" title="Siguiente" onClick="action-event-expediente" />
         </right>
     </form>
-    <form profile="CREADOR" state="FIRMA_POR_USUARIO">
+    <form state="ENTRADA_DATOS">
+        <include-panels>
+            -datos-profesor
+            -disconformidad-view
+            -datos-falta
+            -justificante-view
+        </include-panels>
+        <left/>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+
+    <!-- *********************************************************************************************  -->
+    <!-- ************************************* FIRMA_POR_USUARIO *************************************  -->
+    <!-- *********************************************************************************************  -->
+    <form state="FIRMA_POR_USUARIO" profile="CREADOR">
         <include-panels>
             -datos-profesor
             -datos-falta-view
@@ -141,7 +157,34 @@
             <button name="PRESENTAR_DOCUMENTOS_FIRMADOS" colSpan="3"  title="Presentar documentación" onClick="action-event-expediente" prompt="¿Esta seguro que desea presentar la documentación?&lt;br&gt;No podrá deshacer esta acción"/>
         </right>
     </form>
-    <form profile="CREADOR" state="REVISION_Y_FIRMA_POR_RESPONSABLE">
+    <form state="FIRMA_POR_USUARIO">
+        <include-panels>
+            -datos-profesor
+            -datos-falta-view
+            -justificante-view
+        </include-panels>
+        <left/>
+        <right>
+            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
+        </right>
+    </form>
+
+
+    <!-- **********************************************************************************************  -->
+    <!-- ****************************** REVISION_Y_FIRMA_POR_RESPONSABLE ******************************  -->
+    <!-- **********************************************************************************************  -->
+    <form state="REVISION_Y_FIRMA_POR_RESPONSABLE" profile="RESPONSABLE" >
+        <include-panels>
+            -datos-profesor
+            -datos-falta-view
+            justificante-firmar-director
+        </include-panels>
+        <left/>
+        <right>
+            <button name="RESOLVER" colSpan="3" colOffset="9" title="Resolver el expediente" onClick="action-event-expediente" prompt="¿Esta seguro que desea resolver el expediente?&lt;br&gt;No podrá deshacer esta acción"/>
+        </right>
+    </form>
+    <form state="REVISION_Y_FIRMA_POR_RESPONSABLE">
         <include-panels>
             -datos-profesor
             -datos-falta-view
@@ -152,7 +195,14 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form profile="CREADOR" state="ACEPTADO">
+
+
+
+
+    <!-- **********************************************************************  -->
+    <!-- ****************************** ACEPTADO ******************************  -->
+    <!-- **********************************************************************  -->
+    <form state="ACEPTADO">
         <include-panels>
             -datos-profesor
             -datos-falta-view
@@ -164,6 +214,11 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
+
+
+    <!-- **********************************************************************  -->
+    <!-- ****************************** RECHAZADO ******************************  -->
+    <!-- **********************************************************************  -->
     <form profile="CREADOR" state="RECHAZADO">
         <include-panels>
             -datos-profesor
@@ -179,139 +234,6 @@
 
 
 
-
-
-
-    <!-- ***************************************************************************************  -->
-    <!-- ************************************* RESPONSABLE *************************************  -->
-    <!-- ***************************************************************************************  -->
-    <form profile="RESPONSABLE" state="ENTRADA_DATOS">
-        <include-panels>
-            -datos-profesor
-            -disconformidad-view
-            -datos-falta
-            -justificante-view
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="RESPONSABLE" state="FIRMA_POR_USUARIO">
-        <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            -justificante-view
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="RESPONSABLE" state="REVISION_Y_FIRMA_POR_RESPONSABLE">
-        <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            justificante-firmar-director
-        </include-panels>
-        <left/>
-        <right>
-            <button name="RESOLVER" colSpan="3" colOffset="9" title="Resolver el expediente" onClick="action-event-expediente" prompt="¿Esta seguro que desea resolver el expediente?&lt;br&gt;No podrá deshacer esta acción"/>
-        </right>
-    </form>
-    <form profile="RESPONSABLE" state="ACEPTADO">
-        <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            -justificante-view-documentoCompletoFirmadoUsuarioDirector
-            -resolucion-view
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="RESPONSABLE" state="RECHAZADO">
-        <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            -justificante-view-documentoCompletoFirmadoUsuario
-            -resolucion-view
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-
-
-
-
-
-
-
-
-    <!-- ***************************************************************************************  -->
-    <!-- *************************************** AUDITOR ***************************************  -->
-    <!-- ***************************************************************************************  -->
-    <form profile="AUDITOR" state="ENTRADA_DATOS">
-        <include-panels>
-            -datos-profesor
-            -disconformidad-view
-            -datos-falta-view
-            -justificante-view
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="AUDITOR" state="FIRMA_POR_USUARIO">
-        <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            -justificante-view
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="AUDITOR" state="REVISION_Y_FIRMA_POR_RESPONSABLE">
-        <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            -justificante-view-documentoCompletoFirmadoUsuario
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="AUDITOR" state="ACEPTADO">
-        <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            -justificante-view-documentoCompletoFirmadoUsuarioDirector
-            -resolucion-view
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="AUDITOR" state="RECHAZADO">
-        <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            -justificante-view-documentoCompletoFirmadoUsuario
-            -resolucion-view
-        </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
 
 
 

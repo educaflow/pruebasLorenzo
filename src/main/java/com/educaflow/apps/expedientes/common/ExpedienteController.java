@@ -19,10 +19,7 @@ import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.util.AxelorViewUtil;
 import com.educaflow.common.util.ReflectionUtil;
 import com.educaflow.common.util.TextUtil;
-import com.educaflow.common.validation.engine.BeanValidationRules;
-import com.educaflow.common.validation.engine.FieldValidationRules;
-import com.educaflow.common.validation.engine.ValidationRule;
-import com.educaflow.common.validation.engine.ValidatorEngine;
+import com.educaflow.common.validation.engine.*;
 import com.educaflow.common.validation.messages.BusinessMessages;
 import com.google.common.base.CaseFormat;
 import com.google.inject.Inject;
@@ -98,13 +95,14 @@ public class ExpedienteController {
             if (((eventName.equals(CommonEvent.DELETE.name()))==false) ) {
                 BeanValidationRules beanValidationRules = getBeansValidationRules(stateEventValidator, expediente.getCodeState(), eventName);
 
-                Map<String,Object> allowProperties = getAllowProperties(beanValidationRules.getFieldValidationRules());
+                Map<String,Object> allowProperties = AllowPropertiesFactory.getAllowProperties(beanValidationRules.getFieldValidationRules());
                 populateExpedienteFromActionRequest(expediente, request, eventName, eventContext, allowProperties);
 
 
                 ValidatorEngine validatorEngine = new ValidatorEngine();
                 BusinessMessages businessMessages = validatorEngine.validate(expediente, beanValidationRules);
                 if (businessMessages.isValid()==false) {
+                    JPA.em().detach(expediente);
                     AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
                     return;
                 }
@@ -153,7 +151,7 @@ public class ExpedienteController {
         try {
             Map<String,Object> context = getActionRequestContext(request);
             Class<? extends Model> beanClass =(Class<? extends Model>) Class.forName((String)context.get("_model"));
-            Model bean=findModel(beanClass, (Long) context.get("id"));
+            Model bean=findModel(beanClass, objectToLong(context.get("id")));
             String validateProperty=(String)((Map<String,Object>) context.get("_parent")).get("_source");
             String methodName="get"+TextUtil.toFirstsLetterToUpperCase(validateProperty);
             Expediente expediente=getExpedienteParentFromDB(request);
@@ -163,12 +161,12 @@ public class ExpedienteController {
             List<BeanValidationRules> beansValidationRules = getBeansValidationRules(stateEventValidator, expediente.getCodeState());
             List<FieldValidationRules> fieldsValidationRules=getFieldsValidationRules(beansValidationRules,methodName);
 
-            Map<String,Object> allowProperties = getAllowProperties(fieldsValidationRules);
+            Map<String,Object> allowProperties = AllowPropertiesFactory.getAllowProperties(fieldsValidationRules);
             BeanMapperModel.copyMapToEntity(beanClass, context, bean, allowProperties);
 
             ValidatorEngine validatorEngine = new ValidatorEngine();
             BusinessMessages businessMessages = validatorEngine.validate(bean, fieldsValidationRules);
-
+            JPA.em().detach(bean);
             AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
 
         } catch (Exception ex) {
@@ -438,62 +436,6 @@ public class ExpedienteController {
     }
 
 
-    private Map<String,Object> getAllowProperties(List<? extends ValidationRule> validationRules) {
-        Map<String,Object> allowProperties = new HashMap<>();
-
-        for(ValidationRule validationRule:validationRules) {
-            if ((validationRule instanceof FieldValidationRules)) {
-                FieldValidationRules fieldValidationRules= (FieldValidationRules) validationRule;
-
-                if (allowProperties.containsKey(fieldValidationRules.getFieldName())) {
-                    Map<String,Object> originalAllowProperties = (Map<String, Object>) allowProperties.get(fieldValidationRules.getFieldName());
-                    Map<String,Object> newAllowProperties = getAllowProperties(fieldValidationRules.getValidationRules());
-
-                    Map<String,Object> joinedAllowProperties =joinAllowProperties(originalAllowProperties, newAllowProperties);
-
-                } else {
-                    allowProperties.put(fieldValidationRules.getFieldName(), getAllowProperties(fieldValidationRules.getValidationRules()));
-                }
-            }
-        }
-
-        if (allowProperties.isEmpty()) {
-            return null;
-        } else {
-            return allowProperties;
-        }
-    }
-
-    Map<String,Object> joinAllowProperties(Map<String,Object> originalAllowProperties,Map<String,Object> newAllowProperties) {
-        Map<String,Object> allowProperties = new HashMap<>();
-
-        if (originalAllowProperties!=null) {
-            for (Map.Entry<String, Object> entry : originalAllowProperties.entrySet()) {
-                allowProperties.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        if (newAllowProperties!=null) {
-            for (Map.Entry<String, Object> entry : newAllowProperties.entrySet()) {
-                if (allowProperties.containsKey(entry.getKey())) {
-                    if (allowProperties.get(entry.getKey()) == null) {
-                        allowProperties.put(entry.getKey(), entry.getValue());
-                    } else {
-                        allowProperties.put(entry.getKey(), joinAllowProperties((Map<String, Object>) allowProperties.get(entry.getKey()), (Map<String, Object>) entry.getValue()));
-                    }
-                } else {
-                    allowProperties.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-
-        if (allowProperties.isEmpty()) {
-            return null;
-        } else {
-            return allowProperties;
-        }
-    }
-
     /*******************************************************************/
     /********************** Funciones de Utilidad **********************/
     /*******************************************************************/
@@ -544,8 +486,12 @@ public class ExpedienteController {
     }
 
 
-    private long objectToLong(Object obj) {
-        return ((Number)obj).longValue();
+    private Long objectToLong(Object obj) {
+        if (obj == null) {
+            return null;
+        } else {
+            return ((Number) obj).longValue();
+        }
     }
 
 

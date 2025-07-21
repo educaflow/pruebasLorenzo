@@ -5,8 +5,6 @@ import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
-import com.educaflow.apps.expedientes.db.TipoExpediente;
-import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.repo.JustificacionFaltaProfesoradoRepository;
 import com.google.inject.Inject;

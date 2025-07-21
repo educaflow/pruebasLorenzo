@@ -3,9 +3,7 @@ package com.educaflow.apps.expedientes.tipo.prueba;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
-import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.Prueba;
-import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.apps.expedientes.db.repo.PruebaRepository;
 import com.google.inject.Inject;
 

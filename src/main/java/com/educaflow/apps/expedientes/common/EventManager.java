@@ -14,7 +14,8 @@ import java.util.Arrays;
 
 public abstract class EventManager<T extends Expediente, State extends Enum<State>, Event extends Enum<Event>, Profile extends Enum<Profile> > {
 
-    final private String VIEW_NAME_DEFAULT_FORMAT ="exp-${EXPEDIENT_CODE}-${ROLE_NAME}-${STATE}-form";
+    final private String VIEW_NAME_STATE_PROFILE_FORMAT ="exp-${EXPEDIENT_CODE}-${STATE_CODE}-${PROFILE_CODE}-form";
+    final private String VIEW_NAME_STATE_FORMAT="exp-${EXPEDIENT_CODE}-${STATE_CODE}-form";
 
     private final Class<T> modelClass;
     private final Class<State> stateClass;
@@ -63,15 +64,23 @@ public abstract class EventManager<T extends Expediente, State extends Enum<Stat
     }
 
     public String getViewName(T expediente, EventContext<Profile> eventContext) {
+        String tipoExpedienteCode=expediente.getTipoExpediente().getCode();
+        State state=(State)ReflectionUtil.getEnumConstant(stateClass,expediente.getCodeState());
+        Profile profile=eventContext.getProfile();
 
+        String stateProfileViewName=getStateProfileViewName(tipoExpedienteCode, state, profile);
+        String stateViewName= getStateViewName(tipoExpedienteCode, state, profile);
 
-        String viewName=getDefaultViewName(expediente.getTipoExpediente().getCode(), eventContext.getProfile(),(State)ReflectionUtil.getEnumConstant(stateClass,expediente.getCodeState()));
-
-        if (existsView(viewName)==false) {
-            throw new RuntimeException("No existe la vista:" + viewName + " en el expediente:" + expediente + " en el contexto:" + eventContext);
+        //Los nombre de las vistas tienen una prioridad en caso de que existan varias.
+        if (existsView(stateProfileViewName)) {
+            return stateProfileViewName;
+        }
+        if (existsView(stateViewName)) {
+            return stateViewName;
         }
 
-        return viewName;
+        throw new RuntimeException("No existe la vista en el expediente:" + tipoExpedienteCode + " en el contexto:" + profile.name() + " - " + state.name());
+
 
     }
 
@@ -79,10 +88,19 @@ public abstract class EventManager<T extends Expediente, State extends Enum<Stat
         return AxelorViewUtil.existsView(viewName,"form",this.getModelClass().getName());
     }
 
-    private String getDefaultViewName(String tipoExpedienteCode, Profile profile, State state) {
-        String viewName = VIEW_NAME_DEFAULT_FORMAT.replace("${EXPEDIENT_CODE}", tipoExpedienteCode)
-                .replace("${ROLE_NAME}", profile.name())
-                .replace("${STATE}", state.name());
+
+    private String getStateProfileViewName(String tipoExpedienteCode, State state, Profile profile) {
+        return interpolateViewName(VIEW_NAME_STATE_PROFILE_FORMAT,tipoExpedienteCode, state, profile);
+    }
+    private String getStateViewName(String tipoExpedienteCode, State state, Profile profile) {
+        return interpolateViewName(VIEW_NAME_STATE_FORMAT,tipoExpedienteCode, state, profile);
+    }
+
+
+    private String interpolateViewName(String template,String tipoExpedienteCode, State state, Profile profile) {
+        String viewName = template.replace("${EXPEDIENT_CODE}", tipoExpedienteCode)
+                .replace("${PROFILE_CODE}", profile.name())
+                .replace("${STATE_CODE}", state.name());
 
         return viewName;
     }

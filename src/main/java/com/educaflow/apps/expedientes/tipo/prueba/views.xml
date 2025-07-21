@@ -15,10 +15,10 @@
         </panel>
     </form>
 
-    <!-- ***************************************************************************************  -->
-    <!-- *************************************** CREADOR ***************************************  -->
-    <!-- ***************************************************************************************  -->
-    <form profile="CREADOR" state="ENTRADA_DATOS"   >
+    <!-- *********************************************************************************************  -->
+    <!-- *************************************** ENTRADA_DATOS ***************************************  -->
+    <!-- *********************************************************************************************  -->
+    <form state="ENTRADA_DATOS" profile="CREADOR"   >
         <include-panels>
             datos-solicitante
             fcts-panel
@@ -30,38 +30,12 @@
             <button name="PRESENTAR" title="Guardar" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form profile="CREADOR" state="REVISION"   >
+    <form state="ENTRADA_DATOS"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
         </include-panels>
         <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="CREADOR" state="ACEPTADO"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-        </include-panels>
-        <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="CREADOR" state="RECHAZADO"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-
         </left>
         <right>
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
@@ -71,22 +45,11 @@
 
 
 
-    <!-- ***************************************************************************************  -->
-    <!-- ************************************* RESPONSABLE *************************************  -->
-    <!-- ***************************************************************************************  -->
-    <form profile="RESPONSABLE" state="ENTRADA_DATOS"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-        </include-panels>
-        <left>
 
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="RESPONSABLE" state="REVISION"   title="Prueba Estado inicial2" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
+    <!-- ****************************************************************************************  -->
+    <!-- *************************************** REVISION ***************************************  -->
+    <!-- ****************************************************************************************  -->
+    <form state="REVISION" profile="RESPONSABLE" >
         <include-panels>
             -datos-solicitante
             fcts-panel
@@ -101,38 +64,7 @@
             <button name="ACEPTAR" title="Aceptar" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form profile="RESPONSABLE" state="ACEPTADO"   title="Prueba Estado inicial3" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-            <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-    <form profile="RESPONSABLE" state="RECHAZADO"   title="Prueba Estado inicial4" model="com.educaflow.apps.expedientes.db.Prueba" groups="admins,users">
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-            <button name="SUBSANAR" title="Reabrir" css="btn-primary" outline="true" onClick="action-event-expediente"/>
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-
-    <!-- ***************************************************************************************  -->
-    <!-- *************************************** AUDITOR ***************************************  -->
-    <!-- ***************************************************************************************  -->
-    <form profile="AUDITOR" state="ENTRADA_DATOS"   >
+    <form state="REVISION"   >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -144,7 +76,13 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form profile="AUDITOR" state="REVISION"   >
+
+
+
+    <!-- ****************************************************************************************  -->
+    <!-- *************************************** ACEPTADO ***************************************  -->
+    <!-- ****************************************************************************************  -->
+    <form state="ACEPTADO" >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -156,7 +94,12 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form profile="AUDITOR" state="ACEPTADO"   >
+
+
+    <!-- *****************************************************************************************  -->
+    <!-- *************************************** RECHAZADO ***************************************  -->
+    <!-- *****************************************************************************************  -->
+    <form state="RECHAZADO" >
         <include-panels>
             -datos-solicitante
             -fcts-panel
@@ -169,22 +112,6 @@
             <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
         </right>
     </form>
-    <form profile="AUDITOR" state="RECHAZADO"   >
-        <include-panels>
-            -datos-solicitante
-            -fcts-panel
-            -datos-resolucion
-        </include-panels>
-        <left>
-
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
-    </form>
-
-
-
 
 
 

@@ -31,6 +31,10 @@ public class BeanMapperModel {
     public static void copyEntityToEntity(Class<? extends Model> clazz, Model entity, Model entityDest, Map<String,Object> allowProperties) { copyEntityToEntity(clazz, entity, entityDest, allowProperties, null, null); }
     public static void copyEntityToEntity(Class<? extends Model> clazz, Model entity, Model entityDest, Map<String,Object> allowProperties, String mappedBy, Model mappedByModel) {
         try {
+            if (allowProperties == null) {
+                return;
+            }
+
             PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
 
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -46,10 +50,8 @@ public class BeanMapperModel {
                     continue;
                 }
 
-                if (allowProperties != null) {
-                    if (allowProperties.containsKey(propertyDescriptor.getName()) == false) {
-                        continue;
-                    }
+                if (allowProperties.containsKey(propertyDescriptor.getName()) == false) {
+                    continue;
                 }
 
                 if (ScalarMapper.isScalarType(propertyDescriptor.getPropertyType())) {
@@ -96,6 +98,11 @@ public class BeanMapperModel {
     }
     public static void copyMapToEntity(Class<? extends Model> clazz, Map<String, Object> entityMap, Model entityDest, Map<String,Object> allowProperties, String mappedBy, Model mappedByModel) {
         try {
+            if (allowProperties == null) {
+                return;
+            }
+
+
             PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
 
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -117,11 +124,11 @@ public class BeanMapperModel {
                         continue;
                     }
 
-                    if (allowProperties != null) {
-                        if (allowProperties.containsKey(propertyDescriptor.getName()) == false) {
-                            continue;
-                        }
+
+                    if (allowProperties.containsKey(propertyDescriptor.getName()) == false) {
+                        continue;
                     }
+
 
                     if (ScalarMapper.isScalarType(propertyDescriptor.getPropertyType())) {
                         Object rawValue = entityMap.get(propertyDescriptor.getName());
@@ -138,12 +145,7 @@ public class BeanMapperModel {
 
                         Object rawValue = entityMap.get(propertyDescriptor.getName());
                         Model valueDest = (Model) PropertyUtils.getProperty(entityDest, propertyDescriptor.getName());
-                        Map<String,Object> innerAllowProperties;
-                        if (allowProperties != null) {
-                            innerAllowProperties = (Map<String,Object>)allowProperties.get(propertyDescriptor.getName());
-                        } else {
-                            innerAllowProperties = null;
-                        }
+                        Map<String,Object> innerAllowProperties = (Map<String,Object>)allowProperties.get(propertyDescriptor.getName());
 
                         if ((rawValue == null) && (valueDest == null)) {
                             //No hacer nada
@@ -163,15 +165,10 @@ public class BeanMapperModel {
                         List<Model> listTarget = (List<Model>) PropertyUtils.getProperty(entityDest, propertyDescriptor.getName());
                         Class<? extends Model> tipoListaClass = (Class<? extends Model>) ((ParameterizedType) propertyDescriptor.getReadMethod().getGenericReturnType()).getActualTypeArguments()[0];
                         String mappedByRelation = BeanMapperUtil.getMappedByInOneToMany(clazz, propertyDescriptor.getName());
-                        Map<String,Object> innerAllowProperties;
-                        if (allowProperties != null) {
-                            innerAllowProperties = (Map<String,Object>)allowProperties.get(propertyDescriptor.getName());
-                        } else {
-                            innerAllowProperties = null;
-                        }
+                        Map<String,Object> innerAllowProperties = (Map<String,Object>)allowProperties.get(propertyDescriptor.getName());
+
                         if ((listSource == null) && (listTarget == null)) {
                             //No hacer nada
-
                         } else if ((listSource == null) && (listTarget != null)) {
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), null);
                         } else if ((listSource != null) && (listTarget == null)) {

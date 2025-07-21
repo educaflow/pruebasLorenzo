@@ -1,6 +1,5 @@
 package com.educaflow.apps.expedientes.tipo.prueba
 
-import com.axelor.meta.db.MetaFile
 import com.educaflow.apps.expedientes.common.StateEventValidator
 import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent
 import com.educaflow.apps.expedientes.db.FormacionCentroTrabajo
