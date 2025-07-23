@@ -12,12 +12,12 @@
             <bind node="@code" to="code" />
             <bind node="@name" to="name" />
             <bind node="@ambito" to="ambito" />
-            <bind node="@tramite" to="tramite" search="self.code = :code"  />
+            <bind node="@tramite" to="tramite" search="self.code = :tramite"  />
             <bind node="@fqcnEventManager" to="fqcnEventManager" />
 
             <bind node="state" to="estados"  create="true" update="true">
                 <bind node="@codeState" to="codeState" />
-                <bind node="@profile" to="profile" search="self.code = :code"   />
+                <bind node="@profile" to="profile" search="self.code = :profile"   />
             </bind>
 
         </bind>

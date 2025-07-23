@@ -7,8 +7,14 @@
     <entity name="Tramite">
         <string name="code"  />
         <string name="name" namecolumn="true" />
-        <string name="help" namecolumn="true" large="true" />
+        <string name="help" large="true" />
         <one-to-one name="tipoExpediente" ref="TipoExpediente" />
+        <many-to-one name="grupoTramite" ref="GrupoTramite" />
+    </entity>
+    <entity name="GrupoTramite">
+        <string name="code"  />
+        <string name="name" namecolumn="true" />
+        <one-to-many name="addresses" ref="Tramite" mappedBy="grupoTramite" />
     </entity>
 
 </domain-models>
