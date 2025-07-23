@@ -10,9 +10,7 @@ import com.axelor.rpc.ActionResponse;
 import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
-import com.educaflow.apps.expedientes.db.Profile;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
-import com.educaflow.apps.expedientes.db.repo.ProfileRepository;
 import com.educaflow.apps.expedientes.db.repo.TipoExpedienteRepository;
 import com.educaflow.common.mapper.BeanMapperModel;
 import com.educaflow.common.util.AxelorDBUtil;
@@ -326,15 +324,6 @@ public class ExpedienteController {
         }
     }
 
-    public Profile getProfile(String profileName) {
-        ProfileRepository profileRepository = Beans.get(ProfileRepository.class);
-
-        Profile profile = profileRepository.findByCode(profileName);
-        if (profile == null) {
-            throw new IllegalArgumentException("El Profile con nombre '" + profileName + "' no existe.");
-        }
-        return profile;
-    }
 
 
     /*********************************************************************/

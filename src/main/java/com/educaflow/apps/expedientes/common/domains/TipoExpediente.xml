@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
+
+    <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
+    <entity name="TipoExpediente">
+        <string name="code"  />
+        <string name="name" namecolumn="true" />
+        <enum name="ambito" ref="AmbitoTipoExpediente" />
+        <string name="fqcnEventManager"  />
+        <one-to-one name="tramite" ref="Tramite" />
+        <one-to-many name="estados" ref="EstadoTipoExpediente" mappedBy="tipoExpediente" />
+    </entity>
+    <entity name="EstadoTipoExpediente">
+        <string name="codeState" />
+        <enum name="profile" ref="Profile" />
+        <one-to-one name="tipoExpediente" ref="TipoExpediente" />
+    </entity>
+
+    <enum name="Profile">
+        <item name="CREADOR" title="Creador"/>
+        <item name="RESPONSABLE" title="Responsable"/>
+        <item name="SECRETARIO" title="Secretario"/>
+        <item name="DIRECTOR" title="Director"/>
+        <item name="AUDITOR" title="Auditor" />
+    </enum>
+    <enum name="AmbitoTipoExpediente">
+        <item name="CENTRO" title="Centro"/>
+        <item name="DEPARTAMENTO" title="Departamento"/>
+        <item name="CICLO" title="Ciclo"/>
+        <item name="CURSO" title="Curso"/>
+        <item name="GRUPO" title="Grupo" />
+        <item name="MODULO" title="Módulo" />
+    </enum>
+
+</domain-models>

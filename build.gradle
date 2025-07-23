@@ -99,7 +99,7 @@ tasks.register('deleteMetaTask', JavaExec) {
     classpath = configurations.educaFlowBuildToolsDependency
 
 
-    args './src/main/resources/axelor-config.properties'
+    args './src/main/resources/axelor-config.properties', 'expedientes_estado_tipo_expediente'
 
     workingDir = layout.projectDirectory.dir('.')
 }
@@ -107,8 +107,8 @@ tasks.named('build') {
     finalizedBy 'deleteMetaTask'
 }
 
-tasks.register('copyInitData', JavaExec) {
-    description = 'Ejecuta una clase Java desde un JAR externo para copiar las carpetas "init-data" de cada expediente.'
+tasks.register('copyDataInit', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo para copiar las carpetas "data-init" de cada expediente.'
     group = 'build'
 
     mainClass = 'com.educaflow.common.buildtools.copyinitdata.Main'
@@ -116,14 +116,29 @@ tasks.register('copyInitData', JavaExec) {
     classpath = configurations.educaFlowBuildToolsDependency
 
 
-    args './src/main/java/com/educaflow/apps/expedientes/tipo', './build/resources/main/data-init-expedientes', 'data_init', 'data-init'
+    args './src/main/java', './build/resources/main/java-data-init'
 
     workingDir = layout.projectDirectory.dir('.')
 }
 tasks.named('build') {
-    finalizedBy 'copyInitData'
+    finalizedBy 'copyDataInit'
 }
+tasks.register('copyDomain', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo para copiar las los ficheros de dominio'
+    group = 'build'
 
+    mainClass = 'com.educaflow.common.buildtools.copydomain.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    args './src/main/java', './build/resources/main/java-domain'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('build') {
+    finalizedBy 'copyDomain'
+}
 tasks.register('RichDomainClassTask', JavaExec) {
     description = 'Ejecuta una clase Java desde un JAR externo para añadir código al modelo con los enumerados de estados, eventos y profiles.'
     group = 'build'

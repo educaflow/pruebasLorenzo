@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<datos>
-    <tiposExpedientes>
-        <tipoExpediente code="JustificacionFaltaProfesorado" name="Justificar falta de profesorado"     versionExpediente="1" fqcnEventManager="com.educaflow.apps.expedientes.tipo.justificacion_falta_profesorado.EventManager" />
-    </tiposExpedientes>
-</datos>

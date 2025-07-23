@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<datos>
+    <tramites>
+        <tramite code="JustificacionFaltaProfesorado" name="Justificación de falta del profesorado"><![CDATA[Este trámite permite a justificar la falta del profesorado.
+Es solo para profesores
+Y puedo poner algo en <strong>negrita</strong>.
+]]></tramite>
+        <tramite code="Prueba" name="Expediente de prueba"    ><![CDATA[Este trámite es de prueba
+Es solo para cualquiera
+Y puedo poner algo en <span style="red">negrita</span>.
+]]></tramite>
+    </tramites>
+</datos>
