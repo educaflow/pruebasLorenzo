@@ -6,6 +6,9 @@
   <permission name="TipoExpediente.all" object="com.educaflow.apps.expedientes.db.TipoExpediente">
     <can create="true" read="true" write="true" remove="true" export="true"/>
   </permission>
+  <permission name="Tramite.all" object="com.educaflow.apps.expedientes.db.Tramite">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
   <permission name="Expediente.all" object="com.educaflow.apps.expedientes.db.Expediente">
     <can create="true" read="true" write="true" remove="true" export="true"/>
   </permission>
@@ -31,6 +34,7 @@
 
   <role name="users.all" description="Permisos de usuarios">
     <permission name="TipoExpediente.all"/>
+    <permission name="Tramite.all"/>
     <permission name="Expediente.all"/>
     <permission name="Prueba.all"/>
     <permission name="FormacionCentroTrabajo.all"/>

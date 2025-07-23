@@ -11,7 +11,8 @@ import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForS
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
-import com.educaflow.apps.expedientes.db.repo.TipoExpedienteRepository;
+import com.educaflow.apps.expedientes.db.Tramite;
+import com.educaflow.apps.expedientes.db.repo.TramiteRepository;
 import com.educaflow.common.mapper.BeanMapperModel;
 import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.util.AxelorViewUtil;
@@ -32,7 +33,7 @@ import java.util.*;
 public class ExpedienteController {
 
     @Inject
-    TipoExpedienteRepository tipoExpedienteRepository;
+    TramiteRepository tramiteRepository;
 
 
     public ExpedienteController() {;
@@ -216,8 +217,8 @@ public class ExpedienteController {
     private TipoExpediente getTipoExpediente(ActionRequest request) {
         long id=objectToLong(getActionRequestContext(request).get("id"));
 
-        TipoExpediente tipoExpediente=findTipoExpediente(tipoExpedienteRepository,id);
-
+        Tramite tramite=findTramite(tramiteRepository,id);
+        TipoExpediente tipoExpediente=tramite.getTipoExpediente();
         return tipoExpediente;
     }
 
@@ -302,9 +303,11 @@ public class ExpedienteController {
         return jpaRepository.find(id);
     }
 
-    private <T extends TipoExpediente> T findTipoExpediente(JpaRepository<T> jpaRepository, long id) {
-        return jpaRepository.find(id);
+    private <T extends Tramite> T findTramite(JpaRepository<T> jpaTramiteRepository, long id) {
+        return jpaTramiteRepository.find(id);
     }
+
+
 
     private Model findModel(Class<? extends Model> classModel, Long id) {
         try {

@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <datos>
     <tramites>
-        <tramite code="JustificacionFaltaProfesorado" name="Justificación de falta del profesorado"><![CDATA[Este trámite permite a justificar la falta del profesorado.
-Es solo para profesores
-Y puedo poner algo en <strong>negrita</strong>.
-]]></tramite>
-        <tramite code="Prueba" name="Expediente de prueba"    ><![CDATA[Este trámite es de prueba
-Es solo para cualquiera
-Y puedo poner algo en <span style="red">negrita</span>.
-]]></tramite>
+        <tramite code="JustificacionFaltaProfesorado" name="Trámite de Justificación de falta del profesorado" ><![CDATA[
+            Este trámite permite a justificar la falta del profesorado.<br>
+            Es solo para profesores<br>
+            Y puedo poner algo en <strong>negrita</strong>.
+        ]]></tramite>
+        <tramite code="Prueba" name="Trámite de prueba"   ><![CDATA[
+            Este trámite es de prueba<br>
+            Es solo para cualquiera<br>
+            Y puedo poner algo en <span style="color:red">rojo</span>.<br>
+            Y esta es una tercera línea de texto.
+        ]]></tramite>
     </tramites>
 </datos>

@@ -91,10 +91,10 @@ tasks.named('processResources') {
 }
 
 tasks.register('deleteMetaTask', JavaExec) {
-    description = 'Ejecuta una clase Java desde un JAR externo para borrar las tablas "meta_".'
+    description = 'Ejecuta una clase Java desde un JAR externo para borrar las tablas de Axelor para que podamos volver a crear las tablas.'
     group = 'build'
 
-    mainClass = 'com.educaflow.common.buildtools.deletemeta.Main'
+    mainClass = 'com.educaflow.common.buildtools.deleteaxelortables.Main'
 
     classpath = configurations.educaFlowBuildToolsDependency
 
