@@ -9,8 +9,9 @@
 
     <input file="TiposExpedientesActivos.xml" root="datos">
 
-        <bind node="tramites/tramite" type="com.educaflow.apps.expedientes.db.Tramite" search="self.code = :code" update="true" >
-            <bind node="@tipoExpediente" to="tipoExpediente" alias="code" search="self.code = :code"  create="false"  />
+        <bind node="tramites/tramite" type="com.educaflow.apps.expedientes.db.Tramite" search="self.code = :code" update="true" create="false" >
+            <bind node="@code" to="code" />
+            <bind node="@defaultTipoExpediente" to="defaultTipoExpediente" alias="tipoExpediente" search="self.code = :tipoExpediente"  create="false" update="true" />
         </bind>
     </input>
 

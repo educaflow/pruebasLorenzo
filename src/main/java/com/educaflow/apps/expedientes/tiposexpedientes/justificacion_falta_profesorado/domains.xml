@@ -48,17 +48,17 @@
         <item name="FUNCIONES_REPRESENTATIVAS" title="Funciones representativas"/>
         <item name="OTROS" title="Otros"/>
     </enum>
-    <enum name="MesJustificacionFaltaProfesorado">
-        <item name="SEPTIEMBRE" title="Septiembre"/>
-        <item name="OCTUBRE" title="Octubre"/>
-        <item name="NOVIEMBRE" title="Noviembre"/>
-        <item name="DICIEMBRE" title="Diciembre"/>
-        <item name="ENERO" title="Enero"/>
-        <item name="FEBRERO" title="Febrero"/>
-        <item name="MARZO" title="Marzo"/>
-        <item name="ABRIL" title="Abril"/>
-        <item name="MAYO" title="Mayo"/>
-        <item name="JUNIO" title="Junio"/>
+    <enum name="MesJustificacionFaltaProfesorado"  numeric="true">
+        <item name="SEPTIEMBRE" title="Septiembre" value="9"/>
+        <item name="OCTUBRE" title="Octubre" value="10"/>
+        <item name="NOVIEMBRE" title="Noviembre" value="11"/>
+        <item name="DICIEMBRE" title="Diciembre" value="12"/>
+        <item name="ENERO" title="Enero" value="1"/>
+        <item name="FEBRERO" title="Febrero" value="2"/>
+        <item name="MARZO" title="Marzo" value="3"/>
+        <item name="ABRIL" title="Abril" value="4"/>
+        <item name="MAYO" title="Mayo" value="5"/>
+        <item name="JUNIO" title="Junio" value="6"/>
     </enum>
 
     <enum name="TipoResolucionJustificacionFaltaProfesorado">

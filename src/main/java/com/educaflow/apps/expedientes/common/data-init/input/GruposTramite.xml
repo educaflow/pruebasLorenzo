@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<datos>
-    <grupos>
-        <grupo code="PROFESORES" name="Profesores" />
-        <grupo code="ALUMNOS" name="Alumnos"   />
-    </grupos>
-</datos>

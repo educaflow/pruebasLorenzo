@@ -4,17 +4,11 @@
                xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
 
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
-    <entity name="Tramite">
+    <entity name="Tramite"  >
         <string name="code"  />
         <string name="name" namecolumn="true" />
-        <string name="help" large="true" />
-        <one-to-one name="tipoExpediente" ref="TipoExpediente" />
-        <many-to-one name="grupoTramite" ref="GrupoTramite" />
-    </entity>
-    <entity name="GrupoTramite">
-        <string name="code"  />
-        <string name="name" namecolumn="true" />
-        <one-to-many name="addresses" ref="Tramite" mappedBy="grupoTramite" />
+        <string name="help" large="true"   />
+        <one-to-one name="defaultTipoExpediente" ref="TipoExpediente" />
     </entity>
 
 </domain-models>

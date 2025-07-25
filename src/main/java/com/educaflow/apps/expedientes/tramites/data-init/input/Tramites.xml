@@ -1,16 +1,45 @@
 <?xml version="1.0"?>
 <datos>
     <tramites>
-        <tramite code="JustificacionFaltaProfesorado" name="Trámite de Justificación de falta del profesorado" grupoTramite="PROFESORES" ><![CDATA[
+        <tramite code="JustificacionFaltaProfesorado" name="Trámite de Justificación de falta del profesorado"  ><![CDATA[
             Este trámite permite a justificar la falta del profesorado.<br>
             Es solo para profesores<br>
             Y puedo poner algo en <strong>negrita</strong>.
         ]]></tramite>
-        <tramite code="Prueba" name="Trámite de prueba"   grupoTramite="ALUMNOS"  ><![CDATA[
+        <tramite code="Prueba" name="Trámite de prueba"  ><![CDATA[
+            Este trámite es de prueba<br>
+            Es solo para cualquiera<br>
+
+        ]]></tramite>
+        <tramite code="KK1" name="Trámite de KK1"  ><![CDATA[
             Este trámite es de prueba<br>
             Es solo para cualquiera<br>
             Y puedo poner algo en <span style="color:red">rojo</span>.<br>
             Y esta es una tercera línea de texto.
+        ]]></tramite>
+        <tramite code="KK2" name="Trámite de KK2"  ><![CDATA[
+            Este trámite es de prueba<br>
+        ]]></tramite>
+        <tramite code="KK3" name="Trámite de KK3"  ><![CDATA[
+            Este trámite es de prueba<br>
+            Es solo para cualquiera<br>
+            Y puedo poner algo en <span style="color:red">rojo</span>.<br>
+            Y esta es una tercera línea de texto.<br>
+            hola<br>
+        ]]></tramite>
+        <tramite code="KK4" name="Trámite de KK4"  ><![CDATA[
+            Este trámite es de prueba<br>
+            Es solo para cualquiera<br>
+            Y puedo poner algo en <span style="color:red">rojo</span>.<br>
+            Y esta es una tercera línea de texto.<br>
+            hola<br>
+        ]]></tramite>
+        <tramite code="KK5" name="Trámite de KK5"  ><![CDATA[
+            Este trámite es de prueba<br>
+            Es solo para cualquiera<br>
+            Y puedo poner algo en <span style="color:red">rojo</span>.<br>
+            Y esta es una tercera línea de texto.<br>
+            hola<br>
         ]]></tramite>
     </tramites>
 </datos>

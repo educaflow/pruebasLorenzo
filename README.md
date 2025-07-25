@@ -28,3 +28,8 @@ Luego en el grupo hay un atributo llamado "homeAction" que hay que poner alguna 
 /src/view-containers/action/executor.ts
 /src/hooks/use-relation/use-editor.tsx#handleConfirm   El botoón OK de las ventanas Popup
 
+# freeSearch
+Al poner nombres de campos en la propiedad "freeSearch" de las view-action, 
+se pueden buscar por esos campos en la barra de búsqueda de la parte superior de la pantalla.
+Pero NO se puede buscar el campo es "Enum" pero se podría modificar añadiendo el tipo "enum" 
+en el switch de "axelor-front/src/view-containers/advance-search/utils.ts" línea 292 en la función "getFreeSearchCriteria"

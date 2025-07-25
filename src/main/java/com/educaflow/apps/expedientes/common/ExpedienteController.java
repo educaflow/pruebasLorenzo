@@ -218,7 +218,7 @@ public class ExpedienteController {
         long id=objectToLong(getActionRequestContext(request).get("id"));
 
         Tramite tramite=findTramite(tramiteRepository,id);
-        TipoExpediente tipoExpediente=tramite.getTipoExpediente();
+        TipoExpediente tipoExpediente=tramite.getDefaultTipoExpediente();
         return tipoExpediente;
     }
 

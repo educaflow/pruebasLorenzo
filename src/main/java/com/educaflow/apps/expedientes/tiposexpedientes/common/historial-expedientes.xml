@@ -3,6 +3,18 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
+    <form name="exp-Expediente-Base-Head-form" title="Expediente" model="com.educaflow.apps.expedientes.db.Expediente">
+        <panel name="head" colSpan="12">
+            <panel colSpan="12">
+                <field name="createdBy" title="Creado por" readonly="true" colSpan="3"/>
+                <field name="nameState" readonly="true" colSpan="6"/>
+                <field name="fechaUltimoEstado" readonly="true" colSpan="2"/>
+                <button name="mostrar-historial-estados" icon="assignment" title="" css="btn-link" onClick="action-grid-expediente-historial-estados" colSpan="1"/>
+            </panel>
+        </panel>
+    </form>
+
+
     <action-view name="action-grid-expediente-historial-estados" title="Mostrar historial estados" model="com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados">
         <view type="grid" name="grid-expediente-historial-estados"/>
         <view-param name="popup" value="true"/>
