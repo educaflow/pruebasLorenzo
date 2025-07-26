@@ -32,6 +32,8 @@
         <item name="CURSO" title="Curso"/>
         <item name="GRUPO" title="Grupo" />
         <item name="MODULO" title="Módulo" />
+        <item name="PROFESOR" title="Profesor" />
+        <item name="ALUMNO" title="Alumno" />
     </enum>
 
 </domain-models>
