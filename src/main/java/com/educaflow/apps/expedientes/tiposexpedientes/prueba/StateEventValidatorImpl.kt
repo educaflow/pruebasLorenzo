@@ -8,7 +8,7 @@ import com.educaflow.common.validation.engine.BeanValidationRules
 import com.educaflow.common.validation.rules.*
 import com.educaflow.apps.expedientes.db.Prueba as model
 
-class StateEventValidator : StateEventValidator {
+class StateEventValidatorImpl : StateEventValidator {
 
     @BeanValidationRulesForStateAndEvent
     fun getForStateEntradaDatosInEventPresentar(): BeanValidationRules {

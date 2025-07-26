@@ -8,12 +8,12 @@ import com.educaflow.apps.expedientes.db.repo.PruebaRepository;
 import com.google.inject.Inject;
 
 
-public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<Prueba,Prueba.State,Prueba.Event,Prueba.Profile> {
+public class EventManagerImpl extends com.educaflow.apps.expedientes.common.EventManager<Prueba,Prueba.State,Prueba.Event,Prueba.Profile> {
 
     private final PruebaRepository pruebaRepository;
 
     @Inject
-    public EventManager(PruebaRepository pruebaRepository) {
+    public EventManagerImpl(PruebaRepository pruebaRepository) {
         super(Prueba.class, Prueba.State.class, Prueba.Event.class,Prueba.Profile.class);
         this.pruebaRepository = pruebaRepository;
     }

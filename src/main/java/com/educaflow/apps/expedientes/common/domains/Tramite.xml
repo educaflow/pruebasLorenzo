@@ -9,6 +9,18 @@
         <string name="name" namecolumn="true" />
         <string name="help" large="true"   />
         <one-to-one name="defaultTipoExpediente" ref="TipoExpediente" />
+        <enum name="tipoTramite" ref="TipoTramite" />
+        <boolean name="publico"  />
+        <boolean name="privado"  />
     </entity>
+
+    <enum name="TipoTramite">
+        <item name="PROFESOR" title="Profesor"/>
+        <item name="ALUMNO" title="Alumno"/>
+        <item name="TUTOR" title="Tutor"/>
+        <item name="DIRECCION" title="Dirección"/>
+        <item name="ADMINISTRATIVO" title="Administrativo"/>
+        <item name="CONSERJE" title="Conserje"/>
+    </enum>
 
 </domain-models>

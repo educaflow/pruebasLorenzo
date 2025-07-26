@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
+
+
+    <menuitem name="prueba-search-menu"   title="Prueba Search" action="prueba-search-action" groups="admins,users" order="999"  />
+
+    <action-view name="prueba-search-action" title="Prueba de view Search"  model="com.educaflow.apps.expedientes.db.Expediente">
+        <view type="grid" name="expedientes-pendiente-grid"/>
+    </action-view>
+
+    <search name="prueba-search-grid" title="Expedientes" limit="100">
+        <search-fields>
+            <field name="numeroExpediente"/>
+            <field name="tipoExpediente.name"/>
+            <field name="nameState"/>
+            <field name="fechaUltimoEstado"/>
+        </search-fields>
+
+        <result-fields>
+            <field name="numeroExpediente"/>
+            <field name="tipoExpediente.name"/>
+            <field name="nameState"/>
+            <field name="fechaUltimoEstado"/>
+        </result-fields>
+
+        <select model="com.educaflow.apps.expedientes.db.Expediente" orderBy="numeroExpediente" limit="50">
+            <field name="numeroExpediente" as="numeroExpediente"/>
+            <field name="nameState" as="nameState"/>
+            <field name="tipoExpediente.name" as="tipoExpediente.name"/>
+            <field name="fechaUltimoEstado" as="fechaUltimoEstado"/>
+            <where match="any">
+                <input name="numeroExpediente" field="numeroExpediente" matchStyle="endsWith"/>
+                <input name="partner.fullName" field="fullName" matchStyle="contains"/>
+                <input name="date" field="dateOfBirth" matchStyle="greaterOrEqual"/>
+            </where>
+        </select>
+
+    </search>
+
+
+
+
+
+
+
+
+</object-views>

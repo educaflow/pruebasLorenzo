@@ -12,6 +12,9 @@
         <bind node="tramites/tramite" type="com.educaflow.apps.expedientes.db.Tramite" search="self.code = :code"  create="true" update="true">
             <bind node="@code" to="code" />
             <bind node="@name" to="name" />
+            <bind node="@publico" to="publico" />
+            <bind node="@privado" to="privado" />
+            <bind node="@tipoTramite" to="tipoTramite" />
             <bind node="text()" to="help" />
         </bind>
 

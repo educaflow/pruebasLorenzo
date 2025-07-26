@@ -14,12 +14,12 @@ import java.io.InputStream;
 import java.time.LocalDate;
 
 
-public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<JustificacionFaltaProfesorado, JustificacionFaltaProfesorado.State, JustificacionFaltaProfesorado.Event,JustificacionFaltaProfesorado.Profile> {
+public class EventManagerImpl extends com.educaflow.apps.expedientes.common.EventManager<JustificacionFaltaProfesorado, JustificacionFaltaProfesorado.State, JustificacionFaltaProfesorado.Event,JustificacionFaltaProfesorado.Profile> {
 
     private final JustificacionFaltaProfesoradoRepository repository;
 
     @Inject
-    public EventManager(JustificacionFaltaProfesoradoRepository repository) {
+    public EventManagerImpl(JustificacionFaltaProfesoradoRepository repository) {
         super(JustificacionFaltaProfesorado.class, JustificacionFaltaProfesorado.State.class, JustificacionFaltaProfesorado.Event.class,JustificacionFaltaProfesorado.Profile.class);
         this.repository = repository;
     }

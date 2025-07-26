@@ -348,7 +348,7 @@ public class ExpedienteController {
                 throw new RuntimeException("El fqcnEventManager no tiene un punto: " + tipoExpediente.getFqcnEventManager());
             }
 
-            String fqcnStateEventValidation = fqcnEventManager.substring(0, ultimoPunto) + ".StateEventValidator";
+            String fqcnStateEventValidation = fqcnEventManager.replace("EventManager","StateEventValidator");
 
             Class<StateEventValidator> stateEventValidationClass = (Class<StateEventValidator>) Class.forName(fqcnStateEventValidation);
 

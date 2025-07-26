@@ -21,7 +21,7 @@ import com.educaflow.common.validation.rules.SizeUnit
 import java.time.LocalDate
 import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado as model
 
-class StateEventValidator: StateEventValidator {
+class StateEventValidatorImpl: StateEventValidator {
 
     @BeanValidationRulesForStateAndEvent
     public fun getForStateEntradaDatosInEventPresentar(): BeanValidationRules {

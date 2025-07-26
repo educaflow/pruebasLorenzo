@@ -3,12 +3,8 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
-    <menuitem name="expedientes-nuevo-menu"  title="Trámites" action="expedientes-nuevo-action" groups="admins,users" icon="list_alt_add" order="100"/>
+    <menuitem name="tramite-nuevo-menu"  title="Trámites"  groups="admins,users" icon="list_alt_add" order="100"/>
 
-    <action-view name="expedientes-nuevo-action" home="true" title="Crear un nuevo expediente" model="com.educaflow.apps.expedientes.db.Tramite"  >
-        <view type="cards" name="expediente-nuevo-cards"/>
-        <context name="_profile" expr="CREADOR"/>
-    </action-view>
 
     <cards name="expediente-nuevo-cards" title="Trámite" model="com.educaflow.apps.expedientes.db.Tramite" width="500px" customSearch="false" freeSearch="name,help" canEdit="false" canDelete="false"  canNew="false">
         <field name="code"/>

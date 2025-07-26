@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
+
+    <menuitem name="tramite-nuevo-direccion-menu"  title="Dirección" parent="tramite-nuevo-menu" action="tramite-nuevo-direccion-action" groups="admins,users"  order="104"/>
+
+    <action-view name="tramite-nuevo-direccion-action" home="true" title="Crear un nuevo expediente de dirección" model="com.educaflow.apps.expedientes.db.Tramite"  >
+        <view type="cards" name="expediente-nuevo-cards"/>
+        <domain>self.tipoTramite='DIRECCION' </domain>
+        <context name="_profile" expr="CREADOR"/>
+    </action-view>
+
+
+</object-views>

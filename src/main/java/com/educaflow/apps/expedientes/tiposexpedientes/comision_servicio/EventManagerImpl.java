@@ -1,6 +1,5 @@
 package com.educaflow.apps.expedientes.tiposexpedientes.comision_servicio;
 
-import com.axelor.inject.Beans;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
@@ -10,12 +9,12 @@ import com.google.inject.Inject;
 
 
 
-public class EventManager extends com.educaflow.apps.expedientes.common.EventManager<ComisionServicio, ComisionServicio.State, ComisionServicio.Event,ComisionServicio.Profile> {
+public class EventManagerImpl extends com.educaflow.apps.expedientes.common.EventManager<ComisionServicio, ComisionServicio.State, ComisionServicio.Event,ComisionServicio.Profile> {
 
     private final ComisionServicioRepository repository;
 
     @Inject
-    public EventManager(ComisionServicioRepository repository) {
+    public EventManagerImpl(ComisionServicioRepository repository) {
         super(ComisionServicio.class, ComisionServicio.State.class, ComisionServicio.Event.class,ComisionServicio.Profile.class);
         this.repository = repository;
     }
