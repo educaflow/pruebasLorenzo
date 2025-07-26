@@ -3,7 +3,7 @@
 
     <name>Comisión de servicio</name>
     <code>ComisionServicio</code>
-    <tramite>ComisionServicio</tramite>
+    <tramite>Prueba</tramite>
     <ambito>CENTRO</ambito>
     <states>
         <state initial="true" name="ENTRADA_DATOS" profile="CREADOR" events="DELETE,PRESENTAR" />

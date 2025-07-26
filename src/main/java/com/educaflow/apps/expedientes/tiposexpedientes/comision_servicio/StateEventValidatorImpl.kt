@@ -1,13 +1,17 @@
-package com.educaflow.apps.expedientes.tiposexpedientes.comision_servicio
+package com.educaflow.apps.expedientes.tiposexpedientes.comision_servicio;
 
 import com.educaflow.apps.expedientes.common.StateEventValidator
 import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent
 
 
+import com.educaflow.common.validation.dsl.ifValueIn
 import com.educaflow.common.validation.dsl.rules
 import com.educaflow.common.validation.engine.BeanValidationRules
+import com.educaflow.common.validation.rules.*
+import java.time.LocalDate
+import com.educaflow.apps.expedientes.db.ComisionServicio as model
 
-class StateEventValidatorImpl: StateEventValidator {
+class StateEventValidator: StateEventValidator {
 
     @BeanValidationRulesForStateAndEvent
     public fun getForStateEntradaDatosInEventDelete(): BeanValidationRules {
