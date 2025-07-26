@@ -5,6 +5,9 @@ import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.Prueba;
 import com.educaflow.apps.expedientes.db.repo.PruebaRepository;
+import com.educaflow.common.validation.messages.BusinessException;
+import com.educaflow.common.validation.messages.BusinessMessage;
+import com.educaflow.common.validation.messages.BusinessMessages;
 import com.google.inject.Inject;
 
 
@@ -19,34 +22,40 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     }
 
     @Override
-    public void triggerInitialEvent(Prueba prueba, EventContext<Prueba.Profile> eventContext) {
+    public void triggerInitialEvent(Prueba prueba, EventContext<Prueba.Profile> eventContext) throws BusinessException {
 
     }
 
 
     @WhenEvent
-    public void triggerPresentar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) {
+    public void triggerPresentar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) throws BusinessException {
+        BusinessMessages businessMessages = new BusinessMessages();
+        businessMessages.add(new BusinessMessage("campo1", "Mensaje de error1", "titulo de error1"));
+        businessMessages.add(new BusinessMessage("campo2", "Mensaje de error2", "titulo de error2"));
+        if (1==1) throw new BusinessException(businessMessages);
+
+
         prueba.updateState(Prueba.State.REVISION);
     }
 
 
     @WhenEvent
-    public void triggerSubsanar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) {
+    public void triggerSubsanar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) throws BusinessException {
         prueba.updateState(Prueba.State.ENTRADA_DATOS);
     }
 
     @WhenEvent
-    public void triggerAceptar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) {
+    public void triggerAceptar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) throws BusinessException {
         prueba.updateState(Prueba.State.ACEPTADO);
     }
 
     @WhenEvent
-    public void triggerRechazar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) {
+    public void triggerRechazar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) throws BusinessException {
         prueba.updateState(Prueba.State.RECHAZADO);
     }
 
     @WhenEvent
-    public void triggerDelete(Prueba prueba, Prueba original, EventContext<Prueba.Profile> eventContext) {
+    public void triggerDelete(Prueba prueba, Prueba original, EventContext<Prueba.Profile> eventContext) throws BusinessException {
 
     }
 

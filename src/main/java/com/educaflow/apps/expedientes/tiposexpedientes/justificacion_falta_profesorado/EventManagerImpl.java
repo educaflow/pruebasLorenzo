@@ -7,6 +7,7 @@ import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.repo.JustificacionFaltaProfesoradoRepository;
+import com.educaflow.common.validation.messages.BusinessException;
 import com.google.inject.Inject;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     }
 
     @Override
-    public void triggerInitialEvent(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
+    public void triggerInitialEvent(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) throws BusinessException {
 
 
         justificacionFaltaProfesorado.setAnyo(LocalDate.now().getYear());
@@ -36,14 +37,14 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     }
 
     @WhenEvent
-    public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+    public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
         appendDocuments(justificacionFaltaProfesorado);
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.FIRMA_POR_USUARIO);
 
 
     }
     @WhenEvent
-    public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+    public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
         justificacionFaltaProfesorado.setTipoResolucion(TipoResolucionJustificacionFaltaProfesorado.ACEPTAR);
         justificacionFaltaProfesorado.setDisconformidad(null);
@@ -51,7 +52,7 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     }
 
     @WhenEvent
-    public void triggerResolver(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+    public void triggerResolver(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext)  throws BusinessException {
         TipoResolucionJustificacionFaltaProfesorado tipoResolucion = justificacionFaltaProfesorado.getTipoResolucion();
 
         switch (tipoResolucion) {
@@ -71,7 +72,7 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
 
     @WhenEvent
-    public void triggerBack(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+    public void triggerBack(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext)  throws BusinessException {
             JustificacionFaltaProfesorado.State state=JustificacionFaltaProfesorado.State.valueOf(justificacionFaltaProfesorado.getCodeState());
 
             switch (state) {
@@ -98,7 +99,7 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
 
     @WhenEvent
-    public void triggerDelete(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) {
+    public void triggerDelete(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
         //justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.);
     }
 

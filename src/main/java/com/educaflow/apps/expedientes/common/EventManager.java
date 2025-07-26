@@ -6,9 +6,11 @@ import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.common.util.AxelorViewUtil;
 import com.educaflow.common.util.ReflectionUtil;
+import com.educaflow.common.validation.messages.BusinessException;
 import com.google.common.base.CaseFormat;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -29,22 +31,28 @@ public abstract class EventManager<T extends Expediente, State extends Enum<Stat
         this.profileClass = profileClass;
     }
 
-    public abstract void triggerInitialEvent(T expediente, EventContext<Profile> eventContext);
+    public abstract void triggerInitialEvent(T expediente, EventContext<Profile> eventContext) throws BusinessException;
 
 
-    public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, EventContext<Profile> eventContext) {
+    public void triggerEvent(String strEvent, T expediente, T expedienteOriginal, EventContext<Profile> eventContext) throws BusinessException {
         try {
             Enum event;
 
             try {
-                event  =  Enum.valueOf(eventClass, strEvent);
+                event = Enum.valueOf(eventClass, strEvent);
             } catch (Exception e) {
-                event  =  Enum.valueOf(CommonEvent.class, strEvent);
+                event = Enum.valueOf(CommonEvent.class, strEvent);
             }
-            String methodName = "trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,event.name());
-            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass,modelClass, EventContext.class});
+            String methodName = "trigger" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, event.name());
+            Method method = ReflectionUtil.getMethod(this.getClass(), methodName, void.class, WhenEvent.class, new Class<?>[]{modelClass, modelClass, EventContext.class});
 
             method.invoke(this, expediente, expedienteOriginal, eventContext);
+        } catch (InvocationTargetException ex) {
+            if (ex.getTargetException() instanceof BusinessException) {
+                throw (BusinessException)ex.getTargetException();
+            } else {
+                throw new RuntimeException("Error al invocar el event: " + strEvent, ex);
+            }
         } catch (Exception ex) {
             throw new RuntimeException("Error al invocar el event: " + strEvent , ex);
         }

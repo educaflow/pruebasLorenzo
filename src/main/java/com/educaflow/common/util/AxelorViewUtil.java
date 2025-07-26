@@ -52,6 +52,22 @@ public class AxelorViewUtil {
         }
     }
 
+    public static void doResponseBusinessMessagesAsError(ActionResponse response,String title, BusinessMessages businessMessages) {
+        StringBuilder sb= new StringBuilder();
+        for(BusinessMessage businessMessage : businessMessages) {
+            if (sb.length()>0) {
+                sb.append("<br>");
+            }
+
+            if ((businessMessage.getLabel()!=null) && (!businessMessage.getLabel().isEmpty())) {
+                sb.append("<strong>").append(businessMessage.getLabel()).append(": ").append("</strong>").append(businessMessage.getMessage());
+            } else {
+                sb.append(businessMessage.getMessage());
+            }
+        }
+        response.setError(sb.toString(),title);
+    }
+
     public static void doResponseBusinessMessages(ActionResponse response, BusinessMessages businessMessages) {
 
 /***

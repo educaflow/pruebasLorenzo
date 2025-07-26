@@ -19,6 +19,7 @@ import com.educaflow.common.util.AxelorViewUtil;
 import com.educaflow.common.util.ReflectionUtil;
 import com.educaflow.common.util.TextUtil;
 import com.educaflow.common.validation.engine.*;
+import com.educaflow.common.validation.messages.BusinessException;
 import com.educaflow.common.validation.messages.BusinessMessages;
 import com.google.common.base.CaseFormat;
 import com.google.inject.Inject;
@@ -54,7 +55,12 @@ public class ExpedienteController {
             expediente.setTipoExpediente(tipoExpediente);
             updateName(expediente);
 
-            eventManager.triggerInitialEvent(expediente, eventContext);
+            try {
+                eventManager.triggerInitialEvent(expediente, eventContext);
+            } catch (BusinessException ex) {
+                AxelorViewUtil.doResponseBusinessMessagesAsError(response,"No es posible crear el expediente", ex.getBusinessMessages());
+                return;
+            }
             expediente.updateState(initialEvent);
             addHistorialEstado(expediente,null);
             eventManager.onEnterState(expediente, eventContext);
@@ -109,7 +115,13 @@ public class ExpedienteController {
 
 
             String originalState = expedienteOriginal.getCodeState();
-            eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
+            try {
+                eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
+            } catch (BusinessException ex) {
+                JPA.em().detach(expediente);
+                AxelorViewUtil.doResponseBusinessMessages(response, ex.getBusinessMessages());
+                return;
+            }
             if (eventName.equals(CommonEvent.DELETE.name())) {
                 removeExpediente(expedienteRepository, expediente);
                 response.setSignal("refresh-app", null);

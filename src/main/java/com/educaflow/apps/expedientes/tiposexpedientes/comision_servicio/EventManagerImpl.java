@@ -5,6 +5,7 @@ import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.ComisionServicio;
 import com.educaflow.apps.expedientes.db.repo.ComisionServicioRepository;
+import com.educaflow.common.validation.messages.BusinessException;
 import com.google.inject.Inject;
 
 
@@ -20,30 +21,30 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     }
 
     @Override
-    public void triggerInitialEvent(ComisionServicio comisionServicio, EventContext<ComisionServicio.Profile> eventContext) {
+    public void triggerInitialEvent(ComisionServicio comisionServicio, EventContext<ComisionServicio.Profile> eventContext) throws BusinessException {
 
 
     }
 
 
     @WhenEvent
-    public void triggerDelete(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext) {
+    public void triggerDelete(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext)  throws BusinessException{
         //comisionServicio.updateState(ComisionServicio.State.);
     }
     @WhenEvent
-    public void triggerPresentar(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext) {
+    public void triggerPresentar(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext) throws BusinessException {
         //comisionServicio.updateState(ComisionServicio.State.);
     }
     @WhenEvent
-    public void triggerBack(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext) {
+    public void triggerBack(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext)  throws BusinessException{
         //comisionServicio.updateState(ComisionServicio.State.);
     }
     @WhenEvent
-    public void triggerPresentarDocumentosFirmados(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext) {
+    public void triggerPresentarDocumentosFirmados(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext)  throws BusinessException{
         //comisionServicio.updateState(ComisionServicio.State.);
     }
     @WhenEvent
-    public void triggerResolver(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext) {
+    public void triggerResolver(ComisionServicio comisionServicio, ComisionServicio original, EventContext<ComisionServicio.Profile> eventContext)  throws BusinessException{
         //comisionServicio.updateState(ComisionServicio.State.);
     }
 
