@@ -47,4 +47,10 @@
     <role name="users.all" />
   </group>
 
+  <users>
+    <user code="admin" language="es" />
+    <user code="demo" language="es" />
+  </users>
+
+
 </auth>

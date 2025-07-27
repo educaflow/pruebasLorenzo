@@ -36,6 +36,11 @@
             </bind>
         </bind>
 
+        <bind node="users/user" type="com.axelor.auth.db.User" search="self.code = :code"    update="true">
+            <bind node="@code" to="code"/>
+            <bind node="@language" to="language"/>
+        </bind>
+
 
     </input>
 
