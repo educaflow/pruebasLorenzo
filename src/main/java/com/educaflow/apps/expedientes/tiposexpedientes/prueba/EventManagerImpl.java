@@ -29,12 +29,6 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
     @WhenEvent
     public void triggerPresentar(Prueba prueba,Prueba pruebaOriginal, EventContext<Prueba.Profile> eventContext) throws BusinessException {
-        BusinessMessages businessMessages = new BusinessMessages();
-        businessMessages.add(new BusinessMessage("campo1", "Mensaje de error1", "titulo de error1"));
-        businessMessages.add(new BusinessMessage("campo2", "Mensaje de error2", "titulo de error2"));
-        if (1==1) throw new BusinessException(businessMessages);
-
-
         prueba.updateState(Prueba.State.REVISION);
     }
 

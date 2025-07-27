@@ -3,7 +3,7 @@
               xmlns="http://axelor.com/xml/ns/object-views"
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
-    <form name="exp-JustificacionFaltaProfesorado-Base"   width="large"  model="com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado" groups="admins,users">
+    <form name="exp-JustificacionFaltaProfesorado-Templates"   width="large" title="JustificacionFaltaProfesorado"  model="com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado" groups="admins,users">
         <panel name="datos-profesor" title="Datos del Profesor">
             <field name="apellidos" colSpan="4" readonly="true"/>
             <field name="nombre" colSpan="4" readonly="true"/>
@@ -31,8 +31,6 @@
             <field name="otroMotivo" colSpan="6" colOffset="7"  showIf="motivoFalta == 'OTROS'" readonly="true"/>
         </panel>
 
-        <panel name="botones">
-        </panel>
 
         <panel name="justificante-upload" title="Adjuntar justificante">
             <field name="justificante" title="Foto o PDF del justificante" widget="binary-link" colSpan="4" />
@@ -121,12 +119,14 @@
             datos-falta
             justificante-upload
         </include-panels>
-        <left>
-            <button name="DELETE" colSpan="2" css="btn-danger" outline="true" title="Borrar" onClick="action-event-expediente" prompt="¿Está seguro que desea borrar el expediente?"/>
-        </left>
-        <right>
-            <button name="PRESENTAR" colSpan="2" title="Siguiente" onClick="action-event-expediente" />
-        </right>
+        <footer>
+            <buttons-left>
+                <button name="DELETE" colSpan="2" css="btn-danger" outline="true" title="Borrar" onClick="action-event-expediente" prompt="¿Está seguro que desea borrar el expediente?"/>
+            </buttons-left>
+            <buttons-right>
+                <button name="PRESENTAR" colSpan="2" title="Siguiente" onClick="action-event-expediente"/>
+            </buttons-right>
+        </footer>
     </form>
     <form state="ENTRADA_DATOS">
         <include-panels>
@@ -135,10 +135,12 @@
             -datos-falta
             -justificante-view
         </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left/>
+            <buttons-right>
+                <button name="EXIT" colSpan="2" title="Salir" onClick="action-event-expediente"/>
+            </buttons-right>
+        </footer>
     </form>
 
     <!-- *********************************************************************************************  -->
@@ -150,12 +152,14 @@
             -datos-falta-view
             justificante-firmar-creador
         </include-panels>
-        <left>
-            <button name="BACK" colSpan="2" outline="true" title="Atrás" onClick="action-event-expediente"/>
-        </left>
-        <right>
-            <button name="PRESENTAR_DOCUMENTOS_FIRMADOS" colSpan="3"  title="Presentar documentación" onClick="action-event-expediente" prompt="¿Esta seguro que desea presentar la documentación?&lt;br&gt;No podrá deshacer esta acción"/>
-        </right>
+        <footer>
+            <buttons-left>
+                <button name="BACK" colSpan="2" outline="true" title="Atrás" onClick="action-event-expediente"/>
+            </buttons-left>
+            <buttons-right>
+                <button name="PRESENTAR_DOCUMENTOS_FIRMADOS" colSpan="3" title="Presentar documentación" onClick="action-event-expediente" prompt="¿Esta seguro que desea presentar la documentación?&lt;br&gt;No podrá deshacer esta acción"/>
+            </buttons-right>
+        </footer>
     </form>
     <form state="FIRMA_POR_USUARIO">
         <include-panels>
@@ -163,10 +167,12 @@
             -datos-falta-view
             -justificante-view
         </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left/>
+            <buttons-right>
+                <button name="EXIT" colSpan="2" title="Salir" onClick="action-event-expediente"/>
+            </buttons-right>
+        </footer>
     </form>
 
 
@@ -179,21 +185,26 @@
             -datos-falta-view
             justificante-firmar-director
         </include-panels>
-        <left/>
-        <right>
-            <button name="RESOLVER" colSpan="3" colOffset="9" title="Resolver el expediente" onClick="action-event-expediente" prompt="¿Esta seguro que desea resolver el expediente?&lt;br&gt;No podrá deshacer esta acción"/>
-        </right>
+        <footer>
+            <buttons-left/>
+            <buttons-right>
+                <button name="RESOLVER" colSpan="3" colOffset="9" title="Resolver el expediente" onClick="action-event-expediente" prompt="¿Esta seguro que desea resolver el expediente?&lt;br&gt;No podrá deshacer esta acción"/>
+            </buttons-right>
+        </footer>
     </form>
+
     <form state="REVISION_Y_FIRMA_POR_RESPONSABLE">
         <include-panels>
             -datos-profesor
             -datos-falta-view
             -justificante-view-documentoCompletoFirmadoUsuario
         </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left/>
+            <buttons-right>
+                <button name="EXIT" colSpan="2" title="Salir" onClick="action-event-expediente"/>
+            </buttons-right>
+        </footer>
     </form>
 
 
@@ -209,10 +220,12 @@
             -justificante-view-documentoCompletoFirmadoUsuarioDirector
             -resolucion-view
         </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left/>
+            <buttons-right>
+                <button name="EXIT" colSpan="2" title="Salir" onClick="action-event-expediente"/>
+            </buttons-right>
+        </footer>
     </form>
 
 
@@ -226,10 +239,12 @@
             -justificante-view-documentoCompletoFirmadoUsuario
             -resolucion-view
         </include-panels>
-        <left/>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left/>
+            <buttons-right>
+                <button name="EXIT" colSpan="2" title="Salir" onClick="action-event-expediente"/>
+            </buttons-right>
+        </footer>
     </form>
 
 

@@ -3,7 +3,7 @@
               xmlns="http://axelor.com/xml/ns/object-views"
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
-    <form name="exp-ComisionServicio-Base" title="Comisión de servicio"  width="large"  model="com.educaflow.apps.expedientes.db.ComisionServicio" groups="admins,users">
+    <form name="exp-ComisionServicio-Templates" title="Comisión de servicio"  width="large"  model="com.educaflow.apps.expedientes.db.ComisionServicio" groups="admins,users">
 
 
     </form>
@@ -25,27 +25,30 @@
     <!-- *********************************************************************************************  -->
     
     <form state="ENTRADA_DATOS" profile="CREADOR">
-        <include-panels>
+        <include-panels includeHeader="true">
 
         </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
+        <footer>
+            <buttons-left>
+            </buttons-left>
+            <buttons-right>
+                <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            </buttons-right>
+        </footer>
+
     </form>
 
     <form state="ENTRADA_DATOS" >
-        <include-panels>
+        <include-panels includeHeader="true">
 
         </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left>
+            </buttons-left>
+            <buttons-right>
+                <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            </buttons-right>
+        </footer>
     </form>
 
 
@@ -55,27 +58,30 @@
     <!-- *************************************************************************************************  -->
     
     <form state="FIRMA_POR_USUARIO" profile="CREADOR">
-        <include-panels>
+        <include-panels includeHeader="true">
 
         </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
+        <footer>
+            <buttons-left>
+            </buttons-left>
+            <buttons-right>
+                <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            </buttons-right>
+        </footer>
+
     </form>
 
     <form state="FIRMA_POR_USUARIO" >
-        <include-panels>
+        <include-panels includeHeader="true">
 
         </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left>
+            </buttons-left>
+            <buttons-right>
+                <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            </buttons-right>
+        </footer>
     </form>
 
 
@@ -85,27 +91,30 @@
     <!-- **********************************************************************************************************  -->
     
     <form state="RESOLVER_PERMITIR_COMISION" profile="RESPONSABLE">
-        <include-panels>
+        <include-panels includeHeader="true">
 
         </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="" colSpan="2" title="" onClick="action-event-expediente" />
-        </right>
+        <footer>
+            <buttons-left>
+            </buttons-left>
+            <buttons-right>
+                <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            </buttons-right>
+        </footer>
+
     </form>
 
     <form state="RESOLVER_PERMITIR_COMISION" >
-        <include-panels>
+        <include-panels includeHeader="true">
 
         </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left>
+            </buttons-left>
+            <buttons-right>
+                <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            </buttons-right>
+        </footer>
     </form>
 
 
@@ -115,15 +124,16 @@
     <!-- ***********************************************************************************************  -->
 
     <form state="ENTREGA_TICKETS" >
-        <include-panels>
+        <include-panels includeHeader="true">
 
         </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left>
+            </buttons-left>
+            <buttons-right>
+                <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            </buttons-right>
+        </footer>
     </form>
 
 
@@ -133,15 +143,16 @@
     <!-- ****************************************************************************************  -->
 
     <form state="ACEPTADO" >
-        <include-panels>
+        <include-panels includeHeader="true">
 
         </include-panels>
-        <left>
-            
-        </left>
-        <right>
-            <button name="EXIT" colSpan="2"  title="Salir" onClick="action-event-expediente"/>
-        </right>
+        <footer>
+            <buttons-left>
+            </buttons-left>
+            <buttons-right>
+                <button name="" colSpan="2" title="" onClick="action-event-expediente" />
+            </buttons-right>
+        </footer>
     </form>
 
 

@@ -10,7 +10,7 @@
     <action-view name="expedientes-esperando-action" title="Expedientes esperando a que otra persona realice una tarea"  model="com.educaflow.apps.expedientes.db.Expediente" >
         <view type="grid" name="expedientes-esperando-grid"  />
         <domain>self.closed=false </domain>
-        <context name="_profile" expr="CREADOR"/>
+        <context name="_profile" expr="RESPONSABLE"/>
     </action-view>
 
     <grid name="expedientes-esperando-grid" title="Expedientes" model="com.educaflow.apps.expedientes.db.Expediente"
