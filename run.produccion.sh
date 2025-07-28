@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
 clear
-./gradlew clean build -Penvironment=produccion
-./gradlew --no-daemon run --port 8088 --contextPath /
+export AXELOR_CONFIG="./src/main/resources/axelor-config.production.properties"
+./gradlew clean build
+./gradlew --no-daemon run --port 8080 --contextPath /
