@@ -51,5 +51,22 @@ public class Tables {
         }
     }
 
+    public boolean existsTable(String tableName) {
+        String sql="SELECT tablename FROM pg_tables WHERE schemaname = ? AND tablename = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, schemaName);
+            preparedStatement.setString(2, tableName);
+            ResultSet rsTables = preparedStatement.executeQuery();
+
+            boolean exists = rsTables.next();
+            rsTables.close();
+
+            return exists;
+
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
 }

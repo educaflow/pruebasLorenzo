@@ -22,7 +22,7 @@ public class BulkTables {
 
                 truncateTablesByLike(connection, schemaName, "meta\\_%", tablasExcluidas);
                 truncateTablesByLike(connection, schemaName, "auth\\_%", tablasExcluidas);
-                truncateTablesByName(connection, tablasIncluidas);
+                truncateTablesByName(connection, schemaName, tablasIncluidas);
 
 
                 enableAllTriggers(connection, schemaName);
@@ -74,14 +74,19 @@ public class BulkTables {
 
     }
 
-    private void truncateTablesByName(Connection connection, Set<String> tablasIncluidas) {
+    private void truncateTablesByName(Connection connection, String schemaName, Set<String> tablasIncluidas) {
+        Tables tables = new Tables(connection, schemaName);
 
         for (String tableName : tablasIncluidas) {
-            System.out.println("Borrando contenido de la tabla:" + tableName);
-            Table table = new Table(connection, tableName);
-            table.truncate();
-        }
+            if (tables.existsTable(tableName)==true) {
+                System.out.println("Borrando contenido de la tabla:" + tableName);
+                Table table = new Table(connection, tableName);
+                table.truncate();
 
+            } else {
+                System.out.println("La tabla '" + tableName + "' no existe en el esquema '" + schemaName+"'");
+            }
+        }
     }
 
 }
