@@ -1,5 +1,7 @@
 sudo docker run \
-  --name educaflow \
+  --name educaflow-db \
+  --hostname educaflow-db \
+  --network educaflow \
   -e POSTGRES_USER=educaflow \
   -e POSTGRES_PASSWORD=educaflow \
   -e POSTGRES_DB=educaflow \

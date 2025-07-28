@@ -69,6 +69,10 @@ dependencies {
 
     educaFlowBuildToolsDependency 'com.educaflow:EducaFlowBuildTools:1.0-SNAPSHOT'
 }
+
+def isProduccion = project.hasProperty('environment') && project.environment == 'produccion'
+
+
 tasks.named("compileKotlin").configure {
     dependsOn generateCode
 }
@@ -90,22 +94,7 @@ tasks.named('processResources') {
     finalizedBy 'viewProcessorTask'
 }
 
-tasks.register('deleteMetaTask', JavaExec) {
-    description = 'Ejecuta una clase Java desde un JAR externo para borrar las tablas de Axelor para que podamos volver a crear las tablas.'
-    group = 'build'
 
-    mainClass = 'com.educaflow.common.buildtools.deleteaxelortables.Main'
-
-    classpath = configurations.educaFlowBuildToolsDependency
-
-
-    args './src/main/resources/axelor-config.properties', 'expedientes_estado_tipo_expediente'
-
-    workingDir = layout.projectDirectory.dir('.')
-}
-tasks.named('build') {
-    finalizedBy 'deleteMetaTask'
-}
 
 tasks.register('copyDataInit', JavaExec) {
     description = 'Ejecuta una clase Java desde un JAR externo para copiar las carpetas "data-init" de cada expediente.'
@@ -157,6 +146,25 @@ tasks.named('build') {
     finalizedBy 'generateDataInitTiposExpedientes'
 }
 
+tasks.register('generateProduccionAxelorProperties', JavaExec) {
+    onlyIf {
+        isProduccion
+    }
+    description = 'Ejecuta una clase Java desde un JAR externo para generar el fichero axelor-config.properties de producción.'
+    group = 'build'
+
+    mainClass = 'com.educaflow.common.buildtools.propertymerger.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    args './build/resources/main/axelor-config.properties', './src/main/resources/axelor-config.production.properties', './build/resources/main/axelor-config.properties'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('build') {
+    finalizedBy 'generateProduccionAxelorProperties'
+}
 
 tasks.register('RichDomainClassTask', JavaExec) {
     description = 'Ejecuta una clase Java desde un JAR externo para añadir código al modelo con los enumerados de estados, eventos y profiles.'
@@ -192,6 +200,22 @@ tasks.named('generateCode') {
     dependsOn tasks.CreateFilesTask
 }
 
+tasks.register('deleteMetaTask', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo para borrar las tablas de Axelor para que podamos volver a crear las tablas.'
+    group = 'build'
+
+    mainClass = 'com.educaflow.common.buildtools.deleteaxelortables.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    args './build/resources/main/axelor-config.properties', 'expedientes_estado_tipo_expediente'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('build') {
+    finalizedBy 'deleteMetaTask'
+}
 
 war {
     archiveFileName = 'pruebaslorenzo.war'
