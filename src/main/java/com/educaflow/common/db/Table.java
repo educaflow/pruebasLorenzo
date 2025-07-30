@@ -38,6 +38,9 @@ public class Table {
         }
     }
 
+    public String getTableName() {
+        return tableName;
+    }
 
 
 }

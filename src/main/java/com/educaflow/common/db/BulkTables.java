@@ -38,22 +38,20 @@ public class BulkTables {
     }
 
     private void disableAllTriggers(Connection connection, String schemaName) throws SQLException {
-        Tables tables = new Tables(connection, schemaName);
-        List<String> allTableNames = tables.getAllTableNames();
+        DatabaseSchema databaseSchema = new DatabaseSchema(connection, schemaName);
+        List<Table> tables = databaseSchema.getAllTables();
 
-        for (String tableName : allTableNames) {
-            Table table = new Table(connection, tableName);
+        for (Table table : tables) {
             table.disableAllTriggers();
         }
     }
 
 
     private void enableAllTriggers(Connection connection, String schemaName) throws SQLException {
-        Tables tables = new Tables(connection, schemaName);
-        List<String> allTableNames = tables.getAllTableNames();
+        DatabaseSchema databaseSchema = new DatabaseSchema(connection, schemaName);
+        List<Table> tables = databaseSchema.getAllTables();
 
-        for (String tableName : allTableNames) {
-            Table table = new Table(connection, tableName);
+        for (Table table : tables) {
             table.enablebleAllTriggers();
         }
     }
@@ -61,13 +59,13 @@ public class BulkTables {
 
     private void truncateTablesByLike(Connection connection, String schemaName, String like, Set<String> tablasExcluidas) {
         System.out.println("Borrando contenido de las tablas que empiezan por '" + like + "' .....");
-        Tables tables = new Tables(connection, schemaName);
-        List<String> metaTables = tables.getTableNamesByLike(like);
+        DatabaseSchema databaseSchema = new DatabaseSchema(connection, schemaName);
+        List<Table> tables = databaseSchema.getTablesByLike(like);
 
-        for (String tableName : metaTables) {
+        for (Table table : tables) {
+            String tableName = table.getTableName();
             if (!tablasExcluidas.contains(tableName)) {
                 System.out.println("Borrando contenido de la tabla:" + tableName);
-                Table table = new Table(connection, tableName);
                 table.truncate();
             }
         }
@@ -75,14 +73,13 @@ public class BulkTables {
     }
 
     private void truncateTablesByName(Connection connection, String schemaName, Set<String> tablasIncluidas) {
-        Tables tables = new Tables(connection, schemaName);
+        DatabaseSchema databaseSchema = new DatabaseSchema(connection, schemaName);
 
         for (String tableName : tablasIncluidas) {
-            if (tables.existsTable(tableName)==true) {
+            Table table = databaseSchema.getTable(tableName);
+            if (table!=null) {
                 System.out.println("Borrando contenido de la tabla:" + tableName);
-                Table table = new Table(connection, tableName);
                 table.truncate();
-
             } else {
                 System.out.println("La tabla '" + tableName + "' no existe en el esquema '" + schemaName+"'");
             }
