@@ -31,8 +31,8 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
         justificacionFaltaProfesorado.setAnyo(LocalDate.now().getYear());
         justificacionFaltaProfesorado.setNombre("Lorenzo");
-        justificacionFaltaProfesorado.setApellidos("García García");
-        justificacionFaltaProfesorado.setDni("12345678ZZZ");
+        justificacionFaltaProfesorado.setApellidos("Acción García");
+        justificacionFaltaProfesorado.setDni("12345678Z");
 
     }
 
