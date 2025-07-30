@@ -30,7 +30,7 @@ public class BulkTables {
                 connection.commit();
                 System.out.println("Operación completada exitosamente.");
             } catch (Exception ex) {
-                throw new RuntimeException("Fallo al conectar a la base de datos", ex);
+                throw new RuntimeException("Fallo al conectar a la base de datos:dataBaseURL="+dataBaseURL+",dataBaseUser="+dataBaseUser+",dataBasePassword="+dataBasePassword, ex);
             }
         } catch (Exception ex) {
             throw new RuntimeException("Fallo al borrar los meta datos", ex);
