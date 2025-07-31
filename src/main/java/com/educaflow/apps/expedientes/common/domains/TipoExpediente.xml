@@ -7,15 +7,15 @@
     <entity name="TipoExpediente">
         <string name="code"  />
         <string name="name" namecolumn="true" />
-        <enum name="ambitoCreador" ref="AmbitoTipoExpediente" />
-        <enum name="ambitoResponsable" ref="AmbitoTipoExpediente" />
-        <string name="fqcnEventManager"  />
+        <enum name="ambitoCreador" ref="AmbitoTipoExpediente" title="Ámbito creador" />
+        <enum name="ambitoResponsable" ref="AmbitoTipoExpediente" title="Ámbito responsable"  />
+        <string name="fqcnEventManager"  title="Clase que maneja los eventos" />
         <one-to-one name="tramite" ref="Tramite" />
         <one-to-many name="estados" ref="EstadoTipoExpediente" mappedBy="tipoExpediente" />
     </entity>
     <entity name="EstadoTipoExpediente">
-        <string name="codeState" />
-        <enum name="profile" ref="Profile" />
+        <string name="codeState" title="Código del estado" />
+        <enum name="profile" ref="Profile" title="Perfil" />
         <one-to-one name="tipoExpediente" ref="TipoExpediente" />
     </entity>
 

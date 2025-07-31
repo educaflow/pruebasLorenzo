@@ -9,7 +9,7 @@
             <field name="solicita" colSpan="9"/>
             <field name="justificante"  widget="binary-link" colSpan="3" x-accept=".pdf"/>
         </panel>
-        <panel-related name="fcts-panel" title="FCTs" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
+        <panel-related name="fcts-panel" title="FCT's" field="formacionesCentrosTrabajo" colSpan="12" form-view="fct-details" grid-view="fct-grid"/>
         <panel name="datos-resolucion" title="Datos Resolución">
             <field name="motivo" colSpan="12"/>
         </panel>
@@ -158,7 +158,7 @@
 
 
 
-    <grid name="fct-grid" title="FCTs" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" canEdit="false" edit-icon="false" >
+    <grid name="fct-grid" title="FCT's" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" canEdit="false" edit-icon="false" >
         <field name="alumno" />
     </grid>
     <form name="fct-details" title="Detalle FCT" model="com.educaflow.apps.expedientes.db.FormacionCentroTrabajo" groups="admins,users" onValidate="action-validate-on-save-child" validateSignal="misenyal">

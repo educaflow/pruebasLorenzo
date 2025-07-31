@@ -4,9 +4,9 @@
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
 
-    <menuitem name="prueba-search-menu"   title="Prueba Search" action="prueba-search-action" groups="admins,users" order="999"  />
+    <menuitem name="prueba-search-menu"   title="Prueba Búsqueda" action="prueba-search-action" groups="admins,users" order="999"  />
 
-    <action-view name="prueba-search-action" title="Prueba de view Search"  model="com.educaflow.apps.expedientes.db.Expediente">
+    <action-view name="prueba-search-action" title="Prueba de Búsqueda"  model="com.educaflow.apps.expedientes.db.Expediente">
         <view type="grid" name="expedientes-pendiente-grid"/>
     </action-view>
 

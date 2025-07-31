@@ -10,11 +10,11 @@
     <entity name="Expediente" strategy="JOINED" jsonAttrs="false">
         <many-to-one name="tipoExpediente" title="Tipo de Expediente" ref="com.educaflow.apps.expedientes.db.TipoExpediente" required="true"/>
         <string name="name" namecolumn="true" />
-        <string name="numeroExpediente" sequence="expediente.seq"  />
-        <string name="codeState" />
-        <string name="nameState" />
-        <datetime name="fechaUltimoEstado" />
-        <boolean name="closed"  />
+        <string name="numeroExpediente" sequence="expediente.seq" title="Num. Exped."  />
+        <string name="codeState" title="Código del estado" />
+        <string name="nameState" title="Estado" />
+        <datetime name="fechaUltimoEstado" title="Fecha último estado" />
+        <boolean name="closed" title="Cerrado" />
         <one-to-many name="historialEstados" ref="ExpedienteHistorialEstados" mappedBy="expediente" />
 
         <extra-imports-model>

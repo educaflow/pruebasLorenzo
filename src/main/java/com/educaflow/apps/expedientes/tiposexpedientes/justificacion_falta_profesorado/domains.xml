@@ -8,10 +8,10 @@
     <entity name="JustificacionFaltaProfesorado" extends="Expediente" >
         <string name="apellidos" />
         <string name="nombre" />
-        <string name="dni" />
+        <string name="dni" title="DNI" />
         <string name="dias"  />
         <enum name="mes" ref="com.educaflow.apps.expedientes.db.MesJustificacionFaltaProfesorado" />
-        <integer name="anyo" />
+        <integer name="anyo" title="Año" />
 
 
         <enum name="tipoJornadaFalta" ref="TipoJornadaFaltaJustificacionFaltaProfesorado" />
@@ -20,14 +20,14 @@
         <enum name="motivoFalta" ref="MotivoFaltaJustificacionFaltaProfesorado" />
         <string name="otroMotivo"  />
         <string name="disconformidad"  />
-        <string name="resolucion" />
+        <string name="resolucion" title="Resolución" />
 
-        <enum name="tipoResolucion" ref="TipoResolucionJustificacionFaltaProfesorado" />
+        <enum name="tipoResolucion" title="Tipo resolución" ref="TipoResolucionJustificacionFaltaProfesorado" />
 
         <one-to-one name="justificante" title="Foto o PDF del justificante" ref="com.axelor.meta.db.MetaFile" />
         <one-to-one name="documentoCompletoSinFirmar" title="Documento a firmar por el usuario" ref="com.axelor.meta.db.MetaFile" />
-        <one-to-one name="documentoCompletoFirmadoUsuario" title="Documento " ref="com.axelor.meta.db.MetaFile" />
-        <one-to-one name="documentoCompletoFirmadoUsuarioDirector" title="PDF file" ref="com.axelor.meta.db.MetaFile" />
+        <one-to-one name="documentoCompletoFirmadoUsuario" title="Documento" ref="com.axelor.meta.db.MetaFile" />
+        <one-to-one name="documentoCompletoFirmadoUsuarioDirector" title="Fichero PDF" ref="com.axelor.meta.db.MetaFile" />
 
 
     </entity>

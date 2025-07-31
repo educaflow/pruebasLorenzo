@@ -5,7 +5,7 @@
 
 
 
-    <form name="user-preferences-form" id="secretariavirtual-user-preferences-form" title="Preferences" model="com.axelor.auth.db.User" extension="true">
+    <form name="user-preferences-form" id="secretariavirtual-user-preferences-form" title="Preferencias" model="com.axelor.auth.db.User" extension="true">
 
         <extend target="//field[@name='image']">
             <attribute name="showIf" value="1=0"/>
