@@ -4,7 +4,8 @@
     <name>Prueba</name>
     <code>Prueba</code>
     <tramite>Prueba</tramite>
-    <ambito>CENTRO</ambito>
+    <ambitoCreador>INDIVIDUAL</ambitoCreador>
+    <ambitoResponsable>CENTRO</ambitoResponsable>
     <states>
         <state initial="true" name="ENTRADA_DATOS" profile="CREADOR" events="DELETE,PRESENTAR" />
         <state name="REVISION" profile="RESPONSABLE" events="SUBSANAR,ACEPTAR,RECHAZAR" />

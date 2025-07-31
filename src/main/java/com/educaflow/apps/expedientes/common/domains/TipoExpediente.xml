@@ -7,7 +7,8 @@
     <entity name="TipoExpediente">
         <string name="code"  />
         <string name="name" namecolumn="true" />
-        <enum name="ambito" ref="AmbitoTipoExpediente" />
+        <enum name="ambitoCreador" ref="AmbitoTipoExpediente" />
+        <enum name="ambitoResponsable" ref="AmbitoTipoExpediente" />
         <string name="fqcnEventManager"  />
         <one-to-one name="tramite" ref="Tramite" />
         <one-to-many name="estados" ref="EstadoTipoExpediente" mappedBy="tipoExpediente" />
@@ -32,8 +33,7 @@
         <item name="CURSO" title="Curso"/>
         <item name="GRUPO" title="Grupo" />
         <item name="MODULO" title="Módulo" />
-        <item name="PROFESOR" title="Profesor" />
-        <item name="ALUMNO" title="Alumno" />
+        <item name="INDIVIDUAL" title="Individual" />
     </enum>
 
 </domain-models>
