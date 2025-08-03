@@ -13,6 +13,7 @@
 
     <tree name="tramite-nuevo-tree" title="Trámites disponibles" showHeader="false">
         <column name="name"  />
+        <column name="nuevo" type="button" title="Nuevo expediente"  />
         <column name="ayuda" type="button" title="Ayuda"  />
 
         <node model="com.educaflow.apps.expedientes.db.TipoTramite" domain="EXISTS (SELECT 1 FROM Tramite t WHERE  t.tipoTramite=self)" >
@@ -22,7 +23,8 @@
 
         <node model="com.educaflow.apps.expedientes.db.Tramite"  parent="tipoTramite" draggable="false" onClick="action-event-new-expediente">
             <field name="name" as="name" />
-            <button name="ayuda"  help="Ayuda" onClick="tramite-mostrar-ayuda-action" icon="help"/>
+            <button name="nuevo"  help="Nuevo expediente" onClick="action-event-new-expediente" icon="list_alt_add"/>
+            <button name="ayuda"  help="Descripción del trámite" onClick="tramite-mostrar-ayuda-action" icon="help"/>
         </node>
 
 
