@@ -4,6 +4,7 @@ import com.educaflow.apps.expedientes.common.StateEventValidator
 import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent
 import com.educaflow.apps.expedientes.db.MotivoFaltaJustificacionFaltaProfesorado
 import com.educaflow.apps.expedientes.db.TipoJornadaFaltaJustificacionFaltaProfesorado
+import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfesorado
 import com.educaflow.common.validation.dsl.ifValueIn
 import com.educaflow.common.validation.dsl.rules
 import com.educaflow.common.validation.engine.BeanValidationRules
@@ -86,6 +87,20 @@ class StateEventValidatorImpl: StateEventValidator {
     @BeanValidationRulesForStateAndEvent
     fun getForStateRevisionYFirmaPorResponsableInEventResolver():BeanValidationRules {
         return rules {
+            field(model::getTipoResolucion) {
+                +Required()
+            }
+            field(model::getDisconformidad) {
+                +ifValueIn(model::getTipoResolucion, listOf(TipoResolucionJustificacionFaltaProfesorado.SUBSANAR_DATOS)) {
+                    +Required()
+                }
+            }
+            field(model::getResolucion) {
+                +ifValueIn(model::getTipoResolucion, listOf(TipoResolucionJustificacionFaltaProfesorado.RECHAZAR)) {
+                    +Required()
+                }
+            }
+
         }
     }
 }

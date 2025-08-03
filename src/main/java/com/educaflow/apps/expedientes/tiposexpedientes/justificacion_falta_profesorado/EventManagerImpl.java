@@ -46,7 +46,6 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     @WhenEvent
     public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
-        justificacionFaltaProfesorado.setTipoResolucion(TipoResolucionJustificacionFaltaProfesorado.ACEPTAR);
         justificacionFaltaProfesorado.setDisconformidad(null);
         justificacionFaltaProfesorado.setResolucion(null);
     }
