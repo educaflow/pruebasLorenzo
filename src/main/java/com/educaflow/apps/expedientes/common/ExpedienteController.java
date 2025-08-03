@@ -460,7 +460,7 @@ public class ExpedienteController {
     /*******************************************************************/
 
     private static  String getCentroFromCurrentUser() {
-        System.out.println("TODO!!!!!:El código de centro debe obtener desde el usaurio")
+        System.out.println("TODO!!!!!:El código de centro debe obtener desde el usuario");
         return "460001";
     }
 
