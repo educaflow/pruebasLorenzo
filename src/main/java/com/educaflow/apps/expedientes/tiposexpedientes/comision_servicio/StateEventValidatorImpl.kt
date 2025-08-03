@@ -11,7 +11,7 @@ import com.educaflow.common.validation.rules.*
 import java.time.LocalDate
 import com.educaflow.apps.expedientes.db.ComisionServicio as model
 
-class StateEventValidator: StateEventValidator {
+class StateEventValidatorImpl: StateEventValidator {
 
     @BeanValidationRulesForStateAndEvent
     public fun getForStateEntradaDatosInEventDelete(): BeanValidationRules {

@@ -6,7 +6,7 @@
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
     <entity name="Tramite"  >
         <string name="code"   />
-        <string name="name" namecolumn="true"  />
+        <string name="name" namecolumn="true" translatable="true"  />
         <string name="help" large="true"  title="Ayuda" />
         <one-to-one name="defaultTipoExpediente" ref="TipoExpediente" title="Tipo de expediente por defecto" />
         <enum name="tipoTramite" ref="TipoTramite" />

@@ -86,8 +86,8 @@
 
 
 
-            <field name="disconformidad" colSpan="12" title="Explicar los datos a subsanar" showIf="tipoResolucion == 'SUBSANAR_DATOS'" />
-            <field name="resolucion" colSpan="12" title="Motivo del rechazo" showIf="tipoResolucion == 'RECHAZAR'"/>
+            <field name="disconformidad" colSpan="12"  showIf="tipoResolucion == 'SUBSANAR_DATOS'" />
+            <field name="resolucion" colSpan="12"  showIf="tipoResolucion == 'RECHAZAR'"/>
 
         </panel>
         <panel name="justificante-view-documentoCompletoFirmadoUsuario" title="Justificantes">
@@ -232,7 +232,7 @@
     <!-- **********************************************************************  -->
     <!-- ****************************** RECHAZADO ******************************  -->
     <!-- **********************************************************************  -->
-    <form profile="CREADOR" state="RECHAZADO">
+    <form  state="RECHAZADO">
         <include-panels>
             -datos-profesor
             -datos-falta-view

@@ -1,6 +1,8 @@
 package com.educaflow.common.validation.engine
 
 import com.axelor.db.annotations.Widget
+import com.axelor.i18n.I18n
+import com.educaflow.common.util.TextUtil
 import com.educaflow.common.validation.messages.BusinessMessage
 import com.educaflow.common.validation.messages.BusinessMessages
 import java.lang.reflect.Field
@@ -75,13 +77,17 @@ data class FieldValidationRules(val methodField:KFunction<*>, val validationRule
 
 private fun getLabel(clazz: Class<*>, nombreCampo: String): String {
     try {
+        var label:String;
         val field: Field = clazz.getDeclaredField(nombreCampo)
         if (field.isAnnotationPresent(Widget::class.java)) {
             val widget: Widget = field.getAnnotation(Widget::class.java)
-            return widget.title ?: nombreCampo
+            label=widget.title ?: TextUtil.humanize(nombreCampo)
         } else {
-            return nombreCampo
+            label=TextUtil.humanize(nombreCampo)
         }
+
+        return I18n.get(label)
+
     } catch (e: NoSuchFieldException) {
         throw IllegalArgumentException("El campo '$nombreCampo' no existe en la clase ${clazz.simpleName}", e)
     }

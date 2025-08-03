@@ -19,8 +19,8 @@
         <time name="horaFin"  />
         <enum name="motivoFalta" ref="MotivoFaltaJustificacionFaltaProfesorado" />
         <string name="otroMotivo"  />
-        <string name="disconformidad"  />
-        <string name="resolucion" title="Resolución" />
+        <string name="disconformidad" title="Explicar los datos a subsanar"  />
+        <string name="resolucion"  title="Motivo del rechazo" />
 
         <enum name="tipoResolucion" title="Tipo resolución" ref="TipoResolucionJustificacionFaltaProfesorado" />
 

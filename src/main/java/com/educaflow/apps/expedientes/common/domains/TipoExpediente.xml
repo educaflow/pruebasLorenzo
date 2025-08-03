@@ -6,7 +6,7 @@
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
     <entity name="TipoExpediente">
         <string name="code"  />
-        <string name="name" namecolumn="true" />
+        <string name="name" namecolumn="true" translatable="true" />
         <enum name="ambitoCreador" ref="AmbitoTipoExpediente" title="Ámbito creador" />
         <enum name="ambitoResponsable" ref="AmbitoTipoExpediente" title="Ámbito responsable"  />
         <string name="fqcnEventManager"  title="Clase que maneja los eventos" />
