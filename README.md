@@ -36,3 +36,7 @@ en el switch de "axelor-front/src/view-containers/advance-search/utils.ts" líne
 
 #Traducción
 Es necesario instalar `sudo apt install apertium apertium-spa-cat cg3 vislcg3 apertium-all-dev`
+
+# Funciones que se pueden usar en las plantillas de React cuando se usa "<template>"
+Están en el fichero `/hooks/use-parser/context/script-context.ts`
+

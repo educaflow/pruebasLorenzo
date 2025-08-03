@@ -9,18 +9,11 @@
         <string name="name" namecolumn="true" translatable="true"  />
         <string name="help" large="true"  title="Ayuda" />
         <one-to-one name="defaultTipoExpediente" ref="TipoExpediente" title="Tipo de expediente por defecto" />
-        <enum name="tipoTramite" ref="TipoTramite" />
+        <one-to-one name="tipoTramite" ref="TipoTramite" title="Tipo de trámite" />
         <boolean name="publico"  />
         <boolean name="privado"  />
     </entity>
 
-    <enum name="TipoTramite">
-        <item name="PROFESOR" title="Profesor"/>
-        <item name="ALUMNO" title="Alumno"/>
-        <item name="TUTOR" title="Tutor"/>
-        <item name="DIRECCION" title="Dirección"/>
-        <item name="ADMINISTRATIVO" title="Administrativo"/>
-        <item name="CONSERJE" title="Conserje"/>
-    </enum>
+
 
 </domain-models>

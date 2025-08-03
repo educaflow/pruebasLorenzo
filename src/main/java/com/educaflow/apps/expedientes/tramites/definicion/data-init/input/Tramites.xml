@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <datos>
     <tramites>
-        <tramite code="JustificacionFaltaProfesorado" name="Trámite de Justificación de falta del profesorado" publico="true" privado="true" tipoTramite="PROFESOR" ><![CDATA[
+        <tramite code="JustificacionFaltaProfesorado" name="Justificación de falta del profesorado" publico="true" privado="true" tipoTramite="PROFESOR" ><![CDATA[
             Este trámite permite a justificar la falta del profesorado.<br>
             Es solo para profesores<br>
             Y puedo poner algo en <strong>negrita</strong>.
