@@ -4,40 +4,55 @@
               xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
 
 
-    <menuitem name="prueba-search-menu"   title="Prueba Búsqueda" action="prueba-search-action" groups="admins,users" order="999"  />
+    <menuitem name="prueba-dashboard-menu" title="Prueba Búsqueda" action="prueba-dashboard-action" groups="admins,users" order="999"/>
 
-    <action-view name="prueba-search-action" title="Prueba de Búsqueda"  model="com.educaflow.apps.expedientes.db.Expediente">
-        <view type="grid" name="expedientes-pendiente-grid"/>
+    <action-view name="prueba-dashboard-action" title="Prueba de Búsqueda">
+        <view type="dashboard" name="ver-expedientes-dashboard"/>
     </action-view>
 
-    <search name="prueba-search-grid" title="Expedientes" limit="100">
+    <dashboard name="ver-expedientes-dashboard" title="Expedientes" onInit="ver-expedientes-oninit-action"  searchModel="com.educaflow.apps.expedientes.db.SearchExpedientes">
         <search-fields>
-            <field name="numeroExpediente"/>
-            <field name="tipoExpediente.name"/>
-            <field name="nameState"/>
-            <field name="fechaUltimoEstado"/>
+            <field name="estado" widget="boolean-radio" x-true-text="Cerrado" x-false-text="Abierto" />
+            <field name="anyo" type="integer" title="Año" />
         </search-fields>
 
-        <result-fields>
+        <dashlet   action="expedientes-buscar-action"/>
+    </dashboard>
+
+
+    <action-view name="expedientes-buscar-action" title="Buscando expedientes" model="com.educaflow.apps.expedientes.db.Expediente">
+        <view type="tree" name="expedientes-buscar-tree"/>
+        <context name="_profile" expr="RESPONSABLE"/>
+    </action-view>
+
+
+    <action-record name="ver-expedientes-oninit-action" model="com.educaflow.apps.expedientes.db.SearchExpedientes" >
+        <field name="estado" expr="eval: true" />
+        <field name="anyo" expr="eval: java.time.Year.now().value" />
+    </action-record>
+
+    <tree name="expedientes-buscar-tree" title="Expedientes">
+
+        <column name="name"/>
+        <column name="numeroExpediente" width="100px" title="Num. Exp."/>
+        <column name="createdBy" width="200px" title="Creado por"/>
+        <column name="nameState" width="30%" title="Estado"/>
+        <column name="fechaUltimoEstado" type="date" width="100px" title="Fecha"/>
+
+
+        <node model="com.educaflow.apps.expedientes.db.Tramite" domain="EXISTS (SELECT 1 FROM Expediente e WHERE e.closed=:estado and ((:anyo is null) OR (:anyo=0) OR (YEAR(e.fechaUltimoEstado)=:anyo)) AND e.tipoExpediente.tramite=self)" >
+            <field name="name" as="name"/>
+        </node>
+
+        <node model="com.educaflow.apps.expedientes.db.Expediente" domain="(self.closed=:estado) and ((:anyo is null) OR (:anyo=0) OR (YEAR(self.fechaUltimoEstado)=:anyo))" parent="tipoExpediente.tramite" draggable="false" onClick="action-event-view-expediente">
+            <field name="name"/>
             <field name="numeroExpediente"/>
-            <field name="tipoExpediente.name"/>
+            <field name="createdBy"/>
             <field name="nameState"/>
             <field name="fechaUltimoEstado"/>
-        </result-fields>
+        </node>
 
-        <select model="com.educaflow.apps.expedientes.db.Expediente" orderBy="numeroExpediente" limit="50">
-            <field name="numeroExpediente" as="numeroExpediente"/>
-            <field name="nameState" as="nameState"/>
-            <field name="tipoExpediente.name" as="tipoExpediente.name"/>
-            <field name="fechaUltimoEstado" as="fechaUltimoEstado"/>
-            <where match="any">
-                <input name="numeroExpediente" field="numeroExpediente" matchStyle="endsWith"/>
-                <input name="partner.fullName" field="fullName" matchStyle="contains"/>
-                <input name="date" field="dateOfBirth" matchStyle="greaterOrEqual"/>
-            </where>
-        </select>
-
-    </search>
+    </tree>
 
 
 
