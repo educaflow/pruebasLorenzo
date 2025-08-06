@@ -11,43 +11,28 @@
         <panel name="ambito-creador" title="Ámbito del Creador">
             <field name="numeroExpediente"/>
             <field name="valoresAmbitoCreador.departamento"
-                   type="many-to-one"
-                   target="com.educaflow.apps.sistemaeducativo.db.Departamento"
-                   target-name="name"
-
             />
             <field name="centro"
-                   type="many-to-one"
-                   target="com.educaflow.apps.sistemaeducativo.db.Centro"
                    onChange="clear-cargo-action"
                    grid-view="buscar-centros"
+                   form-view="Centro2"
             />
             <field name="cargo"
-                   type="many-to-one"
-                   target="com.educaflow.apps.sistemaeducativo.db.Cargo"
                    domain="self.centro=:centro"
             />
             <field name="valoresAmbitoCreador.centro"
-                   type="many-to-one"
-                   target="com.educaflow.apps.sistemaeducativo.db.Centro"
-                   target-name="name"
                    form-view="Centro2"
             />
-            <field name="valoresAmbitoCreador.creador"
-                   type="many-to-one"
-                   target="com.axelor.auth.db.User"
-                   target-name="name"/>
+            <field name="valoresAmbitoCreador.creador"/>
         </panel>
 
 
         <panel  name="ambito-responsable" >
             <field name="valoresAmbitoCreador.centro"  widget="ref-text"
-                   x-target="com.educaflow.apps.sistemaeducativo.db.Centro"
-                   x-target-name="name" />
+                   target-name="name" />
             <field name="valoresAmbitoCreador.departamento"  widget="ref-text"
-                   x-target="com.educaflow.apps.sistemaeducativo.db.Departamento"
-                   x-target-name="name" />
-
+                   target-name="name" />
+            <field name="valoresAmbitoCreador.departamento.name"  />
         </panel>
     </form>
     <grid name="buscar-centros" title="Expedientes" model="com.educaflow.apps.sistemaeducativo.db.Centro"
@@ -60,7 +45,7 @@
 
     <form name="Centro" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.sistemaeducativo.db.Centro" groups="admins,users">
         <panel name="Centro" title="Centro">
-            <field name="code"/>
+
             <field name="name"/>
         </panel>
     </form>
@@ -75,6 +60,7 @@
 
     <form name="Centro2" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.sistemaeducativo.db.Centro" groups="admins,users">
         <panel name="Centro" title="Centro">
+            <field name="code"/>
             <field name="name"/>
         </panel>
     </form>
