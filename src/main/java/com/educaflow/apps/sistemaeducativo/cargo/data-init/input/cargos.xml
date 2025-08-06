@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<datos>
+    <cargos>
+        <cargo code="director" name="Director"/>
+        <cargo code="vicedirector" name="vicedirector"/>
+        <cargo code="jefeEstudios" name="Jefe de Estudios"/>
+        <cargo code="secretario" name="Secretario"/>
+        <cargo code="vicesecretario" name="Vicesecretario"/>
+        <cargo code="jefeDepartamento" name="Jefe de Departamento"/>
+        <cargo code="responsableRiesgosLaborales" name="Responsable de Riesgos Laborales"/>
+        <cargo code="coordinadorTIC" name="Coordinador TIC"/>
+        <cargo code="coodinadorInternacionalizacion" name="Coordinador de Internacionalización"/>
+        <cargo code="coordinadorFormacion" name="Coordinador de Formación"/>
+        <cargo code="coodinadorInnovacion" name="Coordinador de Innovación"/>
+        <cargo code="coordinadorEmprendimiento" name="Coordinador de Emprendimiento"/>
+        <cargo code="coordinadorCalidad" name="Coordinador de Calidad"/>
+        <cargo code="coordinadorAcreditaciones" name="Coordinador de Acreditaciones"/>
+        <cargo code="coordinadorComunicacion" name="Coordinador de Comunicación"/>
+        <cargo centro="46019660" code="coordinadorIgualdad" name="Coordinador de Igualdad y Convivencia"/>
+        <cargo code="admin" name="Administrador del centro"/>
+    </cargos>
+</datos>

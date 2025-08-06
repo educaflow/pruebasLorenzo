@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<datos>
+    <centroUsuarios>
+        <centroUsuario
+                usuario="cesar"
+                centro="46019660"
+                tipoUsuario="profesor">
+            <departamentos>
+                <departamento code="INFORMATICA"/>
+            </departamentos>
+        </centroUsuario>
+        <centroUsuario
+                usuario="lorenzo"
+                centro="46019660"
+                tipoUsuario="profesor" >
+            <departamentos>
+                <departamento code="INFORMATICA"/>
+            </departamentos>
+        </centroUsuario>
+        <centroUsuario
+            usuario="joaquin"
+            centro="46019660"
+            tipoUsuario="profesor" >
+            <cargos>
+                <cargo code="jefeEstudios"/>
+                <cargo code="admin"/>
+            </cargos>
+            <departamentos>
+                <departamento code="INFORMATICA"/>
+            </departamentos>
+        </centroUsuario>
+        <centroUsuario
+            usuario="lorenzo"
+            centro="46019015"
+            tipoUsuario="profesor">
+            <cargos>
+                <cargo code="jefeDepartamento"/>
+            </cargos>
+            <departamentos>
+                <departamento code="TURISMO"/>
+            </departamentos>
+        </centroUsuario>
+        <centroUsuario
+                usuario="luis"
+                centro="46019660"
+                tipoUsuario="profesor">
+            <departamentos>
+                <departamento code="INFORMATICA"/>
+            </departamentos>
+        </centroUsuario>
+        <centroUsuario
+                usuario="raquel"
+                centro="46019660"
+                tipoUsuario="profesor">
+            <departamentos>
+                <departamento code="INFORMATICA"/>
+                <departamento code="PEE"/>
+            </departamentos>
+        </centroUsuario>
+        <centroUsuario
+            usuario="luis"
+            centro="46025040"
+            tipoUsuario="alumno">
+        </centroUsuario>
+        <centroUsuario
+                usuario="angela"
+                centro="46019660"
+                tipoUsuario="alumno">
+        </centroUsuario>
+        <centroUsuario
+                usuario="rosa"
+                centro="46019660"
+                tipoUsuario="administrativo"
+        >
+                <departamentos>
+                    <departamento code="ADMINISTRACION"/>
+                </departamentos>
+        </centroUsuario>
+        <centroUsuario
+                usuario="cristina"
+                centro="46019660"
+                tipoUsuario="administrativo"
+        >
+                <departamentos>
+                    <departamento code="ADMINISTRACION"/>
+                </departamentos>
+        </centroUsuario>
+        <centroUsuario
+                usuario="maria"
+                centro="46019660"
+                tipoUsuario="externo"
+        />
+    </centroUsuarios>
+</datos>

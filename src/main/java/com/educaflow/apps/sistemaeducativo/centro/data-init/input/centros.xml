@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<datos>
+    <centros>
+        <centro code="46019660" name="CIPFP Mislata" address="Calle Dolores Ibárruri, 32" city="Mislata" postalCode="46920" country="Valencia">
+            <ciclos>
+                <ciclo code="DAW"/>
+                <ciclo code="DAM"/>
+                <ciclo code="ASIR"/>
+                <ciclo code="SMR"/>
+                <ciclo code="GAT"/>
+                <ciclo code="GIAT"/>
+                <ciclo code="AVGA"/>
+            </ciclos>
+            <departamentos>
+                <departamento code="INFORMATICA"/>
+                <departamento code="TURISMO"/>
+                <departamento code="ADMINISTRACION"/>
+            </departamentos>
+        </centro>
+        <centro code="46019015" name="IES Serra Perenxisa" address="Carrer de la Corona D'Arago, 1" city="Torrent" postalCode="46900" country="Valencia"/>
+        <centro code="46025040" name="IES Abastos" address="Carrer D'Alberic, 18" city="Valencia" postalCode="46008" country="Valencia"/>
+    </centros>
+</datos>

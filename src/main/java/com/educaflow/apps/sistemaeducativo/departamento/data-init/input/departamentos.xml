@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<datos>
+    <departamentos>
+        <departamento code="INFORMATICA" name="Informática"/>
+        <departamento code="TURISMO" name="Turismo"/>
+        <departamento code="ADMINISTRACION" name="Administración"/>
+        <departamento code="PEE" name="Prácticas en Empresa"/>
+    </departamentos>
+</datos>

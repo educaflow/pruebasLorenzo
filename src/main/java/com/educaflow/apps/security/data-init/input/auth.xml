@@ -18,6 +18,27 @@
   <permission name="MetaFile.all" object="com.axelor.meta.db.MetaFile">
     <can create="true" read="true" write="true" remove="true" export="true"/>
   </permission>
+  <permission name="CertificadoTutor.all" object="com.educaflow.apps.expedientes.db.CertificadoTutor">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
+  <permission name="ValoresAmbito.all" object="com.educaflow.apps.expedientes.db.ValoresAmbito">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
+  <permission name="Departamento.all" object="com.educaflow.apps.sistemaeducativo.db.Departamento">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
+  <permission name="Centro.all" object="com.educaflow.apps.sistemaeducativo.db.Centro">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
+  <permission name="Cargo.all" object="com.educaflow.apps.sistemaeducativo.db.Cargo">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
+  <permission name="DMSFile.all" object="=com.axelor.dms.db.DMSFile">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
+  <permission name="User.all" object="com.axelor.auth.db.User">
+    <can create="true" read="true" write="true" remove="true" export="true"/>
+  </permission>
 
   <permission name="Prueba.all" object="com.educaflow.apps.expedientes.db.Prueba">
     <can create="true" read="true" write="true" remove="true" export="true"/>
@@ -49,6 +70,13 @@
     <permission name="MetaFile.all"/>
     <permission name="TipoTramite.all"/>
     <permission name="SearchExpedientes.all"/>
+    <permission name="CertificadoTutor.all"/>
+    <permission name="ValoresAmbito.all"/>
+    <permission name="Departamento.all"/>
+    <permission name="Centro.all"/>
+    <permission name="User.all"/>
+    <permission name="Cargo.all"/>
+    <permission name="DMSFile.all"/>
   </role>
 
   <group code="users">

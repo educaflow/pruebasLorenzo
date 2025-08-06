@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<datos>
+    <usuarios>
+        <usuario code="cesar" name="César Guijarro Rosaleny" group="users" password="cesar"/>
+        <usuario code="lorenzo" name="Lorenzo González Gascón" group="users" password="lorenzo"/>
+        <usuario code="luis" name="Luis García Bonifaz" group="users" password="luis"/>
+        <usuario code="raquel" name="Raquel López Folgado" group="users" password="raquel"/>
+        <usuario code="angela" name="Ángela Hermosilla Del Río" group="users" password="angela"/>
+        <usuario code="joaquin" name="Joaquín Escriche Arcusa" group="users" password="joaquin"/>
+        <usuario code="maria" name="María José García Martínez" group="users" password="maria"/>
+        <usuario code="rosa" name="Rosa María García Martínez" group="users" password="rosa"/>
+        <usuario code="cristina" name="Cristina García Martínez" group="users" password="cristina"/>
+    </usuarios>
+
+</datos>

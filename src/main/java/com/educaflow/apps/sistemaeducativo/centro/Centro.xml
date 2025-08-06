@@ -1,0 +1,17 @@
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
+
+    <module name="sistemaeducativo" package="com.educaflow.apps.sistemaeducativo.db"/>
+    <entity name="Centro">
+        <string name="code"  />
+        <string name="name" namecolumn="true" />
+        <string name="address" title="Dirección"/>
+        <string name="city" title="Ciudad"/>
+        <string name="postalCode" title="Código Postal"/>
+        <string name="country" title="Provincia"/>
+        <many-to-many name="ciclos" ref="com.educaflow.apps.sistemaeducativo.db.Ciclo" />
+        <many-to-many name="departamentos" ref="com.educaflow.apps.sistemaeducativo.db.Departamento" />
+    </entity>
+
+</domain-models>

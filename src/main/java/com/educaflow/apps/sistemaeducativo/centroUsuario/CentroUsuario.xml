@@ -1,0 +1,16 @@
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
+
+    <module name="sistemaeducativo" package="com.educaflow.apps.sistemaeducativo.db"/>
+    <entity name="CentroUsuario">
+        <many-to-one name="usuario" ref="com.axelor.auth.db.User" required="true"/>
+        <many-to-one name="centro" ref="com.educaflow.apps.sistemaeducativo.db.Centro" required="true"/>
+        <many-to-one name="tipoUsuario" ref="com.educaflow.apps.sistemaeducativo.db.TipoUsuario" required="true"/>
+        <many-to-many name="departamentos" ref="com.educaflow.apps.sistemaeducativo.db.Departamento"/>
+
+        <!-- Cargos en el centro -->
+        <many-to-many name="cargos" ref="com.educaflow.apps.sistemaeducativo.db.Cargo"/>
+    </entity>
+
+</domain-models>

@@ -10,7 +10,7 @@
         <enum name="ambitoCreador" ref="AmbitoTipoExpediente" title="Ámbito creador" />
         <enum name="ambitoResponsable" ref="AmbitoTipoExpediente" title="Ámbito responsable"  />
         <string name="fqcnEventManager"  title="Clase que maneja los eventos" />
-        <one-to-one name="tramite" ref="Tramite" />
+        <many-to-one name="tramite" ref="Tramite" />
         <one-to-many name="estados" ref="EstadoTipoExpediente" mappedBy="tipoExpediente" />
     </entity>
     <entity name="EstadoTipoExpediente">

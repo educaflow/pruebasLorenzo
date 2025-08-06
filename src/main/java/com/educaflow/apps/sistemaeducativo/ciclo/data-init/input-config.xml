@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<xml-inputs priority="350" xmlns="http://axelor.com/xml/ns/data-import"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://axelor.com/xml/ns/data-import
+  https://axelor.com/xml/ns/data-import/data-import_7.4.xsd">
+
+
+    <input file="ciclos.xml" root="datos">
+        <bind node="ciclos/ciclo" type="com.educaflow.apps.sistemaeducativo.db.Ciclo" search="self.code = :code"  create="true">
+            <bind node="@code" to="code" />
+            <bind node="@name" to="name" />
+            <bind node="cursos/curso" to="cursos" search="self.code = :code" create="false">
+                <bind node="@code" to="code" />
+            </bind>
+        </bind>
+    </input>
+
+</xml-inputs>

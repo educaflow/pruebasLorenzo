@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<datos>
+    <grupos>
+        <grupo code="1DAW" name="1DAW">
+            <modulos>
+                <modulo code="DWS"/>
+                <modulo code="DWC"/>
+                <modulo code="DAW"/>
+                <modulo code="DIW"/>
+                <modulo code="OPTATIVA2DAW"/>
+            </modulos>
+        </grupo>
+        <grupo code="2DAW" name="2DAW"/>
+        <grupo code="1SDAM" name="1DAM"/>
+        <grupo code="2SDAM" name="2SDAM"/>
+        <grupo code="1ASIR" name="1ASIR"/>
+        <grupo code="2ASIR" name="2ASIR"/>
+        <grupo code="1SMR" name="1SMR"/>
+        <grupo code="2SMR" name="2SMR"/>
+        <grupo code="1SSMRA" name="1SMRA"/>
+        <grupo code="2SSMRA" name="2SMRA"/>
+        <grupo code="1SSMRB" name="1SMRB"/>
+        <grupo code="2SSMRB" name="2SMRB"/>
+        <grupo code="1GAT" name="1GAT"/>
+        <grupo code="2GAT" name="2GAT"/>
+        <grupo code="1GIAT" name="1GIAT"/>
+        <grupo code="2GIAT" name="2GIAT"/>
+        <grupo code="1AVGA" name="1AVGA"/>
+        <grupo code="2AVGA" name="2AVGA"/>
+    </grupos>
+</datos>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<datos>
+    <ciclos>
+        <ciclo code="DAW" name="Desarrollo de Aplicaciones Web">
+            <cursos>
+                <curso code="DAW1"/>
+                <curso code="DAW2"/>
+            </cursos>
+        </ciclo>
+        <ciclo code="DAM" name="Desarrollo de Aplicaciones Multiplataforma">
+            <cursos>
+                <curso code="SDAM1"/>
+                <curso code="SDAM2"/>
+            </cursos>
+        </ciclo>
+        <ciclo code="ASIR" name="Administración de Sistemas Informáticos en Red">
+            <cursos>
+                <curso code="ASIR1"/>
+                <curso code="ASIR2"/>
+            </cursos>
+        </ciclo>
+        <ciclo code="SMR" name="Sistemas Microinformáticos y Redes">
+            <cursos>
+                <curso code="SMR1"/>
+                <curso code="SMR2"/>
+                <curso code="SSMR1"/>
+                <curso code="SSMR2"/>
+            </cursos>
+        </ciclo>
+        <ciclo code="GAT" name="Gestión de Alojamientos Turísticos">
+            <cursos>
+                <curso code="GAT1"/>
+                <curso code="GAT2"/>
+            </cursos>
+        </ciclo>
+        <ciclo code="GIAT" name="Guía, Información y Asistencia Turística">
+            <cursos>
+                <curso code="GIAT1"/>
+                <curso code="GIAT2"/>
+            </cursos>
+        </ciclo>
+        <ciclo code="AVGA" name="Agencia de Viajes y Gestión de Eventos">
+            <cursos>
+                <curso code="AVGA1"/>
+                <curso code="AVGA2"/>
+            </cursos>
+        </ciclo>
+    </ciclos>
+</datos>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<datos>
+    <tiposUsuarios>
+        <tipoUsuario code="profesor" name="Profesor/a"/>
+
+        <tipoUsuario code="alumno" name="Alumno/a"/>
+
+        <tipoUsuario code="administrativo" name="Administrativo/a"/>
+        <tipoUsuario code="conserje" name="Conserje"/>
+
+        <tipoUsuario code="externo" name="Externo/a"/>
+    </tiposUsuarios>
+</datos>
