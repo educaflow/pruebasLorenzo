@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <object-views xmlns="http://axelor.com/xml/ns/object-views"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.1.xsd">
+              xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_7.4.xsd">
 
     <menuitem name="tramite-nuevo-menu"  title="Trámites" action="tramite-nuevo-action" groups="admins,users" icon="list_alt_add" order="100"/>
 
@@ -18,12 +18,10 @@
 
         <node model="com.educaflow.apps.expedientes.db.TipoTramite" domain="EXISTS (SELECT 1 FROM Tramite t WHERE  t.tipoTramite=self)" >
             <field name="name" as="name"  />
-
         </node>
 
         <node model="com.educaflow.apps.expedientes.db.Tramite"  parent="tipoTramite" draggable="false" onClick="action-event-new-expediente">
             <field name="name" as="name" />
-            <button name="nuevo"  help="Nuevo expediente" onClick="action-event-new-expediente" icon="list_alt_add"/>
             <button name="ayuda"  help="Descripción del trámite" onClick="tramite-mostrar-ayuda-action" icon="help"/>
         </node>
 

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<xml-inputs priority="300" xmlns="http://axelor.com/xml/ns/data-import"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://axelor.com/xml/ns/data-import
+  https://axelor.com/xml/ns/data-import/data-import_7.4.xsd">
+
+    <input file="grados.xml" root="datos">
+        <bind node="grados/grado" type="com.educaflow.apps.sistemaeducativo.db.Grado" search="self.code = :code"  create="true">
+            <bind node="@code" to="code" />
+            <bind node="@name" to="name" />
+        </bind>
+    </input>
+
+    <input file="familias_profesionales.xml" root="datos">
+        <bind node="familias_profesionales/familia_profesional" type="com.educaflow.apps.sistemaeducativo.db.FamiliaProfesional" search="self.code = :code"  create="true">
+            <bind node="@code" to="code" />
+            <bind node="@name" to="name" />
+        </bind>
+    </input>
+
+    <input file="modulos.xml" root="datos">
+        <bind node="modulos/modulo" type="com.educaflow.apps.sistemaeducativo.db.Modulo" search="self.code = :code"  create="true">
+            <bind node="@code" to="code" />
+            <bind node="@name" to="name" />
+        </bind>
+    </input>
+
+
+
+    <input file="cursos.xml" root="datos">
+        <bind node="cursos/curso" type="com.educaflow.apps.sistemaeducativo.db.Curso" search="self.code = :code"  create="true">
+            <bind node="@code" to="code" />
+            <bind node="@name" to="name" />
+            <bind node="modulos/modulo" to="modulos" search="self.code = :moduloCode" create="false">
+                <bind node="@code" to="code" alias="moduloCode"/>
+            </bind>
+        </bind>
+    </input>
+
+
+    <input file="ciclos.xml" root="datos">
+        <bind node="ciclos/ciclo" type="com.educaflow.apps.sistemaeducativo.db.Ciclo" search="self.code = :code"  create="true">
+            <bind node="@code" to="code" />
+            <bind node="@name" to="name" />
+            <bind node="cursos/curso" to="cursos" search="self.code = :cursoCode" create="false">
+                <bind node="@code" to="code" alias="cursoCode"/>
+            </bind>
+        </bind>
+    </input>
+
+
+
+
+
+</xml-inputs>

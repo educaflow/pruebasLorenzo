@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<datos>
+    <cursos>
+        <curso code="DAW1" name="1DAW" >
+            <modulos>
+                <modulo code="IPE1" />
+            </modulos>
+        </curso>
+        <curso code="DAW2" name="2DAW" >
+                <modulos>
+                    <modulo code="DWS" />
+                    <modulo code="DWC" />
+                    <modulo code="DAW" />
+                    <modulo code="DIW" />
+                    <modulo code="OPTATIVA2DAW" />
+                </modulos>
+        </curso>
+        <curso code="DAM1" name="1DAM" >
+            <modulos>
+                <modulo code="IPE1" />
+            </modulos>
+        </curso>
+        <curso code="DAM2" name="2DAM" />
+        <curso code="ASIR1" name="1ASIR" />
+        <curso code="ASIR2" name="2ASIR" />
+        <curso code="SMR1" name="1SMR" />
+        <curso code="SMR2" name="2SMR" />
+        <curso code="GAT1" name="1GAT" />
+        <curso code="GAT2" name="2GAT" />
+        <curso code="GIAT1" name="1GIAT" />
+        <curso code="GIAT2" name="2GIAT" />
+        <curso code="AVGA1" name="1AVGA" />
+        <curso code="AVGA2" name="2AVGA" />
+    </cursos>
+</datos>

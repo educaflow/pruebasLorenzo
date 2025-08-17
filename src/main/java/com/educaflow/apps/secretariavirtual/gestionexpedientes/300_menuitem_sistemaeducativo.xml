@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_7.4.xsd">
+
+    <menuitem name="sistemaeducativo-menu"  title="Sistema educativo"  groups="admins"  order="300"/>
+
+
+    <menuitem name="sistemaeducativo-FamiliaProfesional-menu"  parent="sistemaeducativo-menu" title="Familia profesional" action="mant-FamiliaProfesional-action" groups="admins" order="1"  />
+    <menuitem name="sistemaeducativo-Ciclo-menu"  parent="sistemaeducativo-menu" title="Ciclos" action="mant-Ciclo-action" groups="admins" order="2"  />
+    <menuitem name="sistemaeducativo-Curso-menu"  parent="sistemaeducativo-menu" title="Cursos" action="mant-Curso-action" groups="admins" order="3"  />
+    <menuitem name="sistemaeducativo-Modulo-menu"  parent="sistemaeducativo-menu" title="Módulos" action="mant-Modulo-action" groups="admins" order="4"  />
+    <menuitem name="sistemaeducativo-Grado-menu"  parent="sistemaeducativo-menu" title="Grados" action="mant-Grado-action" groups="admins" order="5"  />
+
+
+
+
+
+
+
+</object-views>
