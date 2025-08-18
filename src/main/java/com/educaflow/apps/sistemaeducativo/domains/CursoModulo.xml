@@ -3,11 +3,12 @@
                xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
 
     <module name="sistemaeducativo" package="com.educaflow.apps.sistemaeducativo.db"/>
-    <entity name="Curso">
-        <string name="code"  required="true"  />
-        <string name="name" namecolumn="true"  required="true"  />
-        <many-to-one name="ciclo" ref="com.educaflow.apps.sistemaeducativo.db.Ciclo"  required="true"  />
-        <one-to-many name="modulos" ref="com.educaflow.apps.sistemaeducativo.db.CursoModulo"  title="Módulos" mappedBy="curso"/>
+    <entity name="CursoModulo">
+        <many-to-one name="curso"  ref="com.educaflow.apps.sistemaeducativo.db.Curso"   required="true"  />
+        <many-to-one name="modulo" ref="com.educaflow.apps.sistemaeducativo.db.Modulo"  required="true"  />
+
+        <unique-constraint columns="curso,modulo" />
+
     </entity>
 
 </domain-models>

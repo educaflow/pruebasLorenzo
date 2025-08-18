@@ -27,6 +27,13 @@
             <field name="name" colOffset="9"  colSpan="6"/>
             <field name="ciclo" colOffset="6" colSpan="6" />
         </panel>
+
+        <panel-related name="cursos" field="modulos"
+                       grid-view="mant-Curso-CursoModulo-grid"
+                       form-view="mant-Curso-CursoModulo-form"
+                       colSpan="12"
+        />
+
     </form>
 
     <grid name="search-Curso-grid" title="Curso" model="com.educaflow.apps.sistemaeducativo.db.Curso"
@@ -46,4 +53,27 @@
         </panel>
     </form>
 
+    <!-- ******************************************************************************************************** -->
+    <!-- ********************************* Vistas de CursoModulo hijos de Curso ********************************* -->
+    <!-- ******************************************************************************************************** -->
+
+
+    <grid name="mant-Curso-CursoModulo-grid" title="Curso-Módulos" model="com.educaflow.apps.sistemaeducativo.db.CursoModulo"
+          groups="admins"
+          >
+        <field name="modulo" />
+    </grid>
+
+    <form name="mant-Curso-CursoModulo-form" title="Curso-Módulo" model="com.educaflow.apps.sistemaeducativo.db.CursoModulo"
+          groups="admins"
+          onNew="mant-Curso-CursoModulo-onNew-action"
+          width="large" canAttach="false" >
+        <panel name="CursoModulo" title="">
+            <field name="curso"  colSpan="6" showIf="false" />
+            <field name="modulo" colSpan="6" colOffset="6" />
+        </panel>
+    </form>
+    <action-record name="mant-Curso-CursoModulo-onNew-action" model="com.educaflow.apps.sistemaeducativo.db.CursoModulo">
+        <field name="curso" expr="eval: __parent__"/>
+    </action-record>
 </object-views>
