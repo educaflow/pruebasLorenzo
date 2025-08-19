@@ -14,23 +14,7 @@ public fun getAllowProperties(validationRules: List<ValidationRule?>): MutableMa
         if ((validationRule is FieldValidationRules)) {
             val fieldValidationRules = validationRule
 
-            if (fieldValidationRules.methodField.returnType.classifier== MetaFile::class) {
-                allowProperties.put(fieldValidationRules.getFieldName(),mapOf(
-                    "cid" to null,
-                    "createdBy" to mapOf("code" to null,"id" to null,"name" to null,),
-                    "createdOn" to null,
-                    "description" to null,
-                    "fileName" to null,
-                    "filePath" to null,
-                    "fileSize" to null,
-                    "fileType" to null,
-                    "id" to null,
-                    "selected" to null,
-                    "updatedBy" to mapOf("code" to null,"id" to null,"name" to null,),
-                    "updatedOn" to null,
-                    "version" to null
-                ))
-            } else if (allowProperties.containsKey(fieldValidationRules.getFieldName())) {
+            if (allowProperties.containsKey(fieldValidationRules.getFieldName())) {
                 val originalAllowProperties = allowProperties.get(fieldValidationRules.getFieldName()) as MutableMap<String?, Any?>?
                 val newAllowProperties = getAllowProperties(fieldValidationRules.validationRules)
 

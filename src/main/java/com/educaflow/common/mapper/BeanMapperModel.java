@@ -1,6 +1,8 @@
 package com.educaflow.common.mapper;
 
+import com.axelor.db.JpaRepository;
 import com.axelor.db.Model;
+import com.educaflow.common.util.AxelorDBUtil;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import java.beans.PropertyDescriptor;
@@ -143,7 +145,7 @@ public class BeanMapperModel {
                         }
 
 
-                        Object rawValue = entityMap.get(propertyDescriptor.getName());
+                        Map<String,Object> rawValue = (Map<String,Object>)entityMap.get(propertyDescriptor.getName());
                         Model valueDest = (Model) PropertyUtils.getProperty(entityDest, propertyDescriptor.getName());
                         Map<String,Object> innerAllowProperties = (Map<String,Object>)allowProperties.get(propertyDescriptor.getName());
 
@@ -152,7 +154,7 @@ public class BeanMapperModel {
                         } else if ((rawValue == null) && (valueDest != null)) {
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), null);
                         } else if ((rawValue != null) && (valueDest == null)) {
-                            valueDest = ((Class<? extends Model>) propertyDescriptor.getPropertyType()).getDeclaredConstructor().newInstance();
+                            valueDest = getInitialModelFromMap(rawValue,(Class<? extends Model>) propertyDescriptor.getPropertyType());
                             copyValueToEntityAndNoChangeId((Class<? extends Model>) propertyDescriptor.getPropertyType(), rawValue, valueDest, innerAllowProperties);
                             PropertyUtils.setProperty(entityDest, propertyDescriptor.getName(), valueDest);
                         } else if ((rawValue != null) && (valueDest != null)) {
@@ -174,7 +176,7 @@ public class BeanMapperModel {
                         } else if ((listSource != null) && (listTarget == null)) {
                             List<Model> listValues = new ArrayList<>();
                             for (Object rawValue : listSource) {
-                                Model itemValue = ((Class<? extends Model>) tipoListaClass).getDeclaredConstructor().newInstance();
+                                Model itemValue = getInitialModelFromMap((Map<String,Object>)rawValue,tipoListaClass);
                                 copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, innerAllowProperties, mappedByRelation, entityDest);
                                 listValues.add(itemValue);
                             }
@@ -183,7 +185,7 @@ public class BeanMapperModel {
                             ModelListCompare modelListCompare = new ModelListCompare(listSource, listTarget);
 
                             for (Object rawValue : modelListCompare.getSourceWhereOnlySource()) {
-                                Model itemValue = tipoListaClass.getDeclaredConstructor().newInstance();
+                                Model itemValue = getInitialModelFromMap((Map<String,Object>)rawValue,tipoListaClass);
                                 copyValueToEntityAndNoChangeId(tipoListaClass, rawValue, itemValue, innerAllowProperties, mappedByRelation, entityDest);
                                 listTarget.add(itemValue);
                             }
@@ -236,5 +238,40 @@ public class BeanMapperModel {
         valueDest.setId(originalId);
     }
 
+    /**
+     * Crea un modelo a partir de un mapa de valores.
+     * Si el mapa contiene un id, se busca el modelo existente, si no, se crea uno nuevo.
+     * Porque si ya tiene "id" se asume que es un modelo existente y se busca en la base de datos.
+     *
+     * @param values Mapa de valores
+     * @param clazz Clase del modelo
+     * @return Modelo creado o encontrado
+     * @throws Exception Si ocurre un error al crear o buscar el modelo
+     */
+    private static Model getInitialModelFromMap(Map<String, Object> values,Class<? extends Model> clazz) throws Exception {
+        Model model=clazz.getDeclaredConstructor().newInstance();
+
+        if (values.get("id") != null) {
+            model=getModel(clazz,  ((Number) values.get("id")).longValue());
+            if (model == null) {
+                throw new RuntimeException("No se encontró el modelo con id: " + values.get("id") + " del tipo" + clazz);
+            }
+        }
+
+        return model;
+    }
+
+
+    private static Model getModel(Class<? extends Model> classModel, Long id) {
+        System.out.println("WARNING:------>   TODO:Comprobar la seguridad de acceso a la base de datos al llamar a este método!!!!!!.");
+
+        JpaRepository jpaRepository=AxelorDBUtil.getRepository(classModel);
+        if (jpaRepository == null) {
+            throw new RuntimeException("No se encontró el repositorio para la clase: " + classModel);
+        }
+        Model model = jpaRepository.find(id);
+
+        return model;
+    }
 
 }

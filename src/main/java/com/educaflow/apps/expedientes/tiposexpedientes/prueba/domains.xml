@@ -7,6 +7,7 @@
     <entity name="Prueba" extends="Expediente" >
         <string name="solicita" title="Solicita" />
         <string name="motivo" title="Motivo" />
+        <many-to-one name="ciclo" ref="com.educaflow.apps.sistemaeducativo.db.Ciclo" title="Ciclo" />
         <one-to-one name="justificante"  ref="com.axelor.meta.db.MetaFile" title="Justificante" />
         <one-to-many name="formacionesCentrosTrabajo" title="Formaciones en Centros de Trabajo" ref="FormacionCentroTrabajo" mappedBy="prueba" cascade="all" orphanRemoval="true" />
 

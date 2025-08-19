@@ -3,6 +3,7 @@ package com.educaflow.apps.expedientes.tiposexpedientes.prueba
 import com.educaflow.apps.expedientes.common.StateEventValidator
 import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent
 import com.educaflow.apps.expedientes.db.FormacionCentroTrabajo
+import com.educaflow.apps.sistemaeducativo.db.Ciclo
 import com.educaflow.common.validation.dsl.rules
 import com.educaflow.common.validation.engine.BeanValidationRules
 import com.educaflow.common.validation.rules.*
@@ -18,6 +19,9 @@ class StateEventValidatorImpl : StateEventValidator {
                 +NoAllUpperCase()
                 +MinLength(5)
                 +MaxLength(100)
+            }
+            field(model::getCiclo) {
+                +Required()
             }
             field(model::getJustificante) {
                 +Required()
