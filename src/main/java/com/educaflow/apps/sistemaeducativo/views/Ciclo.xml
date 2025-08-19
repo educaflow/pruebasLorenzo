@@ -27,7 +27,8 @@
 
             <field name="name" colOffset="9" colSpan="6" />
             <field name="familiaProfesional" colOffset="6" colSpan="6" grid-view="search-FamiliaProfesional-grid" />
-            <field name="grado" colSpan="4"  grid-view="search-Grado-grid"  domain="(self.code='D' OR self.code='E')" />
+            <field name="grado" colOffset="6" colSpan="4"  grid-view="search-Grado-grid"  domain="(self.code='D' OR self.code='E')" />
+            <field name="nivel" colSpan="4"  grid-view="search-Nivel-grid"  showIf="grado.code=='D'" requiredIf="grado.code=='D'" />
         </panel>
 
         <panel-related name="cursos" field="cursos"
@@ -54,6 +55,7 @@
             <field name="name"               colSpan="6"  readonly="true" />
             <field name="familiaProfesional" colSpan="6"  readonly="true"  />
             <field name="grado"              colSpan="4"  readonly="true"      />
+            <field name="nivel"              colSpan="4"  readonly="true"      />
         </panel>
     </form>
 
