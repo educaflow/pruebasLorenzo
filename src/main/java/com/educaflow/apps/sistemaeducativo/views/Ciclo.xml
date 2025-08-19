@@ -43,6 +43,7 @@
           groups="admins,users"
           orderBy="name"
           editable="false" edit-icon="false" x-selector="none" canNew="false" canEdit="false" canDelete="false" canSave="false" canViewOnClick="true">
+        <field name="familiaProfesional" />
         <field name="name" />
     </grid>
 
@@ -50,11 +51,9 @@
           groups="admins"
           width="large" canAttach="false" canBack="false" canBackOnSave="false" canDelete="false" canNew="false">
         <panel name="Ciclo" title="">
-            <field name="code" colSpan="3" readonly="true"  />
-
-            <field name="name" colOffset="9" colSpan="6"  readonly="true" />
-            <field name="familiaProfesional" colOffset="6"  colSpan="6"  readonly="true"  />
-            <field name="grado" colSpan="4"  readonly="true"    domain="(self.code='D' OR self.code='E')"  />
+            <field name="name"               colSpan="6"  readonly="true" />
+            <field name="familiaProfesional" colSpan="6"  readonly="true"  />
+            <field name="grado"              colSpan="4"  readonly="true"      />
         </panel>
     </form>
 

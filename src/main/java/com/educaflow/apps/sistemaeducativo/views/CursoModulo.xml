@@ -22,8 +22,8 @@
           groups="admins"
           width="large" canAttach="false" canBack="false" canBackOnSave="true" canDelete="true" canNew="false">
         <panel name="CursoModulo" title="">
-            <field name="curso"  colSpan="6" />
-            <field name="modulo" colSpan="6" colOffset="6" />
+            <field name="curso"  colSpan="6"  grid-view="search-Curso-grid" />
+            <field name="modulo" colSpan="6" colOffset="6" grid-view="search-Modulo-grid" />
         </panel>
     </form>
 

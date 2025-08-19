@@ -40,6 +40,8 @@
           groups="admins,users"
           orderBy="name"
           editable="false" edit-icon="false" x-selector="none" canNew="false" canEdit="false" canDelete="false" canSave="false" canViewOnClick="true">
+        <field name="ciclo.familiaProfesional" />
+        <field name="ciclo"  />
         <field name="name" />
     </grid>
 
