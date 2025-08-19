@@ -263,7 +263,7 @@ public class BeanMapperModel {
 
 
     private static Model getModel(Class<? extends Model> classModel, Long id) {
-        System.out.println("WARNING:------>   TODO:Comprobar la seguridad de acceso a la base de datos al llamar a este método!!!!!!.");
+        System.out.println("ERROR:------>   TODO:Comprobar la seguridad de acceso a la base de datos al llamar a este método!!!!!!.");
 
         JpaRepository jpaRepository=AxelorDBUtil.getRepository(classModel);
         if (jpaRepository == null) {
