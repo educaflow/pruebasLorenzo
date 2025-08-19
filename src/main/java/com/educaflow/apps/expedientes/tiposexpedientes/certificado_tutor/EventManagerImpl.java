@@ -35,23 +35,6 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     @Override
     public void triggerInitialEvent(CertificadoTutor certificadoTutor, EventContext<CertificadoTutor.Profile> eventContext) throws BusinessException {
 
-        User currentUser = AuthUtils.getUser();
-        CentroUsuario centroUsuario = centroUsuarioRepository.all()
-                .filter("self.usuario = ?1", currentUser)
-                .fetchOne();
-
-
-        ValoresAmbito valoresAmbitoCreador = new ValoresAmbito();
-        valoresAmbitoCreador.setCreador(currentUser);
-        valoresAmbitoCreador.setCentro(centroUsuario.getCentro());
-        valoresAmbitoCreador.setDepartamento(centroUsuario.getDepartamentos().stream().findFirst().orElse(null));
-
-        if (certificadoTutor.getValoresAmbitoCreador() == null) {
-            log.info("Añadiendo valores de ámbito creador al certificado tutor");
-            certificadoTutor.setValoresAmbitoCreador(valoresAmbitoCreador);
-        }
-
-        log.info("Valores de ámbito creador: {}", certificadoTutor.getValoresAmbitoCreador());
 
     }
 

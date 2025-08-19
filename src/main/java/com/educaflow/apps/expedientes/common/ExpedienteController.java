@@ -1,5 +1,7 @@
 package com.educaflow.apps.expedientes.common;
 
+import com.axelor.auth.AuthUtils;
+import com.axelor.auth.db.User;
 import com.axelor.db.JPA;
 import com.axelor.db.JpaRepository;
 import com.axelor.db.Model;
@@ -8,30 +10,24 @@ import com.axelor.inject.Beans;
 import com.axelor.meta.CallMethod;
 import com.axelor.rpc.ActionRequest;
 import com.axelor.rpc.ActionResponse;
-import com.educaflow.apps.expedientes.common.annotations.BeanValidationRulesForStateAndEvent;
+import com.educaflow.apps.expedientes.common.tramitador.Tramitador;
 import com.educaflow.apps.expedientes.db.Expediente;
-import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.apps.expedientes.db.Tramite;
-import com.educaflow.apps.expedientes.db.repo.NumeradorRepository;
 import com.educaflow.apps.expedientes.db.repo.TramiteRepository;
-import com.educaflow.common.mapper.BeanMapperModel;
+import com.educaflow.apps.sistemaeducativo.db.Centro;
+import com.educaflow.common.util.ActionRequestHelper;
 import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.util.AxelorViewUtil;
-import com.educaflow.common.util.ReflectionUtil;
-import com.educaflow.common.util.TextUtil;
-import com.educaflow.common.validation.engine.*;
+import com.educaflow.common.util.Convert;
 import com.educaflow.common.validation.messages.BusinessException;
 import com.educaflow.common.validation.messages.BusinessMessages;
-import com.google.common.base.CaseFormat;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
 
-import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
+
 
 
 public class ExpedienteController {
@@ -40,42 +36,32 @@ public class ExpedienteController {
     TramiteRepository tramiteRepository;
 
     @Inject
-    NumeradorRepository numeradorRepository;
+    Tramitador tramitador;
 
 
-    public ExpedienteController() {;
+    public ExpedienteController() {
 
     }
 
     @CallMethod
     @Transactional
-    public void triggerInitialEvent(ActionRequest request, ActionResponse response) {
+    public void triggerInitialEvent(ActionRequest actionRequest, ActionResponse response) {
         try {
-            TipoExpediente tipoExpediente = getTipoExpediente(request);
-            EventManager eventManager=getEventManager(tipoExpediente);
-            EventContext eventContext = getEventContext(eventManager,request);
-            JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
-            Enum initialEvent=getInitialState(eventManager.getStateClass());
+            ActionRequestHelper actionRequestHelper = new ActionRequestHelper(actionRequest);
 
-            Expediente expediente=(Expediente)eventManager.getModelClass().getDeclaredConstructor().newInstance();
-            expediente.setTipoExpediente(tipoExpediente);
-            updateName(expediente);
+            TipoExpediente tipoExpediente = getTipoExpedienteFromIdTramite(actionRequestHelper.getId());
+            EventManager eventManager = tipoExpediente.getEventManager();
+            String profileName = actionRequestHelper.getProfileName();
+            EventContext eventContext = getEventContext(eventManager,profileName);
 
-            try {
-                eventManager.triggerInitialEvent(expediente, eventContext);
-            } catch (BusinessException ex) {
-                AxelorViewUtil.doResponseBusinessMessagesAsError(response,"No es posible crear el expediente", ex.getBusinessMessages());
-                return;
-            }
-            expediente.updateState(initialEvent);
-            updateNumeroExpediente(expediente);
-
-            addHistorialEstado(expediente,null);
-            eventManager.onEnterState(expediente, eventContext);
-            saveExpediente(expedienteRepository,expediente);
+            Expediente expediente = tramitador.triggerInitialEvent(tipoExpediente, eventContext);
 
             String viewName = eventManager.getViewName(expediente, eventContext);
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,getTabName(expediente),eventContext.getProfile().name());
+            AxelorViewUtil.doResponseViewForm(response, viewName, eventManager.getModelClass(), expediente, getTabName(expediente), eventContext.getProfile().name());
+
+        } catch (BusinessException ex) {
+            AxelorViewUtil.doResponseBusinessMessagesAsError(response, "No es posible crear el expediente", ex.getBusinessMessages());
+            return;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -86,64 +72,34 @@ public class ExpedienteController {
     @Transactional
     public void triggerEvent(ActionRequest request, ActionResponse response) {
         try {
-            String eventName=getEventName(request);
-            Expediente expediente=getExpedienteFromDB(request);
-            Expediente expedienteOriginal=(Expediente) BeanMapperModel.getEntityCloned(expediente.getClass(), expediente);
-            EventManager eventManager=getEventManager(expediente.getTipoExpediente());
-            EventContext eventContext = getEventContext(eventManager,request);
-            JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
-            StateEventValidator stateEventValidator = getStateEventValidator(expediente.getTipoExpediente());
-            StateEnum stateEnum = new StateEnum(ReflectionUtil.getEnumConstant(eventManager.getStateClass(), expediente.getCodeState()));
+            ActionRequestHelper actionRequestHelper = new ActionRequestHelper(request);
+
+            Expediente expediente = getExpedienteFromIdExpediente(actionRequestHelper.getId());
+            String eventName = actionRequestHelper.getEventName();
+            Map<String, Object> requestData = actionRequestHelper.getRequestData();
+            EventManager eventManager = expediente.getTipoExpediente().getEventManager();
+            String profileName = actionRequestHelper.getProfileName();
+            EventContext eventContext = getEventContext(eventManager,profileName);
+
+
 
             if (eventName.equals(CommonEvent.EXIT.name())) {
                 response.setSignal("refresh-app", null);
                 return;
             }
 
-            if ((stateEnum.getEvents().contains(eventName)==false)) {
-                throw new RuntimeException("El evento '" + eventName + "' no es válido para el estado '" + expediente.getCodeState() + "'");
-            }
+            tramitador.triggerEvent(expediente, eventName, requestData, eventContext);
 
 
-            if (((eventName.equals(CommonEvent.DELETE.name()))==false) ) {
-                BeanValidationRules beanValidationRules = getBeansValidationRules(stateEventValidator, expediente.getCodeState(), eventName);
-
-                Map<String,Object> allowProperties = AllowPropertiesFactory.getAllowProperties(beanValidationRules.getFieldValidationRules());
-                populateExpedienteFromActionRequest(expediente, request, eventName, eventContext, allowProperties);
-
-
-                ValidatorEngine validatorEngine = new ValidatorEngine();
-                BusinessMessages businessMessages = validatorEngine.validate(expediente, beanValidationRules);
-                if (businessMessages.isValid()==false) {
-                    JPA.em().detach(expediente);
-                    AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
-                    return;
-                }
-            }
-
-
-            String originalState = expedienteOriginal.getCodeState();
-            try {
-                eventManager.triggerEvent(eventName, expediente, expedienteOriginal, eventContext);
-            } catch (BusinessException ex) {
-                JPA.em().detach(expediente);
-                AxelorViewUtil.doResponseBusinessMessages(response, ex.getBusinessMessages());
-                return;
-            }
             if (eventName.equals(CommonEvent.DELETE.name())) {
-                removeExpediente(expedienteRepository, expediente);
                 response.setSignal("refresh-app", null);
             } else {
-                String newState = expediente.getCodeState();
-                if (newState.equals(originalState) == false) {
-                    addHistorialEstado(expediente, eventName);
-                    eventManager.onEnterState(expediente, eventContext);
-                }
-                saveExpediente(expedienteRepository, expediente);
-
                 String viewName = eventManager.getViewName(expediente, eventContext);
                 AxelorViewUtil.doResponseViewForm(response, viewName, eventManager.getModelClass(), expediente, getTabName(expediente), eventContext.getProfile().name());
             }
+
+        } catch (BusinessException ex) {
+            AxelorViewUtil.doResponseBusinessMessages(response, ex.getBusinessMessages());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -152,13 +108,15 @@ public class ExpedienteController {
     @CallMethod
     public void viewExpediente(ActionRequest request, ActionResponse response) {
         try {
-            Expediente expediente=getExpedienteFromDB(request);
-            Expediente expedienteOriginal=(Expediente) BeanMapperModel.getEntityCloned(expediente.getClass(), expediente);
-            EventManager eventManager=getEventManager(expediente.getTipoExpediente());
-            EventContext eventContext = getEventContext(eventManager,request);
-            String viewName = eventManager.getViewName(expediente, eventContext);
+            ActionRequestHelper actionRequestHelper = new ActionRequestHelper(request);
 
-            AxelorViewUtil.doResponseViewForm(response,viewName,eventManager.getModelClass(),expediente,getTabName(expediente),eventContext.getProfile().name());
+            Expediente expediente = getExpedienteFromIdExpediente(actionRequestHelper.getId());
+            EventManager eventManager = expediente.getTipoExpediente().getEventManager();
+            String profileName = actionRequestHelper.getProfileName();
+            EventContext eventContext = getEventContext(eventManager,profileName);
+
+            String viewName = eventManager.getViewName(expediente, eventContext);
+            AxelorViewUtil.doResponseViewForm(response, viewName, eventManager.getModelClass(), expediente, getTabName(expediente), eventContext.getProfile().name());
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -168,24 +126,17 @@ public class ExpedienteController {
     @CallMethod
     public void validateChild(ActionRequest request, ActionResponse response) {
         try {
-            Map<String,Object> context = getActionRequestContext(request);
-            Class<? extends Model> beanClass =(Class<? extends Model>) Class.forName((String)context.get("_model"));
-            Model bean=findModel(beanClass, objectToLong(context.get("id")));
-            String validateProperty=(String)((Map<String,Object>) context.get("_parent")).get("_source");
-            String methodName="get"+TextUtil.toFirstsLetterToUpperCase(validateProperty);
-            Expediente expediente=getExpedienteParentFromDB(request);
-            TipoExpediente tipoExpediente=expediente.getTipoExpediente();
+            ActionRequestHelper actionRequestHelper = new ActionRequestHelper(request);
 
-            StateEventValidator stateEventValidator = getStateEventValidator(tipoExpediente);
-            List<BeanValidationRules> beansValidationRules = getBeansValidationRules(stateEventValidator, expediente.getCodeState());
-            List<FieldValidationRules> fieldsValidationRules=getFieldsValidationRules(beansValidationRules,methodName);
+            Expediente expediente = getExpedienteFromIdExpediente(actionRequestHelper.getParentId());
+            Class<? extends Model> beanClass = actionRequestHelper.getModelClass();
+            Map<String, Object> requestData = actionRequestHelper.getRequestData();
 
-            Map<String,Object> allowProperties = AllowPropertiesFactory.getAllowProperties(fieldsValidationRules);
-            BeanMapperModel.copyMapToEntity(beanClass, context, bean, allowProperties);
+            Model bean=findModel(beanClass, actionRequestHelper.getId());
+            String validateProperty=actionRequestHelper.getParentSource();
 
-            ValidatorEngine validatorEngine = new ValidatorEngine();
-            BusinessMessages businessMessages = validatorEngine.validate(bean, fieldsValidationRules);
-            JPA.em().detach(bean);
+            BusinessMessages businessMessages = tramitador.validateChild(expediente, bean,beanClass, validateProperty,requestData);
+
             AxelorViewUtil.doResponseBusinessMessages(response, businessMessages);
 
         } catch (Exception ex) {
@@ -198,143 +149,38 @@ public class ExpedienteController {
     /********************** Funciones de Negocio  **********************/
     /*******************************************************************/
 
-    private static void addHistorialEstado(Expediente expediente, String eventName) {
-        ExpedienteHistorialEstados historialEstado = new ExpedienteHistorialEstados();
-        historialEstado.setCodeState(expediente.getCodeState());
-        historialEstado.setNameState(TextUtil.humanize(expediente.getCodeState()));
-        historialEstado.setCodeEvent((eventName!=null)?eventName:"");
-        historialEstado.setNameEvent((eventName!=null)?TextUtil.humanize(eventName):"");
-        historialEstado.setFecha(LocalDateTime.now());
-        expediente.addHistorialEstado(historialEstado);
-    }
-
-
-    private void updateName(Expediente expediente) {
-        expediente.setName(expediente.getTipoExpediente().getName());
-    }
-
-    private void updateNumeroExpediente(Expediente expediente) {
-        int anyoActual = LocalDate.now().getYear();
-        String centro = getCentroFromCurrentUser();
-        long numeroExpedienteSinAnyo = numeradorRepository.getSiguienteNumeroExpediente(centro, String.valueOf(anyoActual));
-        String numeroExpediente = String.format("%05d", numeroExpedienteSinAnyo)+"/"+String.valueOf(anyoActual);
-        expediente.setNumeroExpediente(numeroExpediente);
-    }
-
-    private void assertValidState(Expediente expediente,Class<? extends Enum> enumClass) {
-        String stateCode=expediente.getCodeState();
-        boolean isValid = Arrays.stream(enumClass.getEnumConstants()).anyMatch(enumConstant -> stateCode.equals(enumConstant.name()));
-
-        if (isValid==false) {
-            throw new IllegalArgumentException("Invalid state code '" + stateCode + "'  "+enumClass.getSimpleName());
-        }
-    }
 
     private String getTabName(Expediente expediente) {
-        return expediente.getNumeroExpediente()+"-"+ I18n.get(expediente.getTipoExpediente().getName());
+        return expediente.getNumeroExpediente() + "-" + I18n.get(expediente.getTipoExpediente().getName());
     }
 
 
-
-
     /*******************************************************************/
-    /*************** Obtener los datos del ActionRequest ***************/
+    /*************** Funciones de Acceso a Base de datos ***************/
     /*******************************************************************/
 
-    private TipoExpediente getTipoExpediente(ActionRequest request) {
-        long id=objectToLong(getActionRequestContext(request).get("id"));
-
-        Tramite tramite=findTramite(tramiteRepository,id);
-        TipoExpediente tipoExpediente=tramite.getDefaultTipoExpediente();
+    private TipoExpediente getTipoExpedienteFromIdTramite(long idTramite) {
+        Tramite tramite = tramiteRepository.find(idTramite);
+        if (tramite == null) {
+            throw new RuntimeException("No existe el tramite con idTramite: " + idTramite);
+        }
+        TipoExpediente tipoExpediente = tramite.getDefaultTipoExpediente();
+        if (tipoExpediente == null) {
+            throw new RuntimeException("No existe el tipo de expediente para el tramite con idTramite: " + idTramite);
+        }
         return tipoExpediente;
     }
 
 
-
-    private Expediente getExpedienteFromDB(ActionRequest request) {
-        long id=objectToLong(getActionRequestContext(request).get("id"));
-
-        JpaRepository<Expediente> expedienteRepository =getJpaRepository(id);
-
-        Expediente expediente=findExpediente(expedienteRepository,id);
-
-        if (expediente==null) {
-            throw new RuntimeException("No existe el expediente con id: " + id);
+    private Expediente getExpedienteFromIdExpediente(long idExpediente) {
+        JpaRepository<Expediente> expedienteRepository = getJpaRepository(idExpediente);
+        Expediente expediente =expedienteRepository.find(idExpediente);
+        if (expediente == null) {
+            throw new RuntimeException("No existe el expediente con idExpediente: " + idExpediente);
         }
 
         return expediente;
     }
-
-    private Expediente getExpedienteParentFromDB(ActionRequest request) {
-        long id=objectToLong(((Map<String,Object>)(getActionRequestContext(request).get("_parent"))).get("id"));
-
-        JpaRepository<Expediente> expedienteRepository =getJpaRepository(id);
-
-        Expediente expediente=findExpediente(expedienteRepository,id);
-
-        if (expediente==null) {
-            throw new RuntimeException("No existe el expediente con id: " + id);
-        }
-
-        return expediente;
-    }
-
-    private void populateExpedienteFromActionRequest(Expediente expediente, ActionRequest request,String eventName, EventContext eventContext, Map<String,Object> allowProperties) {
-        if (eventName!=null) {
-            BeanMapperModel.copyMapToEntity(expediente.getClass(), getActionRequestContext(request), expediente, allowProperties);
-        }
-    }
-
-
-    private String getEventName(ActionRequest request) {
-
-        String eventName=(String)getActionRequestContext(request).get("_signal");
-
-        if (eventName==null) {
-            throw new RuntimeException("eventName is null");
-        }
-
-        return eventName;
-    }
-
-
-    public <T extends Enum<T>> EventContext<T> getEventContext(EventManager eventManager, ActionRequest request) {
-        try {
-            String profileName = (String) getActionRequestContext(request).get("_profile");
-            if (profileName == null) {
-                throw new RuntimeException("profileName is null");
-            }
-
-            Enum profile = Enum.valueOf(eventManager.getProfileClass(), profileName);
-            return new EventContext<>(profile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /*******************************************************************/
-    /******************* Funciones de Acceso a datos *******************/
-    /*******************************************************************/
-
-
-    private <T extends Expediente> void saveExpediente(JpaRepository<T> jpaRepository, T expediente) {
-        jpaRepository.save(expediente);
-    }
-
-    private <T extends Expediente> void removeExpediente(JpaRepository<T> jpaRepository, T expediente) {
-        jpaRepository.remove(expediente);
-    }
-
-    private <T extends Expediente> T findExpediente(JpaRepository<T> jpaRepository, long id) {
-        return jpaRepository.find(id);
-    }
-
-    private <T extends Tramite> T findTramite(JpaRepository<T> jpaTramiteRepository, long id) {
-        return jpaTramiteRepository.find(id);
-    }
-
-
 
     private Model findModel(Class<? extends Model> classModel, Long id) {
         try {
@@ -345,7 +191,7 @@ public class ExpedienteController {
                 String fqcnRepositoryClass="com.educaflow.apps.expedientes.db.repo."+classModel.getSimpleName()+"Repository";
                 Class<? extends JpaRepository> repositoryClass = (Class<? extends JpaRepository>) Class.forName(fqcnRepositoryClass);
                 JpaRepository<?> repository = Beans.get(repositoryClass);
-                model=repository.find(objectToLong(id));
+                model=repository.find(Convert.objectToLong(id));
             }
 
             return model;
@@ -355,191 +201,57 @@ public class ExpedienteController {
     }
 
 
-
-    /*********************************************************************/
-    /********************** Funciones de Validación **********************/
-    /*********************************************************************/
-
-    private StateEventValidator getStateEventValidator(TipoExpediente tipoExpediente) {
-        try {
-            if (tipoExpediente == null) {
-                throw new RuntimeException("No existe el tipo del expediente a crear.");
-            }
-            String fqcnEventManager = tipoExpediente.getFqcnEventManager();
-            if (fqcnEventManager == null || fqcnEventManager.isEmpty()) {
-                throw new RuntimeException("No existe el fqcnEventManager para el tipo de expediente: " + tipoExpediente.getName());
-            }
-
-            int ultimoPunto = fqcnEventManager.lastIndexOf('.');
-            if (ultimoPunto == -1) {
-                throw new RuntimeException("El fqcnEventManager no tiene un punto: " + tipoExpediente.getFqcnEventManager());
-            }
-
-            String fqcnStateEventValidation = fqcnEventManager.replace("EventManager","StateEventValidator");
-
-            Class<StateEventValidator> stateEventValidationClass = (Class<StateEventValidator>) Class.forName(fqcnStateEventValidation);
-
-            StateEventValidator stateEventValidator = Beans.get(stateEventValidationClass);
-
-            return stateEventValidator;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private BeanValidationRules getBeansValidationRules(StateEventValidator stateEventValidator, String state, String eventName) {
-        try {
-            String methodName = "getForState" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state) + "InEvent" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, eventName);
-            Method method = ReflectionUtil.getMethod(stateEventValidator.getClass(), methodName, BeanValidationRules.class, BeanValidationRulesForStateAndEvent.class, new Class<?>[]{});
-            if (method==null) {
-                throw new RuntimeException("No se ha encontrado el método: " + methodName + " en la clase: " + stateEventValidator.getClass().getName());
-            }
-            Object result = method.invoke(stateEventValidator);
-            if (result == null) {
-                throw new RuntimeException("No se han encontrado las reglas de validación para el estado: " + state + " y el evento: " + eventName);
-            }
-
-
-            BeanValidationRules beanValidationRules = (BeanValidationRules) result;
-
-            return beanValidationRules;
-        } catch (Exception ex) {
-            throw new RuntimeException("Error al obtener las reglas de validación para el estado: " + state + " y el evento: " + eventName + " en " + stateEventValidator.getClass().getName(), ex);
-        }
-    }
-
-    private List<BeanValidationRules> getBeansValidationRules(StateEventValidator stateEventValidator, String state) {
-        try {
-            List<BeanValidationRules> beansValidationRules=new ArrayList<>();
-            String methodName = "getForState" + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, state) + "InEvent";
-
-
-            for (Method method : stateEventValidator.getClass().getDeclaredMethods()) {
-                if (method.getName().startsWith(methodName)) {
-                    if (method.isAnnotationPresent(BeanValidationRulesForStateAndEvent.class)) {
-                        BeanValidationRules beanValidationRules=(BeanValidationRules)method.invoke(stateEventValidator);
-                        if (beanValidationRules == null) {
-                            throw new RuntimeException("El método retorno null:" + method.getName());
-                        }
-                        beansValidationRules.add(beanValidationRules);
-                    }
-                }
-            }
-
-            if (beansValidationRules.isEmpty()) {
-                throw new RuntimeException("No se han encontrado las reglas de validación para el estado: " + state);
-            }
-
-            return beansValidationRules;
-
-        } catch (Exception ex) {
-            throw new RuntimeException("Error al obtener las reglas de validación para el estado: " + state + " en " + stateEventValidator.getClass().getName(), ex);
-        }
-    }
-
-    private List<FieldValidationRules> getFieldsValidationRules(List<BeanValidationRules> beansValidationRules,String methodName) {
-        List<FieldValidationRules> fieldsValidationRules=new ArrayList<>();
-        for(BeanValidationRules rules:beansValidationRules) {
-            for(FieldValidationRules fieldValidationRules:rules.getFieldValidationRules()) {
-                if (fieldValidationRules.getMethodField().getName().equals(methodName)) {
-                    for(ValidationRule validationRule:fieldValidationRules.getValidationRules()) {
-                        if ((validationRule instanceof FieldValidationRules)) {
-                            fieldsValidationRules.add((FieldValidationRules)validationRule);
-                        }
-                    }
-                }
-            }
-        }
-
-        return fieldsValidationRules;
-    }
-
-
     /*******************************************************************/
     /********************** Funciones de Utilidad **********************/
     /*******************************************************************/
 
-    private static  String getCentroFromCurrentUser() {
-        System.out.println("TODO!!!!!:El código de centro debe obtener desde el usuario");
-        return "460001";
-    }
-
-
-    private static  EventManager getEventManager(TipoExpediente tipoExpediente) {
+    public <T extends Enum<T>> EventContext<T> getEventContext(EventManager eventManager, String profileName) {
         try {
-            if (tipoExpediente == null) {
-                throw new RuntimeException("No existe el tipo del expediente a crear.");
-            }
-            String fqcnEventManager = tipoExpediente.getFqcnEventManager();
-            if (fqcnEventManager == null || fqcnEventManager.isEmpty()) {
-                throw new RuntimeException("No existe el fqcnEventManager para el tipo de expediente: " + tipoExpediente.getName());
-            }
-            Class<EventManager> eventManagerClass = (Class<EventManager>) Class.forName(tipoExpediente.getFqcnEventManager());
-
-            EventManager eventManager = (EventManager) Beans.get(eventManagerClass);
-
-            return eventManager;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            Enum profile = Enum.valueOf(eventManager.getProfileClass(), profileName);
+            Centro centro = getCentroFromCurrentUser();
+            return new EventContext<>(profile, centro);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private Map<String,Object> getActionRequestContext(ActionRequest request) {
-         Map<String,Object> requestcontext=(Map<String,Object>) request.getData().get("context");
 
-         if (requestcontext == null) {
-             throw new RuntimeException("requestcontext es null");
-         }
-         return (Map<String,Object>) requestcontext;
+    private static Centro getCentroFromCurrentUser() {
+        final User user = AuthUtils.getUser();
+
+        if (user == null) {
+            throw new RuntimeException("User es null");
+        }
+
+        Centro centro = user.getCentroActivo();
+
+        if (centro == null) {
+            String codigoCentroDefecto = "460001";
+            System.out.println("ERROR:El usuario no tiene un centro activo, se asigna el centro por defecto '" + codigoCentroDefecto + "' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            centro = new Centro();
+            centro.setCode(codigoCentroDefecto);
+        }
+
+        return centro;
     }
 
 
     /**
      * Obtiene el Repository de un expediente en función del id del expediente.
      * Se usa este método porque de otra forma se retornaría el Repositorio de Expediente y no del expdiente en concreto.
+     *
      * @param idExpediente
      * @return
      */
     private JpaRepository<Expediente> getJpaRepository(long idExpediente) {
         JpaRepository<Expediente> onlyExpedienteRepository = AxelorDBUtil.getRepository(Expediente.class);
-        Expediente expediente=onlyExpedienteRepository.find(idExpediente);
-        EventManager eventManager=getEventManager(expediente.getTipoExpediente());
+        Expediente expediente = onlyExpedienteRepository.find(idExpediente);
+        EventManager eventManager = expediente.getTipoExpediente().getEventManager();
         JpaRepository<Expediente> realExpedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
         JPA.em().detach(expediente);
 
         return realExpedienteRepository;
     }
 
-
-    private Long objectToLong(Object obj) {
-        if (obj == null) {
-            return null;
-        } else {
-            return ((Number) obj).longValue();
-        }
-    }
-
-
-    private Enum<?> getInitialState(Class<? extends Enum> stateEnumClass) {
-        Enum<?> initialState=null;
-        Enum<?>[] states = stateEnumClass.getEnumConstants();
-
-        for (Enum<?> state : states) {
-            StateEnum stateEnum=new StateEnum(state);
-
-            if (stateEnum.isInitial()) {
-                if (initialState != null) {
-                    throw new RuntimeException("Hay más de un estado inicial en la clase: " + stateEnumClass.getName());
-                }
-                initialState=state;
-            }
-        }
-
-        if (initialState == null) {
-            throw new RuntimeException("No se ha encontrado el estado inicial en la clase: " + stateEnumClass.getName());
-        }
-
-        return initialState;
-    }
 
 }

@@ -12,6 +12,67 @@
         <string name="fqcnEventManager"  title="Clase que maneja los eventos" />
         <many-to-one name="tramite" ref="Tramite" />
         <one-to-many name="estados" ref="EstadoTipoExpediente" mappedBy="tipoExpediente" />
+
+
+
+
+        <extra-imports-model>
+            <![CDATA[
+                import com.educaflow.apps.expedientes.common.EventManager;
+                import com.educaflow.apps.expedientes.common.StateEventValidator;
+                import com.axelor.inject.Beans;
+            ]]>
+        </extra-imports-model>
+
+
+
+        <extra-code-model>
+            <![CDATA[
+            public EventManager getEventManager() {
+                try {
+                    String fqcnEventManager = this.getFqcnEventManager();
+                    if (fqcnEventManager == null || fqcnEventManager.isEmpty()) {
+                        throw new RuntimeException("No existe el fqcnEventManager para el tipo de expediente: " + this.getName());
+                    }
+                    Class<EventManager> eventManagerClass = (Class<EventManager>) Class.forName(this.getFqcnEventManager());
+
+                    EventManager eventManager = (EventManager) Beans.get(eventManagerClass);
+
+                    return eventManager;
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+            public StateEventValidator getStateEventValidator() {
+                try {
+                    String fqcnEventManager = this.getFqcnEventManager();
+                    if (fqcnEventManager == null || fqcnEventManager.isEmpty()) {
+                        throw new RuntimeException("No existe el fqcnEventManager para el tipo de expediente: " + this.getName());
+                    }
+
+                    int ultimoPunto = fqcnEventManager.lastIndexOf('.');
+                    if (ultimoPunto == -1) {
+                        throw new RuntimeException("El fqcnEventManager no tiene un punto: " + this.getFqcnEventManager());
+                    }
+
+                    String fqcnStateEventValidation = fqcnEventManager.replace("EventManager","StateEventValidator");
+
+                    Class<StateEventValidator> stateEventValidationClass = (Class<StateEventValidator>) Class.forName(fqcnStateEventValidation);
+
+                    StateEventValidator stateEventValidator = Beans.get(stateEventValidationClass);
+
+                    return stateEventValidator;
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+        ]]>
+        </extra-code-model>
+
+
+
     </entity>
     <entity name="EstadoTipoExpediente">
         <string name="codeState" title="Código del estado" />
