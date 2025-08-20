@@ -198,6 +198,23 @@ tasks.named('generateCode') {
 }
 
 
+tasks.register('GenerateDocs', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo para Generar documentación.'
+    group = 'build'
+
+    mainClass = 'com.educaflow.common.buildtools.generatedocs.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    args './src'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('build') {
+    finalizedBy 'GenerateDocs'
+}
+
 
 war {
     archiveFileName = 'pruebaslorenzo.war'
