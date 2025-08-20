@@ -17,6 +17,7 @@
         <many-to-one name="centroReceptor" ref="com.educaflow.apps.sistemaeducativo.db.Centro"  />
         <one-to-one name="valoresAmbitoCreador" ref="com.educaflow.apps.expedientes.db.ValoresAmbito"  title="Valores Ámbito del Creador" />
         <one-to-one name="valoresAmbitoResponsable" ref="com.educaflow.apps.expedientes.db.ValoresAmbito" title="Valores Ámbito del Responsable" />
+        <one-to-one name="valoresAmbitoAuditor" ref="com.educaflow.apps.expedientes.db.ValoresAmbito" title="Valores Ámbito del Auditor" />
 
         <unique-constraint columns="numeroExpediente" />
 
