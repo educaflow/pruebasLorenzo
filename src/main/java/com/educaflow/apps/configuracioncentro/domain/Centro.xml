@@ -2,7 +2,7 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
 
-    <module name="sistemaeducativo" package="com.educaflow.apps.sistemaeducativo.db"/>
+    <module name="configuracioncentro" package="com.educaflow.apps.configuracioncentro.db"/>
     <entity name="Centro">
         <string name="code"  />
         <string name="name" namecolumn="true" />
@@ -10,8 +10,7 @@
         <string name="city" title="Ciudad"/>
         <string name="postalCode" title="Código Postal"/>
         <string name="country" title="Provincia"/>
-        <many-to-many name="cargos" ref="com.educaflow.apps.sistemaeducativo.db.Cargo" />
-        <many-to-many name="ciclos" ref="com.educaflow.apps.sistemaeducativo.db.Ciclo" />
+
     </entity>
 
 </domain-models>

@@ -6,8 +6,8 @@
 
     <module name="expedientes" package="com.educaflow.apps.expedientes.db"/>
     <entity name="CertificadoTutor" extends="Expediente" >
-        <many-to-one name="centro"       ref="com.educaflow.apps.sistemaeducativo.db.Centro" title="Centro" />
-        <many-to-one name="cargo"       ref="com.educaflow.apps.sistemaeducativo.db.Cargo" title="Cargo" />
+        <many-to-one name="centro"       ref="com.educaflow.apps.configuracioncentro.db.Centro" title="Centro" />
+        <many-to-one name="cargo"       ref="com.educaflow.apps.configuracioncentro.db.Cargo" title="Cargo" />
     </entity>
 
 </domain-models>

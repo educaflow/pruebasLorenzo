@@ -9,7 +9,6 @@ import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.CertificadoTutor;
 import com.educaflow.apps.expedientes.db.ValoresAmbito;
 import com.educaflow.apps.expedientes.db.repo.CertificadoTutorRepository;
-import com.educaflow.apps.sistemaeducativo.db.CentroUsuario;
 import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.validation.messages.BusinessException;
 
@@ -21,7 +20,6 @@ import org.slf4j.LoggerFactory;
 public class EventManagerImpl extends com.educaflow.apps.expedientes.common.EventManager<CertificadoTutor, CertificadoTutor.State, CertificadoTutor.Event,CertificadoTutor.Profile> {
 
     private final CertificadoTutorRepository repository;
-    private final JpaRepository<CentroUsuario> centroUsuarioRepository;
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
 
@@ -29,7 +27,6 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     public EventManagerImpl(CertificadoTutorRepository repository) {
         super(CertificadoTutor.class, CertificadoTutor.State.class, CertificadoTutor.Event.class,CertificadoTutor.Profile.class);
         this.repository = repository;
-        this.centroUsuarioRepository = AxelorDBUtil.getRepository(CentroUsuario.class);
     }
 
     @Override

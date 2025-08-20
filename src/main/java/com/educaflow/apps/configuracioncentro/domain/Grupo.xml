@@ -2,16 +2,11 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://axelor.com/xml/ns/domain-models https://axelor.com/xml/ns/domain-models/domain-models_7.4.xsd">
 
-    <module name="sistemaeducativo" package="com.educaflow.apps.sistemaeducativo.db"/>
+    <module name="configuracioncentro" package="com.educaflow.apps.configuracioncentro.db"/>
     <entity name="Grupo">
         <string name="code"  />
         <string name="name" namecolumn="true" />
-        <enum name="tipoGrupo" ref="TipoGrupo" title="Tipo de Grupo"/>
+        <many-to-one name="centro" ref="com.educaflow.apps.configuracioncentro.db.Centro" required="true" title="Centro"/>
     </entity>
-
-    <enum name="TipoGrupo">
-        <item name="PRESENCIAL" title="Presencial"/>
-        <item name="SEMIPRESENCIAL" title="Semipresencial"/>
-    </enum>
 
 </domain-models>

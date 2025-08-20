@@ -14,7 +14,7 @@
         <datetime name="fechaUltimoEstado" title="Fecha último estado" />
         <boolean name="closed" title="Cerrado" />
         <one-to-many name="historialEstados" ref="ExpedienteHistorialEstados" mappedBy="expediente" />
-        <many-to-one name="centroReceptor" ref="com.educaflow.apps.sistemaeducativo.db.Centro"  />
+        <many-to-one name="centroReceptor" ref="com.educaflow.apps.configuracioncentro.db.Centro"  />
         <one-to-one name="valoresAmbitoCreador" ref="com.educaflow.apps.expedientes.db.ValoresAmbito"  title="Valores Ámbito del Creador" />
         <one-to-one name="valoresAmbitoResponsable" ref="com.educaflow.apps.expedientes.db.ValoresAmbito" title="Valores Ámbito del Responsable" />
         <one-to-one name="valoresAmbitoAuditor" ref="com.educaflow.apps.expedientes.db.ValoresAmbito" title="Valores Ámbito del Auditor" />

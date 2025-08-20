@@ -35,7 +35,7 @@
             <field name="valoresAmbitoCreador.departamento.name"  />
         </panel>
     </form>
-    <grid name="buscar-centros" title="Expedientes" model="com.educaflow.apps.sistemaeducativo.db.Centro"
+    <grid name="buscar-centros" title="Expedientes" model="com.educaflow.apps.configuracioncentro.db.Centro"
           groups="admins,users"
           editable="false" edit-icon="false" x-selector="none" canNew="false" canEdit="false" canDelete="false" canSave="false"
     >
@@ -43,7 +43,7 @@
         <field name="name"/>
     </grid>
 
-    <form name="Centro" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.sistemaeducativo.db.Centro" groups="admins,users">
+    <form name="Centro" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.configuracioncentro.db.Centro" groups="admins,users">
         <panel name="Centro" title="Centro">
 
             <field name="name"/>
@@ -51,14 +51,14 @@
     </form>
 
 
-    <form name="Departamento" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.sistemaeducativo.db.Departamento" groups="admins,users">
+    <form name="Departamento" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.configuracioncentro.db.Departamento" groups="admins,users">
         <panel name="Centro" title="Departamento">
             <field name="code"/>
             <field name="name"/>
         </panel>
     </form>
 
-    <form name="Centro2" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.sistemaeducativo.db.Centro" groups="admins,users">
+    <form name="Centro2" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.configuracioncentro.db.Centro" groups="admins,users">
         <panel name="Centro" title="Centro">
             <field name="code"/>
             <field name="name"/>
@@ -66,7 +66,7 @@
     </form>
 
 
-    <form name="Departamento2" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.sistemaeducativo.db.Departamento" groups="admins,users">
+    <form name="Departamento2" title="Certificado Tutor"  width="large"  model="com.educaflow.apps.configuracioncentro.db.Departamento" groups="admins,users">
         <panel name="Centro" title="Departamento">
             <field name="name"/>
         </panel>

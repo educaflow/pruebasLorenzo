@@ -15,7 +15,7 @@ import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.apps.expedientes.db.Tramite;
 import com.educaflow.apps.expedientes.db.repo.TramiteRepository;
-import com.educaflow.apps.sistemaeducativo.db.Centro;
+import com.educaflow.apps.configuracioncentro.db.Centro;
 import com.educaflow.common.util.ActionRequestHelper;
 import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.util.AxelorViewUtil;

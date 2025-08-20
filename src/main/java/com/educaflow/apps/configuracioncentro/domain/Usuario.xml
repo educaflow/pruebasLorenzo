@@ -4,7 +4,8 @@
 
     <module name="auth" package="com.axelor.auth.db"/>
     <entity name="User" id="Usuario">
-        <many-to-one name="centroActivo" ref="com.educaflow.apps.sistemaeducativo.db.Centro" title="Centro Actual" />
+        <many-to-one name="centroActivo" ref="com.educaflow.apps.configuracioncentro.db.Centro" title="Centro Actual" />
+
     </entity>
 
 </domain-models>
