@@ -9,15 +9,16 @@ import java.util.Map;
 public interface DocumentoPdf {
 
 
-    public List<String> getNombreCamposFormulario();
-    public Map<String,DatosCertificado> getFirmasPdf();    
-    public int getNumeroPaginas();    
+    List<String> getNombreCamposFormulario();
+    Map<String,DatosCertificado> getFirmasPdf();
+    int getNumeroPaginas();
+    String getFileName();
     
     
-    
-    public DocumentoPdf setValorCamposFormularioAndFlatten(Map<String,String> valores);
-    public DocumentoPdf firmar(AlmacenClave almacenClave,CampoFirma campoFirma);
-    public DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf);
-    
-    public byte[] getDatos();
+    DocumentoPdf setValorCamposFormularioAndFlatten(Map<String,String> valores);
+    DocumentoPdf firmar(AlmacenClave almacenClave,CampoFirma campoFirma);
+    DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf);
+    DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf,String fileName);
+
+    byte[] getDatos();
 }

@@ -23,10 +23,10 @@ public class DocumentoPdfFactory {
         }
     }
     
-    public static DocumentoPdf getPdf(byte[] bytesPdf) {
+    public static DocumentoPdf getPdf(byte[] bytesPdf,String fileName) {
 
 
-        return new DocumentoPdfImplIText(bytesPdf,keyStore);
+        return new DocumentoPdfImplIText(bytesPdf,fileName,keyStore);
 
     }
 

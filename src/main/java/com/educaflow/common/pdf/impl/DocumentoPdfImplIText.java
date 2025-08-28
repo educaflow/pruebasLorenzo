@@ -51,9 +51,11 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     private final byte[] bytesPdf;
     protected final PdfDocument pdfDocument;
     private final KeyStore keyStore;
+    private final String fileName;
 
-    public DocumentoPdfImplIText(byte[] bytesPdf, KeyStore keyStore) {
+    public DocumentoPdfImplIText(byte[] bytesPdf,String fileName, KeyStore keyStore) {
         this.bytesPdf=bytesPdf;
+        this.fileName=fileName;
         this.pdfDocument = getPdfDocument(bytesPdf);
         this.keyStore = keyStore;        
     }
@@ -61,6 +63,11 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     @Override
     public byte[] getDatos() {
         return bytesPdf;
+    }
+
+    @Override
+    public String getFileName() {
+        return this.fileName;
     }
     
     @Override
@@ -147,7 +154,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             pdfDocumentNuevosValoresCampos.close();
             byteArrayOutputStream.close();
             
-            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray());
+            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray(),this.fileName);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -266,7 +273,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             
             byteArrayOutputStream.close();
 
-            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray());
+            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray(),this.fileName);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -277,6 +284,11 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
     @Override
     public DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf2) {
+        return anyadirDocumentoPdf(documentoPdf2,this.fileName);
+    }
+
+    @Override
+    public DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf2,String fileName) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             PdfDocument pdfDestino = new PdfDocument(new PdfWriter(byteArrayOutputStream));
@@ -287,7 +299,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             merger.close();
             byteArrayOutputStream.close();
 
-            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray());
+            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray(),fileName);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
