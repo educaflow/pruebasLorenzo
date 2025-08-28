@@ -64,6 +64,14 @@ configurations {
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8' // O kotlin-stdlib-jdk7 o kotlin-stdlib
     implementation "org.jetbrains.kotlin:kotlin-reflect:2.2.0"
+    implementation 'com.itextpdf:kernel:9.2.0'
+    implementation 'com.itextpdf:layout:9.2.0'
+    implementation 'com.itextpdf:forms:9.2.0'
+    implementation 'com.itextpdf:pdfa:9.2.0'
+    implementation 'com.itextpdf:sign:9.2.0'
+    implementation 'com.itextpdf:bouncy-castle-adapter:9.2.0'
+    implementation 'com.itextpdf:commons:9.2.0'
+
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit' // O la que uses para testing (ej. kotlin-test-testng)
 
