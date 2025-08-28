@@ -11,7 +11,7 @@ import java.util.Map;
 public class DocumentoPdfUtil {
 
 
-    public static byte[] generate(DocumentoPdf documentoPdf,Map<String,Object> context) {
+    public static DocumentoPdf generate(DocumentoPdf documentoPdf,Map<String,Object> context) {
 
         List<String> expressions= documentoPdf.getNombreCamposFormulario();
 
@@ -23,14 +23,18 @@ public class DocumentoPdfUtil {
 
         DocumentoPdf documentoPdfDatos= documentoPdf.setValorCamposFormularioAndFlatten(resultString);
 
-        return documentoPdfDatos.getDatos();
+        return documentoPdfDatos;
 
     }
 
     private static Map<String, String> getStringMap(Map<String, Object> result) {
         Map<String,String> resultString= new HashMap<>();
         for(Map.Entry<String,Object> entry : result.entrySet()) {
-            resultString.put(entry.getKey(), Convert.objectToUserString(entry.getValue()));
+            if (entry.getValue() instanceof Boolean) {
+                resultString.put(entry.getKey(), (Boolean)entry.getValue() ? "Yes" : "Off");
+            } else {
+                resultString.put(entry.getKey(), Convert.objectToUserString(entry.getValue()));
+            }
         }
         return resultString;
     }

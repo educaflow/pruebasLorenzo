@@ -42,11 +42,7 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -85,7 +81,8 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             for (Entry<String, PdfFormField> entry : PdfFormFields.entrySet()) {
                 String name = entry.getKey();
                 PdfFormField pdfFormField = entry.getValue();
-
+                System.out.println("Campo:" + name + " tipo:" + pdfFormField.getFormType() + " valor:" + pdfFormField.getValueAsString());
+                System.out.println(Arrays.toString(pdfFormField.getAppearanceStates()));
                 if (isSignatureFormField(pdfFormField) == false) {
                     fields.add(name);
                 }

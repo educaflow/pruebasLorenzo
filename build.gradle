@@ -168,7 +168,22 @@ tasks.named('build') {
     finalizedBy 'generateDataInitTiposExpedientes'
 }
 
+tasks.register('copiarPdf', JavaExec) {
+    description = 'Ejecuta una clase Java desde un JAR externo para copia los PDF en resource.'
+    group = 'build'
 
+    mainClass = 'com.educaflow.common.buildtools.documentopdf.Main'
+
+    classpath = configurations.educaFlowBuildToolsDependency
+
+
+    args './src/main/java', './build/resources/main/documentospdf'
+
+    workingDir = layout.projectDirectory.dir('.')
+}
+tasks.named('build') {
+    finalizedBy 'copiarPdf'
+}
 
 tasks.register('RichDomainClassTask', JavaExec) {
     description = 'Ejecuta una clase Java desde un JAR externo para añadir código al modelo con los enumerados de estados, eventos y profiles.'
