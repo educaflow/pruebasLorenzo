@@ -15,7 +15,7 @@ public interface DocumentoPdf {
     
     
     
-    public DocumentoPdf setValorCamposFormulario(Map<String,String> valores);
+    public DocumentoPdf setValorCamposFormularioAndFlatten(Map<String,String> valores);
     public DocumentoPdf firmar(AlmacenClave almacenClave,CampoFirma campoFirma);
     public DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf);
     

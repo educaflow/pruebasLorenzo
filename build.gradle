@@ -72,8 +72,7 @@ dependencies {
     implementation 'com.itextpdf:bouncy-castle-adapter:9.2.0'
     implementation 'com.itextpdf:commons:9.2.0'
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit' // O la que uses para testing (ej. kotlin-test-testng)
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.2.0")
 
     educaFlowBuildToolsDependency 'com.educaflow:EducaFlowBuildTools:1.0-SNAPSHOT'
 }

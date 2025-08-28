@@ -115,7 +115,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     
 
     @Override
-    public DocumentoPdf setValorCamposFormulario(Map<String,String> valores) {
+    public DocumentoPdf setValorCamposFormularioAndFlatten(Map<String,String> valores) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
