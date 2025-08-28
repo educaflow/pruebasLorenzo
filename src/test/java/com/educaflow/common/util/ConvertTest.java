@@ -1,5 +1,7 @@
 package com.educaflow.common.util;
 
+import com.axelor.db.ValueEnum;
+import com.axelor.db.annotations.EnumWidget;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -52,14 +54,44 @@ class ConvertTest {
         Date utilDate = Date.from(instant);
 
         assertEquals("28/08/2025", Convert.objectToUserString(date));
-        assertEquals("14:30:15", Convert.objectToUserString(time));
-        assertEquals("28/08/2025 14:30:15", Convert.objectToUserString(dateTime));
-        assertEquals("28/08/2025 14:30:15", Convert.objectToUserString(instant));
-        assertEquals("28/08/2025 14:30:15", Convert.objectToUserString(utilDate));
+        assertEquals("14:30", Convert.objectToUserString(time));
+        assertEquals("28/08/2025 14:30", Convert.objectToUserString(dateTime));
+        assertEquals("28/08/2025 14:30", Convert.objectToUserString(instant));
+        assertEquals("28/08/2025 14:30", Convert.objectToUserString(utilDate));
+
+        //Enumerados
+        assertEquals("Enfermedad comun", Convert.objectToUserString(MotivoFaltaJustificacionFaltaProfesorado.ENFERMEDAD_COMUN));
+        assertEquals("Permiso médico, educativo o asistencial", Convert.objectToUserString(MotivoFaltaJustificacionFaltaProfesorado.PERMISO_MEDICO_EDUCATIVO_ASISTENCIAL));
+        assertEquals("Traslado domicilio", Convert.objectToUserString(MotivoFaltaJustificacionFaltaProfesorado.TRASLADO_DOMICILIO));
+        assertEquals("Valor primero", Convert.objectToUserString(Prueba2.VALOR_PRIMERO));
+
 
         // Otros objetos
         Object obj = new Object();
         assertEquals(obj.toString(), Convert.objectToUserString(obj));
 
+    }
+
+    enum MotivoFaltaJustificacionFaltaProfesorado implements ValueEnum<String> {
+        @EnumWidget()
+        ENFERMEDAD_COMUN,
+
+        @EnumWidget(
+                title = "Permiso médico, educativo o asistencial"
+        )
+        PERMISO_MEDICO_EDUCATIVO_ASISTENCIAL,
+
+        TRASLADO_DOMICILIO,
+        ;
+
+        @Override
+        public String getValue() {
+            return name();
+        }
+
+
+    }
+    enum Prueba2 {
+        VALOR_PRIMERO
     }
 }
