@@ -3,9 +3,12 @@ package com.educaflow.apps.expedientes.tiposexpedientes.shared;
 import com.axelor.inject.Beans;
 import com.axelor.meta.db.MetaFile;
 import com.educaflow.common.pdf.DocumentoPdf;
+import com.educaflow.common.pdf.DocumentoPdfFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class TipoExpedienteUtil {
 
@@ -25,5 +28,21 @@ public class TipoExpedienteUtil {
             throw new RuntimeException(e);
         }
     }
+
+    public static DocumentoPdf getDocumentoPdfFromMetaFile(MetaFile metaFile) {
+        try {
+            Path filePath=Beans.get(com.axelor.meta.MetaFiles.class).getPath(metaFile);
+
+
+            byte[] bytes = Files.readAllBytes(filePath);
+
+            DocumentoPdf documentoPdf= DocumentoPdfFactory.getPdf(bytes, metaFile.getFileName());
+
+            return documentoPdf;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

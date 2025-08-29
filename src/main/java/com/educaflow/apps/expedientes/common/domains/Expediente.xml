@@ -12,7 +12,7 @@
         <string name="codeState" title="Código del estado" />
         <string name="nameState" title="Estado" translatable="true" />
         <datetime name="fechaUltimoEstado" title="Fecha último estado" />
-        <boolean name="closed" title="Cerrado" />
+        <boolean name="abierto" title="Abierto" />
         <one-to-many name="historialEstados" ref="ExpedienteHistorialEstados" mappedBy="expediente" />
         <many-to-one name="centroReceptor" ref="com.educaflow.apps.configuracioncentro.db.Centro"  />
         <one-to-one name="valoresAmbitoCreador" ref="com.educaflow.apps.expedientes.db.ValoresAmbito"  title="Valores Ámbito del Creador" />
@@ -54,7 +54,7 @@
       this.setCodeState(stateEnum.getCodeState());
       this.setNameState(com.educaflow.common.util.TextUtil.humanize(stateEnum.getCodeState()));
       this.setFechaUltimoEstado(java.time.LocalDateTime.now());
-      this.setClosed(stateEnum.isClosed());
+      this.setAbierto(!stateEnum.isClosed());
   }
 
 
@@ -70,7 +70,7 @@
                 }
                 DocumentoPdf documentoPdfVacio= DocumentoPdfFactory.getPdf(in.readAllBytes(), pathFileName.getFileName().toString());
 
-                Map<String, Object> contexto = Map.of("self", expediente);
+                Map<String, Object> contexto = Map.of("self", expediente,"now", java.time.LocalDateTime.now());
 
                 DocumentoPdf documentoPdfRelleno = DocumentoPdfUtil.generate(documentoPdfVacio, contexto);
 
