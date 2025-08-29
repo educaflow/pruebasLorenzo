@@ -20,16 +20,6 @@ pkcs11-tool --list-slots
 El numero es el slot.
 
 
-Hay que ver el alias a usar para firmar con el código:
-
-//Muestra los alias es decir los certificados que hay en el dispositivo
-//En el DNI hay: "CertAutenticacion" "CertFirmaDigital"
-Enumeration<String> aliasesDevice = ks.aliases();
-while(aliasesDevice.hasMoreElements()) {
-    alias = aliasesDevice.nextElement();
-    System.out.println("Alias---->"+alias);
-} 
-
 
 Y los algoritmos se ven con:
 
