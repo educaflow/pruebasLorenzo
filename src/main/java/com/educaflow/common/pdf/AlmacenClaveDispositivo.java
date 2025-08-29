@@ -11,39 +11,30 @@ import java.nio.file.Path;
  * @author logongas
  */
 public class AlmacenClaveDispositivo implements AlmacenClave {
-    
-    private final String pin;
-    private final Path libraryOpenscPkcs11;
+
     private final int slot;
     private final String alias;
 
     /**
      *
-     * @param pin El pin del certificado
-     * @param libraryOpenscPkcs11 "/usr/lib/x86_64-linux-gnu/opensc-pkcs11.so"
      * @param slot 0 para el primer dispositivo, 1 para el segundo...Se obtiene con el comando "pkcs11-tool --list-slots"
      * @param alias En el eDNI los valores son "CertAutenticacion" "CertFirmaDigital"
      */
-    public AlmacenClaveDispositivo(String pin, Path libraryOpenscPkcs11, int slot, String alias) {
-        this.pin = pin;
-        this.libraryOpenscPkcs11 = libraryOpenscPkcs11;
+    public AlmacenClaveDispositivo(int slot, String alias) {
         this.slot = slot;
         this.alias = alias;
     }
 
     /**
-     * @return the pin
+     *
+     * Se usa el  slot 0
+     * @param alias En el eDNI los valores son "CertAutenticacion" "CertFirmaDigital"
      */
-    public String getPin() {
-        return pin;
+    public AlmacenClaveDispositivo(String alias) {
+        this.slot = 0;
+        this.alias = alias;
     }
 
-    /**
-     * @return the libraryOpenscPkcs11
-     */
-    public Path getLibraryOpenscPkcs11() {
-        return libraryOpenscPkcs11;
-    }
 
     /**
      * @return the slot
