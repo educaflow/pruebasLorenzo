@@ -1,10 +1,7 @@
 package com.educaflow.common.pdf.impl;
 
 import com.educaflow.common.pdf.DatosCertificado;
-import com.educaflow.common.pdf.EmisorCertificado;
-import static com.educaflow.common.pdf.EmisorCertificado.ACCV;
-import static com.educaflow.common.pdf.EmisorCertificado.DNI;
-import static com.educaflow.common.pdf.EmisorCertificado.FNMT;
+import com.educaflow.common.pdf.TipoEmisorCertificado;
 import com.itextpdf.signatures.PdfPKCS7;
 import java.security.KeyStore;
 import java.security.cert.CertPath;
@@ -40,18 +37,20 @@ public class DatosCertificadoImpl implements DatosCertificado {
     private static final String OID_NOMBRE_APELLIDOS_ACCV_LOCATION = "2.5.29.17";
 
     private final X509Certificate certificate;
-    private final EmisorCertificado emisorCertificado;
+    private final TipoEmisorCertificado tipoEmisorCertificado;
     private String dni;
     private String nombre;
     private String apellidos;
+    private String cnSubject;
+    private String cnIssuer;
     private final boolean valid;
 
     public DatosCertificadoImpl(PdfPKCS7 pdfPKCS7, KeyStore keyStore) {
 
         try {
             this.certificate = pdfPKCS7.getSigningCertificate();
-            this.emisorCertificado = getEmisorCertificado(this.certificate);
-            populateDNINombreApellidosSegunEmisorCertificado(this.emisorCertificado);
+            this.tipoEmisorCertificado = getTipoEmisorCertificado(this.certificate);
+            populateDNINombreApellidosSegunTipoEmisorCertificado(this.tipoEmisorCertificado);
 
             valid = pdfPKCS7.verifySignatureIntegrityAndAuthenticity() && isValidoCertificadoSegunListaAutorizadesCertificacion(certificate, keyStore);
         } catch (Exception ex) {
@@ -63,8 +62,8 @@ public class DatosCertificadoImpl implements DatosCertificado {
 
         try {
             this.certificate = certificate;
-            this.emisorCertificado = getEmisorCertificado(this.certificate);
-            populateDNINombreApellidosSegunEmisorCertificado(this.emisorCertificado);
+            this.tipoEmisorCertificado = getTipoEmisorCertificado(this.certificate);
+            populateDNINombreApellidosSegunTipoEmisorCertificado(this.tipoEmisorCertificado);
 
             valid = isValidoCertificadoSegunListaAutorizadesCertificacion(certificate, keyStore);
         } catch (Exception ex) {
@@ -90,19 +89,33 @@ public class DatosCertificadoImpl implements DatosCertificado {
     }
 
     @Override
-    public EmisorCertificado getEmisorCertificado() {
-        return emisorCertificado;
+    public String getCnSubject() {
+        return cnSubject;
+    }
+
+    @Override
+    public String getCnIssuer() {
+        return cnIssuer;
+    }
+
+    @Override
+    public TipoEmisorCertificado getTipoEmisorCertificado() {
+        return tipoEmisorCertificado;
     }
 
     @Override
     public boolean isValid() {
         return valid;
     }
-    
+
 
 
     private boolean isValidoCertificadoSegunListaAutorizadesCertificacion(X509Certificate certificate, KeyStore trustStore) {
         try {
+            if (trustStore==null) {
+                return false;
+            }
+
 
             CertPathValidator validator = CertPathValidator.getInstance("PKIX");
 
@@ -131,20 +144,20 @@ public class DatosCertificadoImpl implements DatosCertificado {
 
     }
 
-    private EmisorCertificado getEmisorCertificado(X509Certificate x509Certificate) {
-        EmisorCertificado emisorCertificado;
+    private TipoEmisorCertificado getTipoEmisorCertificado(X509Certificate x509Certificate) {
+        TipoEmisorCertificado tipoEmisorCertificado;
         String strCertificado = x509Certificate.toString();
         if (strCertificado.contains("FNMT") && !strCertificado.contains("ACCV") && !strCertificado.contains("DNI")) {
-            emisorCertificado = EmisorCertificado.FNMT;
+            tipoEmisorCertificado = TipoEmisorCertificado.FNMT;
         } else if (!strCertificado.contains("FNMT") && strCertificado.contains("ACCV") && !strCertificado.contains("DNI")) {
-            emisorCertificado = EmisorCertificado.ACCV;
+            tipoEmisorCertificado = TipoEmisorCertificado.ACCV;
         } else if (!strCertificado.contains("FNMT") && !strCertificado.contains("ACCV") && strCertificado.contains("DNI")) {
-            emisorCertificado = EmisorCertificado.DNI;
+            tipoEmisorCertificado = TipoEmisorCertificado.DNI;
         } else {
-            emisorCertificado = null;
+            tipoEmisorCertificado = null;
         }
 
-        return emisorCertificado;
+        return tipoEmisorCertificado;
     }
     
     /*******************************************************************************************************/
@@ -152,10 +165,10 @@ public class DatosCertificadoImpl implements DatosCertificado {
     /*******************************************************************************************************/     
     
 
-    private void populateDNINombreApellidosSegunEmisorCertificado(EmisorCertificado emisorCertificado) {
+    private void populateDNINombreApellidosSegunTipoEmisorCertificado(TipoEmisorCertificado tipoEmisorCertificado) {
 
-        if (emisorCertificado != null) {
-            switch (emisorCertificado) {
+        if (tipoEmisorCertificado != null) {
+            switch (tipoEmisorCertificado) {
                 case FNMT:
                     populateDNINombreApellidosFNMT();
                     break;
@@ -165,13 +178,16 @@ public class DatosCertificadoImpl implements DatosCertificado {
                     populateDNINombreApellidosDNI();
                     break;
                 default:
-                    throw new RuntimeException("El tipo de emisor es desconocido:" + this.emisorCertificado);
+                    throw new RuntimeException("El tipo de emisor es desconocido:" + this.tipoEmisorCertificado);
             }
         } else {
             populateDNINombreApellidosEmpy();
         }
-    }    
-    
+
+        cnSubject = getCnPrincipal(certificate.getSubjectX500Principal());
+        cnIssuer = getCnPrincipal(certificate.getIssuerX500Principal());
+    }
+
     private void populateDNINombreApellidosFNMT() {
         dni = getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_NIF_FNMT));
         nombre = getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_NOMBRE_FNMT));
@@ -204,15 +220,15 @@ public class DatosCertificadoImpl implements DatosCertificado {
         Map<String, String> data = getX500PrincipalData(x500Principal);
 
         dni = "";
-        nombre = data.get("CN");
+        nombre = "";
         apellidos = "";
     }
 
     
     
-    /**************************************************************************************/
-    /************************************* Parsear CN *************************************/
-    /**************************************************************************************/    
+    /*************************************************************************************/
+    /********************************** Datos Principal **********************************/
+    /*************************************************************************************/
     
     private Map<String, String> getX500PrincipalData(X500Principal x500Principal) {
 
@@ -254,7 +270,13 @@ public class DatosCertificadoImpl implements DatosCertificado {
             throw new RuntimeException(ex);
         }
     }
-    
+
+    private String getCnPrincipal(X500Principal certificate) {
+        Map<String, String> datos=getX500PrincipalData(certificate);
+        String cn=datos.get("CN");
+
+        return cn;
+    }
     
     /**************************************************************************************/
     /************************************* Utilidades *************************************/
@@ -272,9 +294,10 @@ public class DatosCertificadoImpl implements DatosCertificado {
     
     @Override
     public String toString() {
-        return this.getDNI() + ":" + this.getNombre() + "," + this.getApellidos() + "--Tipo:" + this.getEmisorCertificado() + "(" + this.isValid() + ")";
+        return this.getDNI() + ":" + this.getNombre() + "," + this.getApellidos() + "--Tipo:" + this.getTipoEmisorCertificado() + "(" + this.isValid() + ")";
     }
     
   
+
 
 }

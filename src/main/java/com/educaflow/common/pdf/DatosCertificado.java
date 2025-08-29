@@ -13,7 +13,9 @@ public interface DatosCertificado {
     String getDNI();
     String getNombre();
     String getApellidos();
-    EmisorCertificado getEmisorCertificado();
+    String getCnSubject();
+    String getCnIssuer();
+    TipoEmisorCertificado getTipoEmisorCertificado();
     boolean isValid();
     
 }

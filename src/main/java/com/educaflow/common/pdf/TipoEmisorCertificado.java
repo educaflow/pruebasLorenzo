@@ -4,7 +4,7 @@ package com.educaflow.common.pdf;
  *
  * @author logongas
  */
-public enum EmisorCertificado {
+public enum TipoEmisorCertificado {
     FNMT,
     ACCV,
     DNI
