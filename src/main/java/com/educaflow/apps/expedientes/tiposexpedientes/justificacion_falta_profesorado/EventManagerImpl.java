@@ -1,17 +1,18 @@
 package com.educaflow.apps.expedientes.tiposexpedientes.justificacion_falta_profesorado;
 
-import com.axelor.inject.Beans;
+import com.axelor.meta.db.MetaFile;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.repo.JustificacionFaltaProfesoradoRepository;
+import com.educaflow.apps.expedientes.tiposexpedientes.shared.TipoExpedienteUtil;
+import com.educaflow.common.pdf.DocumentoPdf;
+
 import com.educaflow.common.validation.messages.BusinessException;
 import com.google.inject.Inject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 
 
@@ -38,10 +39,11 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
     @WhenEvent
     public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
-        appendDocuments(justificacionFaltaProfesorado);
+        DocumentoPdf documentoPdf = justificacionFaltaProfesorado.getDocumentoPdf(JustificacionFaltaProfesorado.TipoDocumentoPdf.SOLICITUD);
+        MetaFile metaFile= TipoExpedienteUtil.getMetaFileFromDocumentoPdf(documentoPdf);
+
+        justificacionFaltaProfesorado.setDocumentoCompletoSinFirmar(metaFile);
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.FIRMA_POR_USUARIO);
-
-
     }
     @WhenEvent
     public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
@@ -125,24 +127,6 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     public void onEnterRechazado(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
     }
 
-
-
-    public void appendDocuments(JustificacionFaltaProfesorado justificacionFaltaProfesorado) {
-        String fileName = "justificacion_falta_profesor.pdf";
-        String resourcePath = "pdf-templates/" + fileName;
-
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
-            if (inputStream == null) {
-                throw new IOException("Resource not found: " + resourcePath);
-            }
-
-            justificacionFaltaProfesorado.setDocumentoCompletoSinFirmar(Beans.get(com.axelor.meta.MetaFiles.class).upload(inputStream, fileName));
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
 
 
 }
