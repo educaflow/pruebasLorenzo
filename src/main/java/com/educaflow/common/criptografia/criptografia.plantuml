@@ -1,0 +1,37 @@
+@startuml
+EntornoCriptografico -> ConfiguracionCriptografica
+
+EntornoCriptografico *--  AlmacenCertificadosConfiables
+EntornoCriptografico *-- "*" DispositivoCriptografico
+
+ConfiguracionCriptografica *--  AlmacenCertificadosConfiablesConfig
+ConfiguracionCriptografica *-- "*" DispositivoCriptograficoConfig
+
+
+
+
+class AlmacenCertificadosConfiables {
+    trustedKeyStore
+}
+
+class DispositivoCriptografico {
+    PrivateKey getPrivateKey(Alias)
+    Certificate[] getCertificateChain(Alias)
+    List<Alias> getAliases()
+}
+
+class DispositivoCriptograficoConfig {
+    pkcs11LibraryPath
+    slot
+    pin
+}
+
+class AlmacenCertificadosConfiablesConfig {
+    path
+    password
+}
+
+DispositivoCriptografico .> DispositivoCriptograficoConfig
+AlmacenCertificadosConfiables .> AlmacenCertificadosConfiablesConfig
+
+@enduml
