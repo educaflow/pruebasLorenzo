@@ -3,7 +3,6 @@ package com.educaflow.common.evaluator.impl;
 import com.educaflow.common.evaluator.Evaluator;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import org.mozilla.javascript.EvaluatorException;
 
 import java.util.HashMap;
 import java.util.List;
