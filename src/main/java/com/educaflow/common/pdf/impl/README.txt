@@ -15,6 +15,8 @@ app default {
 los dipositivos se ven con:
 
 opensc-tool -l
+o con
+pkcs11-tool --list-slots
 El numero es el slot.
 
 
@@ -38,3 +40,7 @@ for (Provider.Service s : p.getServices()) {
         System.out.println("Algoritmo soportado: " + s.getAlgorithm());
     }
 }
+
+Se necesita el Path a la libreria del dispositivo:
+"/usr/lib/x86_64-linux-gnu/opensc-pkcs11.so"
+O la que haya
