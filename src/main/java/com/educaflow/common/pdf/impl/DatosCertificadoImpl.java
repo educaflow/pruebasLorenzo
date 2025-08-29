@@ -45,27 +45,27 @@ public class DatosCertificadoImpl implements DatosCertificado {
     private String cnIssuer;
     private final boolean valid;
 
-    public DatosCertificadoImpl(PdfPKCS7 pdfPKCS7, KeyStore keyStore) {
+    public DatosCertificadoImpl(PdfPKCS7 pdfPKCS7, KeyStore trustedKeyStore) {
 
         try {
             this.certificate = pdfPKCS7.getSigningCertificate();
             this.tipoEmisorCertificado = getTipoEmisorCertificado(this.certificate);
             populateDNINombreApellidosSegunTipoEmisorCertificado(this.tipoEmisorCertificado);
 
-            valid = pdfPKCS7.verifySignatureIntegrityAndAuthenticity() && isValidoCertificadoSegunListaAutorizadesCertificacion(certificate, keyStore);
+            valid = pdfPKCS7.verifySignatureIntegrityAndAuthenticity() && isValidoCertificadoSegunListaAutorizadesCertificacion(certificate, trustedKeyStore);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public DatosCertificadoImpl(X509Certificate certificate, KeyStore keyStore) {
+    public DatosCertificadoImpl(X509Certificate certificate, KeyStore trustedKeyStore) {
 
         try {
             this.certificate = certificate;
             this.tipoEmisorCertificado = getTipoEmisorCertificado(this.certificate);
             populateDNINombreApellidosSegunTipoEmisorCertificado(this.tipoEmisorCertificado);
 
-            valid = isValidoCertificadoSegunListaAutorizadesCertificacion(certificate, keyStore);
+            valid = isValidoCertificadoSegunListaAutorizadesCertificacion(certificate, trustedKeyStore);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
