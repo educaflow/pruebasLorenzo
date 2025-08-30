@@ -39,8 +39,8 @@ public class SecretariaVirtualModule extends AxelorModule {
 
     public ConfiguracionCriptografica getConfiguracionCriptograficaFromAppSettings()  {
 
-        Path pathAlmacen = Path.of(AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiagles.path"));
-        String passwordAlmacen = AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiagles.password");
+        Path pathAlmacen = Path.of(AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiables.path"));
+        String passwordAlmacen = AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiables.password");
         AlmacenCertificadosConfiablesConfig almacenConfig = new AlmacenCertificadosConfiablesConfig(pathAlmacen, passwordAlmacen);
 
 
