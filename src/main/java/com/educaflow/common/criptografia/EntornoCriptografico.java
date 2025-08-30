@@ -51,9 +51,9 @@ public class EntornoCriptografico {
                     throw new RuntimeException("La librería PKCS#11 no es un archivo regular" + pkcs11LibraryPath);
                 }
 
-                Provider providerPkcS11 = getProviderPKCS11(pkcs11LibraryPath, slot);
-                KeyStore devicePkc11KeyStore=getKeyStoreDevicePkc11(providerPkcS11, pin);
-                DispositivoCriptografico dispositivoCriptografico=new DispositivoCriptografico(devicePkc11KeyStore, pin.toCharArray());
+                Provider providerPkcs11 = getProviderPKCS11(pkcs11LibraryPath, slot);
+                KeyStore devicePkcs11KeyStore=getKeyStoreDevicePkc11(providerPkcs11, pin);
+                DispositivoCriptografico dispositivoCriptografico=new DispositivoCriptografico(devicePkcs11KeyStore, pin.toCharArray());
 
                 dispositivosCriptograficos.put(slot,dispositivoCriptografico);
             }

@@ -11,10 +11,10 @@ public class DispositivoCriptografico {
     private final Map<String,PrivateKey> privateKeys;
     private final Map<String,Certificate[]>  certificateChains;
 
-    public DispositivoCriptografico(KeyStore keyStore,char[] pin) {
-        aliases=getAliases(keyStore);
-        privateKeys=getPrivateKeys(keyStore,pin,aliases);
-        certificateChains=getCertificateChains(keyStore,aliases);
+    public DispositivoCriptografico(KeyStore devicePkcs11KeyStore,char[] pin) {
+        aliases=getAliases(devicePkcs11KeyStore);
+        privateKeys=getPrivateKeys(devicePkcs11KeyStore,pin,aliases);
+        certificateChains=getCertificateChains(devicePkcs11KeyStore,aliases);
     }
 
     public PrivateKey getPrivateKey(String alias) {
