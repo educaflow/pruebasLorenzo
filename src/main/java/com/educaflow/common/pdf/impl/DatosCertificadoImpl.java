@@ -2,7 +2,7 @@ package com.educaflow.common.pdf.impl;
 
 import com.educaflow.common.pdf.DatosCertificado;
 import com.educaflow.common.pdf.TipoEmisorCertificado;
-import com.itextpdf.signatures.PdfPKCS7;
+
 import java.security.KeyStore;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
@@ -43,20 +43,8 @@ public class DatosCertificadoImpl implements DatosCertificado {
     private String apellidos;
     private String cnSubject;
     private String cnIssuer;
-    private final boolean valid;
+    private final boolean validoEnListaCertificadosConfiables;
 
-    public DatosCertificadoImpl(PdfPKCS7 pdfPKCS7, KeyStore trustedKeyStore) {
-
-        try {
-            this.certificate = pdfPKCS7.getSigningCertificate();
-            this.tipoEmisorCertificado = getTipoEmisorCertificado(this.certificate);
-            populateDNINombreApellidosSegunTipoEmisorCertificado(this.tipoEmisorCertificado);
-
-            valid = pdfPKCS7.verifySignatureIntegrityAndAuthenticity() && isValidoCertificadoSegunListaAutorizadesCertificacion(certificate, trustedKeyStore);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
 
     public DatosCertificadoImpl(X509Certificate certificate, KeyStore trustedKeyStore) {
 
@@ -65,7 +53,7 @@ public class DatosCertificadoImpl implements DatosCertificado {
             this.tipoEmisorCertificado = getTipoEmisorCertificado(this.certificate);
             populateDNINombreApellidosSegunTipoEmisorCertificado(this.tipoEmisorCertificado);
 
-            valid = isValidoCertificadoSegunListaAutorizadesCertificacion(certificate, trustedKeyStore);
+            validoEnListaCertificadosConfiables = isValidoEnListaCertificadosConfiables(certificate, trustedKeyStore);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -104,13 +92,13 @@ public class DatosCertificadoImpl implements DatosCertificado {
     }
 
     @Override
-    public boolean isValid() {
-        return valid;
+    public boolean isValidoEnListaCertificadosConfiables() {
+        return validoEnListaCertificadosConfiables;
     }
 
 
 
-    private boolean isValidoCertificadoSegunListaAutorizadesCertificacion(X509Certificate certificate, KeyStore trustStore) {
+    private boolean isValidoEnListaCertificadosConfiables(X509Certificate certificate, KeyStore trustStore) {
         try {
             if (trustStore==null) {
                 return false;
@@ -294,7 +282,7 @@ public class DatosCertificadoImpl implements DatosCertificado {
     
     @Override
     public String toString() {
-        return this.getDNI() + ":" + this.getNombre() + "," + this.getApellidos() + "--Tipo:" + this.getTipoEmisorCertificado() + "(" + this.isValid() + ")";
+        return this.getDNI() + ":" + this.getNombre() + "," + this.getApellidos() + "--Tipo:" + this.getTipoEmisorCertificado() + "(" + this.isValidoEnListaCertificadosConfiables() + ")";
     }
     
   

@@ -27,6 +27,28 @@ public class DocumentoPdfUtil {
 
     }
 
+    public static boolean isValidasTodasFirmas(DocumentoPdf documentoPdf) {
+        Map<String, ResultadoFirma> firmasPdf = documentoPdf.getFirmasPdf();
+
+        if (firmasPdf.isEmpty()) {
+            return false;
+        }
+
+        for (Map.Entry<String, ResultadoFirma> entry : firmasPdf.entrySet()) {
+            ResultadoFirma resultadoFirma=entry.getValue();
+            DatosCertificado datosCertificado= resultadoFirma.getDatosCertificado();
+            if (resultadoFirma.isCorrecta()==false) {
+                return false;
+            }
+            if (datosCertificado.isValidoEnListaCertificadosConfiables()==false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     private static Map<String, String> getStringMap(Map<String, Object> result) {
         Map<String,String> resultString= new HashMap<>();
         for(Map.Entry<String,Object> entry : result.entrySet()) {

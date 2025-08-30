@@ -16,6 +16,12 @@ public interface DatosCertificado {
     String getCnSubject();
     String getCnIssuer();
     TipoEmisorCertificado getTipoEmisorCertificado();
-    boolean isValid();
+
+
+    /**
+     * Valida contra https://sedediatid.digital.gob.es/Prestadores/Paginas/Inicio.aspx
+     * @return
+     */
+    boolean isValidoEnListaCertificadosConfiables();
     
 }

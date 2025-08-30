@@ -1,13 +1,7 @@
 package com.educaflow.common.pdf.impl;
 
 import com.educaflow.common.criptografia.EntornoCriptografico;
-import com.educaflow.common.pdf.AlmacenClave;
-import com.educaflow.common.pdf.AlmacenClaveDispositivo;
-import com.educaflow.common.pdf.AlmacenClaveFichero;
-import com.educaflow.common.pdf.CampoFirma;
-import com.educaflow.common.pdf.DatosCertificado;
-import com.educaflow.common.pdf.DocumentoPdf;
-import com.educaflow.common.pdf.DocumentoPdfFactory;
+import com.educaflow.common.pdf.*;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
@@ -39,15 +33,12 @@ import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class DocumentoPdfImplIText implements DocumentoPdf {
 
@@ -103,8 +94,8 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     }
     
     @Override
-    public Map<String, DatosCertificado> getFirmasPdf() {
-        Map<String, DatosCertificado> firmas = new HashMap<>();
+    public Map<String, ResultadoFirma> getFirmasPdf() {
+        Map<String, ResultadoFirma> resultadoFirmas = new HashMap<>();
 
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
@@ -113,11 +104,12 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         for (String signatureName : signatureNames) {
             PdfPKCS7 pkcs7 = signatureUtil.readSignatureData(signatureName);
             KeyStore trustedKeyStore = EntornoCriptografico.getAlmacenCertificadosConfiables().getTrustedKeyStore();
-            DatosCertificado datosCertificado = new DatosCertificadoImpl(pkcs7, trustedKeyStore);
-            firmas.put(signatureName, datosCertificado);
+
+            ResultadoFirma resultadoFirma=new ResultadoFirmaImpl(pkcs7, trustedKeyStore);
+            resultadoFirmas.put(signatureName, resultadoFirma);
         }
 
-        return firmas;
+        return resultadoFirmas;
 
     }    
     
@@ -158,7 +150,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             pdfDocumentNuevosValoresCampos.close();
             byteArrayOutputStream.close();
             
-            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray(),this.fileName);
+            return DocumentoPdfFactory.getDocumentoPdf(byteArrayOutputStream.toByteArray(),this.fileName);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -244,7 +236,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
             pdfReader.close();
             byteArrayOutputStream.close();
-            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray(),this.fileName);
+            return DocumentoPdfFactory.getDocumentoPdf(byteArrayOutputStream.toByteArray(),this.fileName);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -270,7 +262,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             merger.close();
             byteArrayOutputStream.close();
 
-            return DocumentoPdfFactory.getPdf(byteArrayOutputStream.toByteArray(),fileName);
+            return DocumentoPdfFactory.getDocumentoPdf(byteArrayOutputStream.toByteArray(),fileName);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -311,13 +303,13 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     
     
     private String getSignatureFieldName() {
-        Map<String, DatosCertificado> firmas = this.getFirmasPdf();
+        Map<String, ResultadoFirma> resultadoFirmas = this.getFirmasPdf();
         String signatureFieldName;
 
         for (int i = 1; i < 100; i++) {
             signatureFieldName = "Signature" + Integer.toString(i);
 
-            if (firmas.containsKey(signatureFieldName) == false) {
+            if (resultadoFirmas.containsKey(signatureFieldName) == false) {
                 return signatureFieldName;
             }
 
