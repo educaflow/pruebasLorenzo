@@ -36,7 +36,7 @@ public class TipoExpedienteUtil {
 
             byte[] bytes = Files.readAllBytes(filePath);
 
-            DocumentoPdf documentoPdf= DocumentoPdfFactory.getPdf(bytes, metaFile.getFileName());
+            DocumentoPdf documentoPdf= DocumentoPdfFactory.getDocumentoPdf(bytes, metaFile.getFileName());
 
             return documentoPdf;
         } catch (Exception e) {
