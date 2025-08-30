@@ -6,7 +6,6 @@ import com.educaflow.common.criptografia.config.DispositivoCriptograficoConfig;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,53 +13,23 @@ import java.security.KeyStore;
 import java.security.Provider;
 import java.security.Security;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class EntornoCriptografico {
     private static AlmacenCertificadosConfiables almacenCertificadosConfiables;
-    private static Map<Integer, DispositivoCriptografico> dispositivosCriptograficos = new HashMap<>();
+    private static Map<Integer, DispositivoCriptografico> dispositivosCriptograficos;
 
 
 
     public static void configure(ConfiguracionCriptografica configuracionCriptografica) {
-        try {
-            Security.addProvider(new BouncyCastleProvider());
+        AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig=configuracionCriptografica.getAlmacenCertificadosConfiablesConfig();
+        List<DispositivoCriptograficoConfig> dispositivoCritograficoConfigs=configuracionCriptografica.getDispositivoCritograficoConfigs();
 
-            AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig=configuracionCriptografica.getAlmacenCertificadosConfiablesConfig();
-            Path pathAlmacenCertificadosConfiables=almacenCertificadosConfiablesConfig.getPath();
-            String passwordAlmacenCertificadosConfiables=almacenCertificadosConfiablesConfig.getPassword();
-
-            try (FileInputStream inputStreamKeyStore = new FileInputStream(pathAlmacenCertificadosConfiables.toFile())) {
-                KeyStore trustedKeyStore = getKeyStore(inputStreamKeyStore,passwordAlmacenCertificadosConfiables);
-                almacenCertificadosConfiables = new AlmacenCertificadosConfiables(trustedKeyStore);
-            }
-
-            for(DispositivoCriptograficoConfig dispositivoCriptograficoConfig : configuracionCriptografica.getDispositivoCritograficoConfigs()) {
-                Path pkcs11LibraryPath = dispositivoCriptograficoConfig.getPkcs11LibraryPath();
-                int slot = dispositivoCriptograficoConfig.getSlot();
-                String pin = dispositivoCriptograficoConfig.getPin();
-
-                if (dispositivosCriptograficos.containsKey(slot)) {
-                    throw new RuntimeException("Yas existe un PKCS#11 para el slot: " + slot);
-                }
-                if (Files.exists(pkcs11LibraryPath)==false) {
-                    throw new RuntimeException("La librería PKCS#11 no existe" + pkcs11LibraryPath);
-                }
-                if (Files.isRegularFile(pkcs11LibraryPath)==false) {
-                    throw new RuntimeException("La librería PKCS#11 no es un archivo regular" + pkcs11LibraryPath);
-                }
-
-                Provider providerPkcs11 = getProviderPKCS11(pkcs11LibraryPath, slot);
-                KeyStore devicePkcs11KeyStore=getKeyStoreDevicePkc11(providerPkcs11, pin);
-                DispositivoCriptografico dispositivoCriptografico=new DispositivoCriptografico(devicePkcs11KeyStore, pin.toCharArray());
-
-                dispositivosCriptograficos.put(slot,dispositivoCriptografico);
-            }
-
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        Security.addProvider(new BouncyCastleProvider());
+        almacenCertificadosConfiables=getAlmacenCertificadosConfiables(almacenCertificadosConfiablesConfig);
+        dispositivosCriptograficos=getDispositivosCriptograficos(dispositivoCritograficoConfigs);
     }
 
 
@@ -76,9 +45,64 @@ public class EntornoCriptografico {
         return dispositivosCriptograficos.get(slot);
     }
 
-    /******************************************************************************/
-    /***************************** Funciones privadas *****************************/
-    /******************************************************************************/
+    /*********************************************************************************/
+    /***************************** Creación de los datos *****************************/
+    /*********************************************************************************/
+
+    private static AlmacenCertificadosConfiables getAlmacenCertificadosConfiables(AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig) {
+        try {
+            Path pathAlmacenCertificadosConfiables=almacenCertificadosConfiablesConfig.getPath();
+            String passwordAlmacenCertificadosConfiables=almacenCertificadosConfiablesConfig.getPassword();
+
+            AlmacenCertificadosConfiables almacenCertificadosConfiables;
+            try (InputStream inputStreamKeyStore = EntornoCriptografico.class.getClassLoader().getResourceAsStream(pathAlmacenCertificadosConfiables.toString())) {
+                KeyStore trustedKeyStore = getKeyStore(inputStreamKeyStore,passwordAlmacenCertificadosConfiables);
+                almacenCertificadosConfiables = new AlmacenCertificadosConfiables(trustedKeyStore);
+            }
+
+            return almacenCertificadosConfiables;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    private static Map<Integer, DispositivoCriptografico> getDispositivosCriptograficos(List<DispositivoCriptograficoConfig> dispositivoCritograficoConfigs) {
+        Map<Integer, DispositivoCriptografico> dispositivosCriptograficos = new HashMap<>();
+
+        for(DispositivoCriptograficoConfig dispositivoCriptograficoConfig : dispositivoCritograficoConfigs) {
+            int slot = dispositivoCriptograficoConfig.getSlot();
+
+            if (dispositivosCriptograficos.containsKey(slot)) {
+                throw new RuntimeException("Yas existe un PKCS#11 para el slot: " + slot);
+            }
+
+            DispositivoCriptografico dispositivoCriptografico=getDispositivoCriptografico(dispositivoCriptograficoConfig);
+            dispositivosCriptograficos.put(slot,dispositivoCriptografico);
+        }
+
+        return dispositivosCriptograficos;
+    }
+
+    private static DispositivoCriptografico getDispositivoCriptografico(DispositivoCriptograficoConfig dispositivoCriptograficoConfig) {
+        Path pkcs11LibraryPath = dispositivoCriptograficoConfig.getPkcs11LibraryPath();
+        int slot = dispositivoCriptograficoConfig.getSlot();
+        String pin = dispositivoCriptograficoConfig.getPin();
+
+        if (Files.exists(pkcs11LibraryPath)==false) {
+            throw new RuntimeException("La librería PKCS#11 no existe" + pkcs11LibraryPath);
+        }
+        if (Files.isRegularFile(pkcs11LibraryPath)==false) {
+            throw new RuntimeException("La librería PKCS#11 no es un archivo regular" + pkcs11LibraryPath);
+        }
+
+        Provider providerPkcs11 = getProviderPKCS11(pkcs11LibraryPath, slot);
+        KeyStore devicePkcs11KeyStore=getKeyStoreDevicePkc11(providerPkcs11, pin);
+        DispositivoCriptografico dispositivoCriptografico=new DispositivoCriptografico(devicePkcs11KeyStore, pin.toCharArray());
+
+        return dispositivoCriptografico;
+
+    }
 
 
 
