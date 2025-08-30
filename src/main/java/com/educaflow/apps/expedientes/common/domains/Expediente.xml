@@ -68,7 +68,7 @@
                 if (in == null) {
                     throw new IOException("No se encontró el recurso: " + documentoPdfFileName);
                 }
-                DocumentoPdf documentoPdfVacio= DocumentoPdfFactory.getPdf(in.readAllBytes(), pathFileName.getFileName().toString());
+                DocumentoPdf documentoPdfVacio= DocumentoPdfFactory.getDocumentoPdf(in.readAllBytes(), pathFileName.getFileName().toString());
 
                 Map<String, Object> contexto = Map.of("self", expediente,"now", java.time.LocalDateTime.now());
 
