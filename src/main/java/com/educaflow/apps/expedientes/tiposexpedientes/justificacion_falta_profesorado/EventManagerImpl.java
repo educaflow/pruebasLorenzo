@@ -40,25 +40,25 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
     @WhenEvent
     public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
-        DocumentoPdf documentoPdf = justificacionFaltaProfesorado.getDocumentoPdf(JustificacionFaltaProfesorado.TipoDocumentoPdf.SOLICITUD);
-        DocumentoPdf documentoPdfRegistroEntrada = justificacionFaltaProfesorado.getDocumentoPdf(JustificacionFaltaProfesorado.TipoDocumentoPdf.REGISTRO);
-        DocumentoPdf solicitudPdf=documentoPdfRegistroEntrada.anyadirDocumentoPdf(documentoPdf,"solicitud.pdf");
+        DocumentoPdf solicitudPdf = justificacionFaltaProfesorado.getDocumentoPdf(JustificacionFaltaProfesorado.TipoDocumentoPdf.SOLICITUD);
         DocumentoPdf justificantePdf=TipoExpedienteUtil.getDocumentoPdfFromMetaFile(justificacionFaltaProfesorado.getJustificante());
         solicitudPdf=solicitudPdf.anyadirDocumentoPdf(justificantePdf);
 
-        AlmacenClave almacenClave=new AlmacenClaveFichero(Path.of("mi_certificado.p12"),"nadanada");
-        //AlmacenClave almacenClave=new AlmacenClaveDispositivo(0,"CertFirmaDigital");
-        CampoFirma campoFirma=new CampoFirma(new Rectangulo(100,450,200,150),1);
-        solicitudPdf=solicitudPdf.firmar(almacenClave,campoFirma);
+
+
 
         MetaFile metaFile= TipoExpedienteUtil.getMetaFileFromDocumentoPdf(solicitudPdf);
-        justificacionFaltaProfesorado.setDocumentoCompletoSinFirmar(metaFile);
+        justificacionFaltaProfesorado.setDocumentacionParaPresentarSinFirmar(metaFile);
 
 
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.FIRMA_POR_USUARIO);
     }
     @WhenEvent
     public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
+        DocumentoPdf documentacionPresentadaFirmadaUsuario=TipoExpedienteUtil.getDocumentoPdfFromMetaFile(justificacionFaltaProfesorado.getDocumentacionPresentadaFirmadaUsuario());
+        System.out.println("Signature isValidasTodasFirmas"+DocumentoPdfUtil.isValidasTodasFirmas(documentacionPresentadaFirmadaUsuario));
+
+
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
         justificacionFaltaProfesorado.setDisconformidad(null);
         justificacionFaltaProfesorado.setResolucion(null);

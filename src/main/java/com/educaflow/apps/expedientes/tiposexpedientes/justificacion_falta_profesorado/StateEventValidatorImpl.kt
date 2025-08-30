@@ -8,6 +8,7 @@ import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfeso
 import com.educaflow.common.validation.dsl.ifValueIn
 import com.educaflow.common.validation.dsl.rules
 import com.educaflow.common.validation.engine.BeanValidationRules
+import com.educaflow.common.validation.rules.DocumentoPdfFirmaValida
 import com.educaflow.common.validation.rules.FileMaxSize
 import com.educaflow.common.validation.rules.FileType
 import com.educaflow.common.validation.rules.GreaterThan
@@ -81,6 +82,10 @@ class StateEventValidatorImpl: StateEventValidator {
     @BeanValidationRulesForStateAndEvent
     fun getForStateFirmaPorUsuarioInEventPresentarDocumentosFirmados():BeanValidationRules {
         return rules {
+            field(model::getDocumentacionPresentadaFirmadaUsuario) {
+                +Required()
+                +DocumentoPdfFirmaValida()
+            }
         }
     }
 

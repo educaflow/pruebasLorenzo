@@ -68,3 +68,6 @@ key,message,comment,context
 "value:Revisión y firma por responsable","Revisió i signatura per responsable","",""
 "value:Aceptado","Acceptat","",""
 "value:Rechazado","Rebutjat","",""
+"Solicitud a firmar por el usuario","Sol·licitud a signar per l'usuari","",""
+"Solicitud firmada por el usuario","Sol·licitud signada per l'usuari","",""
+"Justificante de recepción por el centro","Justificant de recepció pel centre","",""
