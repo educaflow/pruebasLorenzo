@@ -192,31 +192,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
                 throw new RuntimeException("Almacen desconocido:"+almacenClave.getClass().getName());
             }
 
-
-            String message;
-            if (campoFirma.getMensaje()==null) {
-                message=getMensajeFirma((X509Certificate)chain[0], alias);
-            } else {
-                message=campoFirma.getMensaje();
-            }
-
-            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
-            if (campoFirma.getImage()==null) {
-                appearance.setContent(message);
-            } else {
-                ImageData imageData= ImageDataFactory.create(campoFirma.getImage());
-                appearance.setContent(message,imageData);
-            }
-            appearance.setFontSize(campoFirma.getFontSize());
-            PdfFont courier = PdfFontFactory.createFont(StandardFonts.COURIER);
-            appearance.setFont(courier);
-
-
-            SignerProperties signerProperties = new SignerProperties();
-            signerProperties.setFieldName(getSignatureFieldName());
-            signerProperties.setPageRect(new Rectangle(campoFirma.getRectanguloMensaje().getX(), campoFirma.getRectanguloMensaje().getY(), campoFirma.getRectanguloMensaje().getWidth(), campoFirma.getRectanguloMensaje().getHeight()));
-            signerProperties.setPageNumber(campoFirma.getNumeroPagina());
-            signerProperties.setSignatureAppearance(appearance);
+            SignerProperties signerProperties=getSignerProperties(campoFirma,(X509Certificate)chain[0],alias);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytesPdf);
@@ -338,6 +314,75 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             throw new RuntimeException(ex);
         }
     }
+
+    private SignerProperties getSignerProperties(CampoFirma campoFirma,X509Certificate cert,String alias) {
+        SignatureFieldAppearance signatureFieldAppearance = getSignatureFieldAppearance(campoFirma,cert,alias);
+
+        SignerProperties signerProperties = new SignerProperties();
+        signerProperties.setFieldName(getSignatureFieldName());
+        signerProperties.setPageRect(getRectangle(campoFirma));
+        signerProperties.setPageNumber(campoFirma.getNumeroPagina());
+        signerProperties.setSignatureAppearance(signatureFieldAppearance);
+
+        return signerProperties;
+    }
+
+    private SignatureFieldAppearance getSignatureFieldAppearance(CampoFirma campoFirma,X509Certificate cert,String alias) {
+        try {
+            String message;
+            if (campoFirma.getMensaje() == null) {
+                message = getMensajeFirma( cert, alias);
+            } else {
+                message = campoFirma.getMensaje();
+            }
+
+            SignatureFieldAppearance signatureFieldAppearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
+            if (campoFirma.getImage() == null) {
+                signatureFieldAppearance.setContent(message);
+            } else {
+                ImageData imageData = ImageDataFactory.create(campoFirma.getImage());
+                signatureFieldAppearance.setContent(message, imageData);
+            }
+            signatureFieldAppearance.setFontSize(campoFirma.getFontSize());
+            PdfFont courier = PdfFontFactory.createFont(StandardFonts.COURIER);
+            signatureFieldAppearance.setFont(courier);
+
+            return signatureFieldAppearance;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Calcula el rectángulo que ocupa la firma en función del rectángulo del mensaje y de la imagen
+     * Añade al rectangulo del texto el alto de la imagen y el ancho es el máximo entre el del texto y el de la imagen
+     * @param campoFirma
+     * @return
+     */
+    private Rectangle getRectangle(CampoFirma campoFirma) {
+        float width;
+        float height;
+
+        float mensajeX=campoFirma.getRectanguloMensaje().getX();
+        float mensajeY=campoFirma.getRectanguloMensaje().getY();
+        float mensajeWidth=campoFirma.getRectanguloMensaje().getWidth();
+        float mensajeHeight=campoFirma.getRectanguloMensaje().getHeight();
+
+        if (campoFirma.getImage() != null) {
+            ImageData imageData = ImageDataFactory.create(campoFirma.getImage());
+            float imageWidth=imageData.getWidth();
+            float imageHeight=imageData.getHeight();
+
+            width=Math.max(mensajeWidth, imageWidth);
+            height=mensajeHeight+imageHeight;
+        } else {
+            width=mensajeWidth;
+            height=mensajeHeight;
+        }
+
+        return new Rectangle(mensajeX, mensajeY,width, height);
+    }
+
 
     /***********************************************************************************/
     /******************************* Mensaje de la firma *******************************/
