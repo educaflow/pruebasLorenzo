@@ -18,26 +18,60 @@ import java.util.Map;
 
 
 public class EntornoCriptografico {
+    private static boolean configured = false;
     private static AlmacenCertificadosConfiables almacenCertificadosConfiables;
     private static Map<Integer, DispositivoCriptografico> dispositivosCriptograficos;
 
 
 
     public static void configure(ConfiguracionCriptografica configuracionCriptografica) {
-        AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig=configuracionCriptografica.getAlmacenCertificadosConfiablesConfig();
-        List<DispositivoCriptograficoConfig> dispositivoCritograficoConfigs=configuracionCriptografica.getDispositivoCritograficoConfigs();
+        if (configured) {
+            throw new RuntimeException("El entorno criptográfico ya ha sido configurado");
+        }
 
         Security.addProvider(new BouncyCastleProvider());
-        almacenCertificadosConfiables=getAlmacenCertificadosConfiables(almacenCertificadosConfiablesConfig);
-        dispositivosCriptograficos=getDispositivosCriptograficos(dispositivoCritograficoConfigs);
+
+        if (configuracionCriptografica == null) {
+            almacenCertificadosConfiables=new AlmacenCertificadosConfiables(null);
+            dispositivosCriptograficos=new HashMap<>();
+        } else {
+            AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig=configuracionCriptografica.getAlmacenCertificadosConfiablesConfig();
+            List<DispositivoCriptograficoConfig> dispositivoCritograficoConfigs=configuracionCriptografica.getDispositivoCritograficoConfigs();
+
+
+            if (almacenCertificadosConfiablesConfig == null) {
+                almacenCertificadosConfiables=new AlmacenCertificadosConfiables(null);
+            } else {
+                almacenCertificadosConfiables=getAlmacenCertificadosConfiables(almacenCertificadosConfiablesConfig);
+            }
+
+            if (dispositivoCritograficoConfigs==null) {
+                dispositivosCriptograficos=new HashMap<>();
+            } else {
+                dispositivosCriptograficos=getDispositivosCriptograficos(dispositivoCritograficoConfigs);
+            }
+        }
+
+
+
+
+
+
+        configured=true;
     }
 
 
     public static AlmacenCertificadosConfiables getAlmacenCertificadosConfiables() {
+        if (configured==false) {
+            throw new RuntimeException("El entorno criptográfico no ha sido configurado");
+        }
         return almacenCertificadosConfiables;
     }
 
     public static DispositivoCriptografico getDispositivoCriptografico(int slot) {
+        if (configured==false) {
+            throw new RuntimeException("El entorno criptográfico no ha sido configurado");
+        }
         if (!dispositivosCriptograficos.containsKey(slot)) {
             throw new RuntimeException("No se ha configurado ningún proveedor PKCS#11 para el slot: " + slot);
         }
@@ -56,7 +90,7 @@ public class EntornoCriptografico {
 
             AlmacenCertificadosConfiables almacenCertificadosConfiables;
             try (InputStream inputStreamKeyStore = EntornoCriptografico.class.getClassLoader().getResourceAsStream(pathAlmacenCertificadosConfiables.toString())) {
-                KeyStore trustedKeyStore = getKeyStore(inputStreamKeyStore,passwordAlmacenCertificadosConfiables);
+                KeyStore trustedKeyStore = CriptografiaUtil.getKeyStore(inputStreamKeyStore,passwordAlmacenCertificadosConfiables, CriptografiaUtil.KeyStoreType.PKCS12);
                 almacenCertificadosConfiables = new AlmacenCertificadosConfiables(trustedKeyStore);
             }
 
@@ -96,53 +130,12 @@ public class EntornoCriptografico {
             throw new RuntimeException("La librería PKCS#11 no es un archivo regular" + pkcs11LibraryPath);
         }
 
-        Provider providerPkcs11 = getProviderPKCS11(pkcs11LibraryPath, slot);
-        KeyStore devicePkcs11KeyStore=getKeyStoreDevicePkc11(providerPkcs11, pin);
+        Provider providerPkcs11 = CriptografiaUtil.getProviderPKCS11(pkcs11LibraryPath, slot);
+        KeyStore devicePkcs11KeyStore=CriptografiaUtil.getKeyStore(providerPkcs11,pin, CriptografiaUtil.KeyStoreType.PKCS11);
         DispositivoCriptografico dispositivoCriptografico=new DispositivoCriptografico(devicePkcs11KeyStore, pin.toCharArray());
 
         return dispositivoCriptografico;
 
-    }
-
-
-
-    private static KeyStore getKeyStoreDevicePkc11(Provider providerPKCS11, String pin) {
-        try {
-            KeyStore pkcs11KeyStore = KeyStore.getInstance("PKCS11", providerPKCS11);
-            pkcs11KeyStore.load(null, pin.toCharArray());
-
-            return pkcs11KeyStore;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private static Provider getProviderPKCS11(Path path, int slot) {
-        try {
-            String pkcs11Config = String.format("name=DispositivoCriptograficoEducaFlow"+slot+"\nlibrary=%s\nslot=%d\n", path.toAbsolutePath().toString(), slot);
-            File tempFileConf = File.createTempFile("DispositivoCriptograficoEducaFlow", ".cfg");
-            tempFileConf.deleteOnExit(); // se borrará al salir del programa
-            Files.writeString(tempFileConf.toPath(), pkcs11Config);
-
-            Provider pkcs11Provider = Security.getProvider("SunPKCS11").configure(tempFileConf.getAbsolutePath());
-            Security.addProvider(pkcs11Provider);
-
-            return pkcs11Provider;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-
-    }
-
-    private static KeyStore getKeyStore(InputStream inputStreamKeyStore, String keyStorePassword) {
-        try {
-            KeyStore trustedKeyStore = KeyStore.getInstance("JKS");
-            trustedKeyStore.load(inputStreamKeyStore, keyStorePassword.toCharArray());
-
-            return trustedKeyStore;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
 
