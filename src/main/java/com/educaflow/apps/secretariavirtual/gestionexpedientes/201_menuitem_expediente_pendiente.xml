@@ -8,7 +8,7 @@
 
     <action-view name="expedientes-pendiente-action" title="Listado de expedientes pendientes de que realices la tarea"  model="com.educaflow.apps.expedientes.db.Expediente">
         <view type="grid" name="expedientes-pendiente-grid"/>
-        <domain>self.closed=false </domain>
+        <domain>self.abierto=true </domain>
         <context name="_profile" expr="CREADOR"/>
     </action-view>
 

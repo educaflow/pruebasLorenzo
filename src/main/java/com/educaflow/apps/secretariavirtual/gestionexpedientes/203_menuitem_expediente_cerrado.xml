@@ -6,7 +6,7 @@
     <menuitem name="expedientes-cerrados-menu" parent="expedientes-menu" title="Expedientes Cerrados" action="expedientes-cerrados-action" groups="admins,users" order="203"/>
     <action-view name="expedientes-cerrados-action"  title="Expedientes cerrados" model="com.educaflow.apps.expedientes.db.Expediente">
         <view type="grid" name="expedientes-cerrados-grid"/>
-        <domain>self.closed=true </domain>
+        <domain>self.abierto=false </domain>
         <context name="_profile" expr="RESPONSABLE"/>
     </action-view>
     <grid name="expedientes-cerrados-grid" title="Expedientes" model="com.educaflow.apps.expedientes.db.Expediente"
