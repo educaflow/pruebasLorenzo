@@ -8,11 +8,11 @@
     <ambitoResponsable>CENTRO</ambitoResponsable>
     <ambitoAuditor>DEPARTAMENTO</ambitoAuditor>
     <states>
-        <state initial="true" name="ENTRADA_DATOS" profile="CREADOR" events="DELETE,PRESENTAR" />
-        <state name="FIRMA_POR_USUARIO" profile="CREADOR" events="BACK,PRESENTAR_DOCUMENTOS_FIRMADOS" />
-        <state name="REVISION_Y_FIRMA_POR_RESPONSABLE" title="Revisión y firma por responsable" profile="RESPONSABLE" events="RESOLVER"/>
-        <state closed="true" name="ACEPTADO" profile="RESPONSABLE" events=""/>
-        <state closed="true" name="RECHAZADO" profile="RESPONSABLE" events=""/>
+        <state name="ENTRADA_DATOS"          events="DELETE,GUARDAR_DATOS" profile="CREADOR"      title="Entrada de datos"           initial="true"  />
+        <state name="PENDIENTE_PRESENTACION" events="BACK,PRESENTAR"       profile="CREADOR"      title="Pendiente de presentación"                  />
+        <state name="PENDIENTE_RESOLUCION"   events="RESOLVER"             profile="RESPONSABLE"  title="Pendiente de resolución"                    />
+        <state name="ACEPTADO"               events=""                     profile="RESPONSABLE"                                     closed="true"   />
+        <state name="RECHAZADO"              events=""                     profile="RESPONSABLE"                                     closed="true"   />
     </states>
 </TipoExpediente>
 

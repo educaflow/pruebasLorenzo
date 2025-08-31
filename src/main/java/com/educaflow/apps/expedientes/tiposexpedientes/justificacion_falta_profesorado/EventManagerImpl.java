@@ -1,6 +1,7 @@
 package com.educaflow.apps.expedientes.tiposexpedientes.justificacion_falta_profesorado;
 
 import com.axelor.meta.db.MetaFile;
+import com.educaflow.apps.configuracioncentro.db.Centro;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
@@ -13,6 +14,7 @@ import com.educaflow.common.pdf.*;
 import com.educaflow.common.validation.messages.BusinessException;
 import com.google.inject.Inject;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.LocalDate;
 
@@ -39,7 +41,7 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     }
 
     @WhenEvent
-    public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
+    public void triggerGuardarDatos(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
         DocumentoPdf solicitudPdf = justificacionFaltaProfesorado.getDocumentoPdf(JustificacionFaltaProfesorado.TipoDocumentoPdf.SOLICITUD);
         DocumentoPdf justificantePdf=TipoExpedienteUtil.getDocumentoPdfFromMetaFile(justificacionFaltaProfesorado.getJustificante());
         solicitudPdf=solicitudPdf.anyadirDocumentoPdf(justificantePdf);
@@ -51,15 +53,26 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
         justificacionFaltaProfesorado.setDocumentacionParaPresentarSinFirmar(metaFile);
 
 
-        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.FIRMA_POR_USUARIO);
+        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.PENDIENTE_PRESENTACION);
     }
     @WhenEvent
-    public void triggerPresentarDocumentosFirmados(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
+    public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
         DocumentoPdf documentacionPresentadaFirmadaUsuario=TipoExpedienteUtil.getDocumentoPdfFromMetaFile(justificacionFaltaProfesorado.getDocumentacionPresentadaFirmadaUsuario());
-        System.out.println("Signature isValidasTodasFirmas"+DocumentoPdfUtil.isValidasTodasFirmas(documentacionPresentadaFirmadaUsuario));
 
+        byte[] sello=getSelloCentro(justificacionFaltaProfesorado.getCentroReceptor());
 
-        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
+        AlmacenClaveFichero almacenClave=new AlmacenClaveFichero(Path.of("mi_certificado.p12"),"nadanada");
+        //AlmacenClaveDispositivo almacenClave=new AlmacenClaveDispositivo( 0,"CertFirmaDigital");
+        CampoFirma campoFirma=new CampoFirma(new Rectangulo(80,10,120,100))
+                .setMensaje("Recibido en el centro CIPFP Mislata el día "+ LocalDate.now())
+                .setImage(sello)
+                .setNumeroPagina(1);
+
+        DocumentoPdf justificanteDocumentacionPresentadaFirmadaCentro=documentacionPresentadaFirmadaUsuario.firmar(almacenClave,campoFirma);
+        MetaFile metaFile= TipoExpedienteUtil.getMetaFileFromDocumentoPdf(justificanteDocumentacionPresentadaFirmadaCentro);
+        justificacionFaltaProfesorado.setJustificanteDocumentacionPresentadaFirmadaCentro(metaFile);
+
+        justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.PENDIENTE_RESOLUCION);
         justificacionFaltaProfesorado.setDisconformidad(null);
         justificacionFaltaProfesorado.setResolucion(null);
     }
@@ -92,17 +105,17 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
                 case ENTRADA_DATOS:
                     justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.ENTRADA_DATOS);
                     break;
-                case FIRMA_POR_USUARIO:
+                case PENDIENTE_PRESENTACION:
                     justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.ENTRADA_DATOS);
                     break;
-                case REVISION_Y_FIRMA_POR_RESPONSABLE:
+                case PENDIENTE_RESOLUCION:
                     justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.ENTRADA_DATOS);
                     break;
                 case ACEPTADO:
-                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.PENDIENTE_PRESENTACION);
                     break;
                 case RECHAZADO:
-                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.REVISION_Y_FIRMA_POR_RESPONSABLE);
+                    justificacionFaltaProfesorado.updateState( JustificacionFaltaProfesorado.State.PENDIENTE_PRESENTACION);
                     break;
                 default:
                     throw new IllegalArgumentException("State no reconocido: " + state);
@@ -113,7 +126,6 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
     @WhenEvent
     public void triggerDelete(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
-        //justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.Estado.);
     }
 
 
@@ -123,11 +135,11 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
 
     @OnEnterState
-    public void onEnterFirmaPorUsuario(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
+    public void onEnterPendientePresentacion(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
     }
 
     @OnEnterState
-    public void onEnterRevisionYFirmaPorResponsable(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
+    public void onEnterPendienteResolucion(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
     }
 
 
@@ -139,6 +151,19 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     public void onEnterRechazado(JustificacionFaltaProfesorado justificacionFaltaProfesorado, EventContext eventContext) {
     }
 
+
+    private byte[] getSelloCentro(Centro centro) {
+        System.out.print("Error:Cada centro debe tener su propio sello de entrada");
+
+        try (InputStream inputStream = EventManagerImpl.class.getClassLoader().getResourceAsStream("firma/sello_centro_educativo.png")) {
+            if (inputStream == null) {
+                throw new RuntimeException("No se ha encontrado el recurso: sello_centro_educativo.png");
+            }
+            return inputStream.readAllBytes();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
 
 }

@@ -30,8 +30,6 @@
             <field name="motivoFalta" colSpan="6"   readonly="true"/>
             <field name="otroMotivo" colSpan="6" colOffset="7"  showIf="motivoFalta == 'OTROS'" readonly="true"/>
         </panel>
-
-
         <panel name="justificante-upload" title="Adjuntar justificante">
             <field name="justificante" title="Foto o PDF del justificante" widget="binary-link" colSpan="4" />
             <help variant="info" colSpan="6" colOffset="8" showIf="motivoFalta=='ENFERMEDAD_COMUN'">Es necesario aportar justificante médico a partir del segundo día</help>
@@ -41,81 +39,48 @@
         <panel name="justificante-view" title="Adjuntar justificante">
             <field name="justificante" title="Foto o PDF del justificante" widget="binary-link" colSpan="4" readonly="true"/>
         </panel>
-        <panel name="justificante-firmar-creador" title="Justificante" >
-
-            <field name="new" showTitle="false" readonly="true" colSpan="6">
+        <panel name="documentacionParaPresentarSinFirmar" title="Solicitud" >
+            <field name="new" showTitle="false" readonly="true" colSpan="9">
                 <viewer depends="documentacionParaPresentarSinFirmar" ><![CDATA[
                     <>
-                    <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentacionParaPresentarSinFirmar.id}/content/download?inline=true&name=${documentacionParaPresentarSinFirmar.fileName}`} ></Box>
+                    <Box as="iframe" height="900" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentacionParaPresentarSinFirmar.id}/content/download?inline=true&name=${documentacionParaPresentarSinFirmar.fileName}`} ></Box>
                     </>
                     ]]></viewer>
             </field>
-            <field name="new2" showTitle="false" readonly="true" colSpan="6">
-                <viewer depends="documentacionPresentadaFirmadaUsuario" ><![CDATA[
-                    <>
-                    <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentacionPresentadaFirmadaUsuario.id}/content/download?inline=true&name=${documentacionPresentadaFirmadaUsuario.fileName}`} ></Box>
-                    </>
-                    ]]></viewer>
-            </field>
-
-            <button name="Firmar" colSpan="6"  title="Firmar digitalmente el documento" onClick="exp-JustificacionFaltaProfesorado-firmarDocumentacionParaPresentar-action" />
-            <button name="Refrescar" colSpan="6"  title="Ver documento firmado" icon="autorenew" onClick="action-event-view-expediente"/>
         </panel>
-
-
-
-        <panel name="justificante-firmar-director" title="Resolver expediente">
-            <field name="tipoResolucion" widget="SwitchSelect" colSpan="8" />
-
-            <field name="new" showTitle="false" readonly="true"   colSpan="6" showIf="tipoResolucion == 'ACEPTAR'">
+        <panel name="documentacionParaPresentarSinFirmar-view" title="Solicitud" >
+            <field name="new" showTitle="false" readonly="true" colSpan="9">
                 <viewer depends="documentacionParaPresentarSinFirmar" ><![CDATA[
                     <>
                     <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentacionParaPresentarSinFirmar.id}/content/download?inline=true&name=${documentacionParaPresentarSinFirmar.fileName}`} ></Box>
                     </>
                     ]]></viewer>
             </field>
-            <field name="new2" showTitle="false" readonly="true"   colSpan="6" showIf="tipoResolucion == 'ACEPTAR'">
-                <viewer depends="documentacionPresentadaFirmadaUsuario" ><![CDATA[
+        </panel>
+        <panel name="justificanteDocumentacionPresentadaFirmadaCentro-view" title="Solicitud" >
+            <field name="new2" showTitle="false" readonly="true" colSpan="12">
+                <viewer depends="justificanteDocumentacionPresentadaFirmadaCentro" ><![CDATA[
                     <>
-                    <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${documentacionPresentadaFirmadaUsuario.id}/content/download?inline=true&name=${documentacionPresentadaFirmadaUsuario.fileName}`} ></Box>
+                    <Box as="iframe" height="400" border="0" src={`ws/rest/com.axelor.meta.db.MetaFile/${justificanteDocumentacionPresentadaFirmadaCentro.id}/content/download?inline=true&name=${justificanteDocumentacionPresentadaFirmadaCentro.fileName}`} ></Box>
                     </>
                     ]]></viewer>
             </field>
-            <button name="Firmar"  colSpan="6"   title="Firmar digitalmente el documento" showIf="tipoResolucion == 'ACEPTAR'" onClick="exp-JustificacionFaltaProfesorado-firmarDocumentacionParaPresentar-action" />
-            <button name="Refrescar" colSpan="6"  title="Ver documento firmado" icon="autorenew" onClick="action-event-view-expediente"  showIf="tipoResolucion == 'ACEPTAR'"/>
-
-
-
+        </panel>
+        <panel name="resolucion" title="Resolver expediente">
+            <field name="tipoResolucion" widget="SwitchSelect" colSpan="8" />
             <field name="disconformidad" colSpan="12"  showIf="tipoResolucion == 'SUBSANAR_DATOS'" />
             <field name="resolucion" colSpan="12"  showIf="tipoResolucion == 'RECHAZAR'"/>
 
         </panel>
-        <panel name="justificante-view-documentoCompletoFirmadoUsuario" title="Justificantes">
-            <field name="documentoCompletoFirmadoUsuario" title="Documento firmado por el usuario" widget="binary-link" colSpan="12" readonly="true" />
-        </panel>
-        <panel name="justificante-view-documentoCompletoFirmadoUsuarioDirector" title="Justificantes">
-            <field name="documentoCompletoFirmadoUsuarioDirector" title="Documento firmado por el usuario y el director" widget="binary-link" colSpan="12" readonly="true"/>
-        </panel>
-
-        <panel name="disconformidad-view" title="Disconformidad de los datos presentados" showIf="(disconformidad!=null) &amp;&amp; (disconformidad!='')">
-            <field name="disconformidad" title="Motivo disconformidad"  colSpan="12" readonly="true"/>
-        </panel>
-
         <panel name="resolucion-view" title="Resolución">
             <field name="tipoResolucion" title="Resolución"  readonly="true"  />
             <field name="disconformidad" colSpan="12" title="Explicar los datos a subsanar" readonly="true" showIf="tipoResolucion == 'SUBSANAR_DATOS'" />
             <field name="resolucion" colSpan="12" title="Motivo del rechazo" readonly="true" showIf="tipoResolucion == 'RECHAZAR'"/>
         </panel>
-
+        <panel name="disconformidad-view" title="Disconformidad de los datos presentados" showIf="(disconformidad!=null) &amp;&amp; (disconformidad!='')">
+            <field name="disconformidad" title="Motivo disconformidad"  colSpan="12" readonly="true"/>
+        </panel>
     </form>
-
-    <action-method name="exp-JustificacionFaltaProfesorado-firmarDocumentacionParaPresentar-action" model="com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado">
-        <call
-                class="com.educaflow.apps.expedientes.tiposexpedientes.justificacion_falta_profesorado.ActionController"
-                method="firmarDocumentacionParaPresentar"
-        />
-    </action-method>
-
 
 
     <!-- *********************************************************************************************  -->
@@ -133,7 +98,7 @@
                 <button name="DELETE" colSpan="2" css="btn-danger" outline="true" title="Borrar" onClick="action-event-expediente" prompt="¿Está seguro que desea borrar el expediente?"/>
             </buttons-left>
             <buttons-right>
-                <button name="PRESENTAR" colSpan="2" title="Siguiente" onClick="action-event-expediente"/>
+                <button name="GUARDAR_DATOS" colSpan="2" title="Siguiente" onClick="action-event-expediente"/>
             </buttons-right>
         </footer>
     </form>
@@ -152,29 +117,28 @@
         </footer>
     </form>
 
-    <!-- *********************************************************************************************  -->
-    <!-- ************************************* FIRMA_POR_USUARIO *************************************  -->
-    <!-- *********************************************************************************************  -->
-    <form state="FIRMA_POR_USUARIO" profile="CREADOR">
+    <!-- **********************************************************************************************  -->
+    <!-- *********************************** PENDIENTE_PRESENTACION ***********************************  -->
+    <!-- **********************************************************************************************  -->
+    <form state="PENDIENTE_PRESENTACION" profile="CREADOR">
         <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            justificante-firmar-creador
+            -documentacionParaPresentarSinFirmar
         </include-panels>
         <footer>
             <buttons-left>
                 <button name="BACK" colSpan="2" outline="true" title="Atrás" onClick="action-event-expediente"/>
             </buttons-left>
             <buttons-right>
-                <button name="PRESENTAR_DOCUMENTOS_FIRMADOS" colSpan="3" title="Presentar documentación" onClick="action-event-expediente" prompt="¿Esta seguro que desea presentar la documentación?&lt;br&gt;No podrá deshacer esta acción"/>
+                <button name="PRESENTAR" colSpan="4" title="Firmar con AutoFirma__!! y Presentar la solicitud" onClick="serial:exp-JustificacionFaltaProfesorado-firmarDocumentacionParaPresentar-action,action-event-expediente" prompt="¿Esta seguro que desea presentar la documentación?&lt;br&gt;No podrá deshacer esta acción"/>
             </buttons-right>
         </footer>
+        <panel title="ayuda" showFrame="false" >
+            <help variant="info" colSpan="12" colOffset="0" >Para presentar la solicitud debe tener la aplicación de AutoFirma instalada y un certificado digital válido</help>
+        </panel>
     </form>
-    <form state="FIRMA_POR_USUARIO">
+    <form state="PENDIENTE_PRESENTACION">
         <include-panels>
-            -datos-profesor
-            -datos-falta-view
-            -justificante-view
+            -documentacionParaPresentarSinFirmar-view
         </include-panels>
         <footer>
             <buttons-left/>
@@ -184,15 +148,21 @@
         </footer>
     </form>
 
-
+    <action-method name="exp-JustificacionFaltaProfesorado-firmarDocumentacionParaPresentar-action" model="com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado">
+        <call
+                class="com.educaflow.apps.expedientes.tiposexpedientes.justificacion_falta_profesorado.ActionController"
+                method="firmarDocumentacionParaPresentar"
+        />
+    </action-method>
     <!-- **********************************************************************************************  -->
-    <!-- ****************************** REVISION_Y_FIRMA_POR_RESPONSABLE ******************************  -->
+    <!-- ************************************ PENDIENTE_RESOLUCION ************************************  -->
     <!-- **********************************************************************************************  -->
-    <form state="REVISION_Y_FIRMA_POR_RESPONSABLE" profile="RESPONSABLE" >
+    <form state="PENDIENTE_RESOLUCION" profile="RESPONSABLE" >
         <include-panels>
             -datos-profesor
             -datos-falta-view
-            justificante-firmar-director
+            -justificanteDocumentacionPresentadaFirmadaCentro-view
+            resolucion
         </include-panels>
         <footer>
             <buttons-left/>
@@ -202,11 +172,11 @@
         </footer>
     </form>
 
-    <form state="REVISION_Y_FIRMA_POR_RESPONSABLE">
+    <form state="PENDIENTE_RESOLUCION">
         <include-panels>
             -datos-profesor
             -datos-falta-view
-            -justificante-view-documentoCompletoFirmadoUsuario
+            -justificanteDocumentacionPresentadaFirmadaCentro-view
         </include-panels>
         <footer>
             <buttons-left/>
@@ -226,7 +196,7 @@
         <include-panels>
             -datos-profesor
             -datos-falta-view
-            -justificante-view-documentoCompletoFirmadoUsuarioDirector
+            -justificanteDocumentacionPresentadaFirmadaCentro-view
             -resolucion-view
         </include-panels>
         <footer>
@@ -245,7 +215,7 @@
         <include-panels>
             -datos-profesor
             -datos-falta-view
-            -justificante-view-documentoCompletoFirmadoUsuario
+            -justificanteDocumentacionPresentadaFirmadaCentro-view
             -resolucion-view
         </include-panels>
         <footer>

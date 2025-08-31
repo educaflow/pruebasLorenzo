@@ -26,7 +26,7 @@ import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado as model
 class StateEventValidatorImpl: StateEventValidator {
 
     @BeanValidationRulesForStateAndEvent
-    public fun getForStateEntradaDatosInEventPresentar(): BeanValidationRules {
+    public fun getForStateEntradaDatosInEventGuardarDatos(): BeanValidationRules {
         return rules {
             field(model::getDias) {
                 +Required()
@@ -74,13 +74,13 @@ class StateEventValidatorImpl: StateEventValidator {
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForStateFirmaPorUsuarioInEventBack():BeanValidationRules {
+    fun getForStatePendientePresentacionInEventBack():BeanValidationRules {
         return rules {
         }
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForStateFirmaPorUsuarioInEventPresentarDocumentosFirmados():BeanValidationRules {
+    fun getForStatePendientePresentacionInEventPresentar():BeanValidationRules {
         return rules {
             field(model::getDocumentacionPresentadaFirmadaUsuario) {
                 +Required()
@@ -90,7 +90,7 @@ class StateEventValidatorImpl: StateEventValidator {
     }
 
     @BeanValidationRulesForStateAndEvent
-    fun getForStateRevisionYFirmaPorResponsableInEventResolver():BeanValidationRules {
+    fun getForStatePendienteResolucionInEventResolver():BeanValidationRules {
         return rules {
             field(model::getTipoResolucion) {
                 +Required()

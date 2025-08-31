@@ -3,6 +3,7 @@ package com.educaflow.apps.expedientes.tiposexpedientes.justificacion_falta_prof
 import com.axelor.meta.CallMethod;
 import com.axelor.rpc.ActionRequest;
 import com.axelor.rpc.ActionResponse;
+import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.tiposexpedientes.shared.AutoFirma;
 import com.educaflow.common.pdf.Rectangulo;
 
@@ -13,8 +14,8 @@ public class ActionController {
     @CallMethod
     public void firmarDocumentacionParaPresentar(ActionRequest actionRequest, ActionResponse actionResponse) {
 
-        AutoFirma autofirma = (new AutoFirma())
-            .setRectangulo(new Rectangulo(100,200,200,150))
+        AutoFirma autofirma = (new AutoFirma(JustificacionFaltaProfesorado.class))
+            .setRectangulo(new Rectangulo(300,10,120,100))
             .setPageNumber(1)
             .setSourceField("documentacionParaPresentarSinFirmar")
             .setTargetField("documentacionPresentadaFirmadaUsuario");
