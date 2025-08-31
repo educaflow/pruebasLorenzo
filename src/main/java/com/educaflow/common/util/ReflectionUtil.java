@@ -10,13 +10,13 @@ public class ReflectionUtil {
 
 
     public static boolean hasMethod(Class<?> baseClass, String methodName, Class<?> returnClass, Class<? extends Annotation> annotation, Class<?>[] parameterTypes) {
-        try {
             Method method=getMethod(baseClass, methodName, returnClass, annotation, parameterTypes);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
 
+            if (method!=null) {
+                return true;
+            } else {
+                return false;
+            }
 
     }
 
@@ -42,13 +42,15 @@ public class ReflectionUtil {
                     continue;
                 }
             }
-            Class<?>[] methodParamTypes = method.getParameterTypes();
-            if (methodParamTypes.length != parameterTypes.length) {
 
-                continue;
-            }
 
-            if (methodParamTypes!=null) {
+            if (parameterTypes!=null) {
+                Class<?>[] methodParamTypes = method.getParameterTypes();
+                if (methodParamTypes.length != parameterTypes.length) {
+                    continue;
+                }
+
+
                 boolean paramsMatch = true;
                 for (int i = 0; i < parameterTypes.length; i++) {
                     if (!methodParamTypes[i].equals(parameterTypes[i])) {
@@ -73,7 +75,7 @@ public class ReflectionUtil {
         if (matchingMethods.size() == 1) {
             return matchingMethods.get(0);
         } else {
-            throw new RuntimeException("No existe el método: " + methodName + " en la clase: " + baseClass.getName() + " con Nº parámetros: " + (parameterTypes != null ? parameterTypes.length : "N/A") + " y retorno: " + (returnClass != null ? returnClass.getName() : "N/A") + " y la anotación: " + (annotation != null ? annotation.getName() : "N/A"));
+            return null;
         }
 
 
