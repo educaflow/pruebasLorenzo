@@ -40,3 +40,5 @@ Es necesario instalar `sudo apt install apertium apertium-spa-cat cg3 vislcg3 ap
 # Funciones que se pueden usar en las plantillas de React cuando se usa "<template>"
 Están en el fichero `/hooks/use-parser/context/script-context.ts`
 
+#Que un pdf no sea PDF/A
+`gs -dPDFA=0 -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=salida.pdf entrada.pdf`
