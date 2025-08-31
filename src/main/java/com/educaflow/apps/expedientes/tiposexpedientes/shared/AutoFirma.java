@@ -1,22 +1,30 @@
 package com.educaflow.apps.expedientes.tiposexpedientes.shared;
 
 import com.axelor.rpc.ActionResponse;
+import com.educaflow.apps.expedientes.db.Expediente;
+import com.educaflow.common.pdf.CampoFirma;
 import com.educaflow.common.pdf.Rectangulo;
+import com.educaflow.common.util.ReflectionUtil;
+import com.educaflow.common.util.TextUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AutoFirma {
 
+    private static final int AUTOFIRMA_Y_OFFSET=-6;
+
+    private final Class<? extends Expediente> expedienteClass;
     private Rectangulo rectangulo;
     private String nif=null;
     private String sourceField;
     private String targetField;
     private String sufijo="_signed";
-    private int pageNumber=-1;
+    private int pageNumber= CampoFirma.DEFAULT_NUMERO_PAGINA;
+    private int fontSize=CampoFirma.DEFAULT_FONT_SIZE;
 
-    public AutoFirma() {
-
+    public AutoFirma(Class<? extends Expediente> expedienteClass) {
+        this.expedienteClass = expedienteClass;
     }
 
     public static void sendToActionResponse(AutoFirma autofirma, ActionResponse actionResponse) {
@@ -37,11 +45,12 @@ public class AutoFirma {
         payload.put("targetField", autofirma.getTargetField());
         payload.put("sufijo", autofirma.getSufijo());
         payload.put("pageNumber", autofirma.getPageNumber());
+        payload.put("fontSize", autofirma.getFontSize());
         Rectangulo rectangulo = autofirma.getRectangulo();
         payload.put("signaturePositionOnPageLowerLeftX", rectangulo.getX());
-        payload.put("signaturePositionOnPageLowerLeftY", rectangulo.getY());
+        payload.put("signaturePositionOnPageLowerLeftY", rectangulo.getY()+AUTOFIRMA_Y_OFFSET);
         payload.put("signaturePositionOnPageUpperRightX", rectangulo.getX() + rectangulo.getWidth());
-        payload.put("signaturePositionOnPageUpperRightY", rectangulo.getY() + rectangulo.getHeight());
+        payload.put("signaturePositionOnPageUpperRightY", rectangulo.getY()+AUTOFIRMA_Y_OFFSET + rectangulo.getHeight());
 
 
 
@@ -71,6 +80,8 @@ public class AutoFirma {
     }
 
     public AutoFirma setSourceField(String sourceField) {
+        checkFieldExists(sourceField);
+
         this.sourceField = sourceField;
         return this;
     }
@@ -80,6 +91,8 @@ public class AutoFirma {
     }
 
     public AutoFirma setTargetField(String targetField) {
+        checkFieldExists(targetField);
+
         this.targetField = targetField;
         return this;
     }
@@ -106,7 +119,25 @@ public class AutoFirma {
         return pageNumber;
     }
 
+    public AutoFirma setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+        return this;
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
 
 
+    private void checkFieldExists(String fieldName) {
+        String getMethodName = "get" + TextUtil.toFirstsLetterToUpperCase(fieldName);
+        String setMethodName = "set" + TextUtil.toFirstsLetterToUpperCase(fieldName);
+        if (ReflectionUtil.hasMethod(expedienteClass, getMethodName,null,null,null)==false) {
+            throw new RuntimeException("El método sourceField: " + getMethodName + " no existe en la clase: " + expedienteClass.getName());
+        }
+        if (ReflectionUtil.hasMethod(expedienteClass, setMethodName,null,null,null)==false) {
+            throw new RuntimeException("El método sourceField: " + setMethodName + " no existe en la clase: " + expedienteClass.getName());
+        }
+    }
 
 }
