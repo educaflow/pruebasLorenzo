@@ -1,5 +1,6 @@
 package com.educaflow.common.pdf.impl;
 
+import com.educaflow.common.criptografia.CriptografiaUtil;
 import com.educaflow.common.criptografia.EntornoCriptografico;
 import com.educaflow.common.pdf.*;
 import com.itextpdf.forms.PdfAcroForm;
@@ -7,6 +8,8 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -174,10 +177,8 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
                 Path fileCertificate=almacenClaveFichero.getFileCertificate();
                 String password=almacenClaveFichero.getPassword();
 
-                KeyStore  userKeyStore = KeyStore.getInstance("PKCS12");
-                userKeyStore.load(new FileInputStream(fileCertificate.toFile()), password.toCharArray());
+                KeyStore  userKeyStore = CriptografiaUtil.getKeyStore(new FileInputStream(fileCertificate.toFile()), password, CriptografiaUtil.KeyStoreType.PKCS12);
                 alias = userKeyStore.aliases().nextElement();
-
                 privateKey = (PrivateKey) userKeyStore.getKey(alias, password.toCharArray());
                 chain = userKeyStore.getCertificateChain(alias);
             } else if (almacenClave instanceof AlmacenClaveDispositivo) {
@@ -192,12 +193,19 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             }
 
 
+            String message;
+            if (campoFirma.getMensaje()==null) {
+                message=getMensajeFirma((X509Certificate)chain[0], alias);
+            } else {
+                message=campoFirma.getMensaje();
+            }
 
             SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
-            if (campoFirma.getMensaje()==null) {
-                appearance.setContent(getMensajeFirma((X509Certificate)chain[0], alias));
+            if (campoFirma.getImage()==null) {
+                appearance.setContent(message);
             } else {
-                appearance.setContent(campoFirma.getMensaje());
+                ImageData imageData= ImageDataFactory.create(campoFirma.getImage());
+                appearance.setContent(message,imageData);
             }
             appearance.setFontSize(campoFirma.getFontSize());
             PdfFont courier = PdfFontFactory.createFont(StandardFonts.COURIER);
@@ -210,7 +218,6 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             signerProperties.setPageNumber(campoFirma.getNumeroPagina());
             signerProperties.setSignatureAppearance(appearance);
 
-
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytesPdf);
             PdfReader pdfReader = new PdfReader(byteArrayInputStream);
@@ -221,13 +228,15 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
 
             if (almacenClave instanceof AlmacenClaveFichero) {
-                IExternalSignature pks = new PrivateKeySignature(privateKey, DigestAlgorithms.SHA256, "BC");
                 IExternalDigest digest = new BouncyCastleDigest();
+                IExternalSignature pks = new PrivateKeySignature(privateKey, DigestAlgorithms.SHA256, "BC");
+
                 signer.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CMS);
             } else if (almacenClave instanceof AlmacenClaveDispositivo) {
                 synchronized(EntornoCriptografico.getDispositivoCriptografico(slot)) {
                     IExternalDigest digest = new BouncyCastleDigest();
                     IExternalSignature pks = new PKCS11ExternalSignature(privateKey, DigestAlgorithms.SHA256, "RSA");
+
                     signer.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CMS);
                 }
             } else {
