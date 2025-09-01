@@ -315,7 +315,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         }
     }
 
-    private SignerProperties getSignerProperties(CampoFirma campoFirma,X509Certificate cert,String alias) {
+    private SignerProperties getSignerProperties(CampoFirma campoFirma, X509Certificate cert, String alias) {
         SignatureFieldAppearance signatureFieldAppearance = getSignatureFieldAppearance(campoFirma,cert,alias);
 
         SignerProperties signerProperties = new SignerProperties();
@@ -323,6 +323,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         signerProperties.setPageRect(getRectangle(campoFirma));
         signerProperties.setPageNumber(campoFirma.getNumeroPagina());
         signerProperties.setSignatureAppearance(signatureFieldAppearance);
+        signerProperties.setClaimedSignDate(toCalendar(campoFirma.getFechaFirma()));
 
         return signerProperties;
     }
@@ -331,7 +332,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         try {
             String message;
             if (campoFirma.getMensaje() == null) {
-                message = getMensajeFirma( cert, alias);
+                message = getMensajeFirma( cert, alias,campoFirma.getFechaFirma());
             } else {
                 message = campoFirma.getMensaje();
             }
@@ -387,13 +388,13 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     /***********************************************************************************/
     /******************************* Mensaje de la firma *******************************/
     /***********************************************************************************/
-    private static String getMensajeFirma(X509Certificate cert,String alias)  {
+    private static String getMensajeFirma(X509Certificate cert,String alias,LocalDateTime localDateTime)  {
         try {
             String mensaje;
 
 
             DatosCertificado datosCertificado=new DatosCertificadoImpl(cert, null);
-            mensaje="Firmado por "+ datosCertificado.getCnSubject() + " el dia " + getNowForFirma() + " con un certificado emitido por " + datosCertificado.getCnIssuer();
+            mensaje="Firmado por "+ datosCertificado.getCnSubject() + " el dia " + getStringDateForMensajeFirma(localDateTime) + " con un certificado emitido por " + datosCertificado.getCnIssuer();
 
 
             return mensaje;
@@ -402,11 +403,18 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         }
     }
 
-    private static String getNowForFirma() {
-        LocalDateTime ahora = LocalDateTime.now();
-        String fecha = ahora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    /***********************************************************************************/
+    /******************************* Date Utils *******************************/
+    /***********************************************************************************/
+
+    private static String getStringDateForMensajeFirma(LocalDateTime localDateTime) {
+        String fecha = localDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
         return fecha;
+    }
+
+    private static Calendar toCalendar(LocalDateTime fecha) {
+        return GregorianCalendar.from(fecha.atZone(TimeZone.getDefault().toZoneId()));
     }
 
 }

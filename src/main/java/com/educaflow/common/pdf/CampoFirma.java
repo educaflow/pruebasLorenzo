@@ -1,6 +1,6 @@
 package com.educaflow.common.pdf;
 
-import java.awt.*;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -16,6 +16,7 @@ public class CampoFirma {
     private int fontSize=DEFAULT_FONT_SIZE;
     private int numeroPagina=DEFAULT_NUMERO_PAGINA;
     private byte[] image=null;
+    private LocalDateTime fechaFirma= LocalDateTime.now();
 
     public CampoFirma(Rectangulo rectanguloMensaje) {
         this.rectanguloMensaje=rectanguloMensaje;
@@ -43,6 +44,14 @@ public class CampoFirma {
 
     public CampoFirma setImage(byte[] image) {
         this.image=image;
+        return this;
+    }
+
+    public CampoFirma setFechaFirma(LocalDateTime fechaFirma) {
+        if (fechaFirma==null) {
+            throw new IllegalArgumentException("Fecha de firma no puede ser nulo");
+        }
+        this.fechaFirma=fechaFirma;
         return this;
     }
 
@@ -77,6 +86,9 @@ public class CampoFirma {
     public byte[] getImage() {
         return image;
     }
-    
+
+    public LocalDateTime getFechaFirma() {
+        return fechaFirma;
+    }
     
 }
