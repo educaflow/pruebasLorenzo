@@ -44,6 +44,10 @@ public class ResultadoFirmaImpl implements ResultadoFirma {
         return datosCertificado;
     }
 
+    /********************************************************************/
+    /**************************** Utilidades ****************************/
+    /********************************************************************/
+
     private LocalDateTime toLocalDateTime(Calendar calendar) {
         LocalDateTime localDateTime = LocalDateTime.of(
                 calendar.get(Calendar.YEAR),
