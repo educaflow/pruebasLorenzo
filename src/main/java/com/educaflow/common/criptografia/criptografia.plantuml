@@ -1,11 +1,13 @@
 @startuml
-EntornoCriptografico -> EntornoCriptograficoConfig
+EntornoCriptografico ..> EntornoCriptograficoConfig
+DispositivoCriptografico ..> DispositivoCriptograficoConfig
+AlmacenCertificadosConfiables ..> AlmacenCertificadosConfiablesConfig
 
-EntornoCriptografico *--  AlmacenCertificadosConfiables
-EntornoCriptografico *-- "*" DispositivoCriptografico
+EntornoCriptografico *-left-  AlmacenCertificadosConfiables
+EntornoCriptografico *-right- "*" DispositivoCriptografico
 
-EntornoCriptograficoConfig *--  AlmacenCertificadosConfiablesConfig
-EntornoCriptograficoConfig *-- "*" DispositivoCriptograficoConfig
+EntornoCriptograficoConfig *-left-  AlmacenCertificadosConfiablesConfig
+EntornoCriptograficoConfig *-right- "*" DispositivoCriptograficoConfig
 
 
 
@@ -31,7 +33,5 @@ class AlmacenCertificadosConfiablesConfig {
     password
 }
 
-DispositivoCriptografico .> DispositivoCriptograficoConfig
-AlmacenCertificadosConfiables .> AlmacenCertificadosConfiablesConfig
 
 @enduml
