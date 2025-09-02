@@ -1,11 +1,11 @@
 @startuml
-EntornoCriptografico -> ConfiguracionCriptografica
+EntornoCriptografico -> EntornoCriptograficoConfig
 
 EntornoCriptografico *--  AlmacenCertificadosConfiables
 EntornoCriptografico *-- "*" DispositivoCriptografico
 
-ConfiguracionCriptografica *--  AlmacenCertificadosConfiablesConfig
-ConfiguracionCriptografica *-- "*" DispositivoCriptograficoConfig
+EntornoCriptograficoConfig *--  AlmacenCertificadosConfiablesConfig
+EntornoCriptograficoConfig *-- "*" DispositivoCriptograficoConfig
 
 
 

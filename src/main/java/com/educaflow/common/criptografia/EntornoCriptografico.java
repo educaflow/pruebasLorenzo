@@ -1,11 +1,10 @@
 package com.educaflow.common.criptografia;
 
 import com.educaflow.common.criptografia.config.AlmacenCertificadosConfiablesConfig;
-import com.educaflow.common.criptografia.config.ConfiguracionCriptografica;
+import com.educaflow.common.criptografia.config.EntornoCriptograficoConfig;
 import com.educaflow.common.criptografia.config.DispositivoCriptograficoConfig;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,19 +23,19 @@ public class EntornoCriptografico {
 
 
 
-    public static void configure(ConfiguracionCriptografica configuracionCriptografica) {
+    public static void configure(EntornoCriptograficoConfig entornoCriptograficoConfig) {
         if (configured) {
             throw new RuntimeException("El entorno criptográfico ya ha sido configurado");
         }
 
         Security.addProvider(new BouncyCastleProvider());
 
-        if (configuracionCriptografica == null) {
+        if (entornoCriptograficoConfig == null) {
             almacenCertificadosConfiables=new AlmacenCertificadosConfiables(null);
             dispositivosCriptograficos=new HashMap<>();
         } else {
-            AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig=configuracionCriptografica.getAlmacenCertificadosConfiablesConfig();
-            List<DispositivoCriptograficoConfig> dispositivoCritograficoConfigs=configuracionCriptografica.getDispositivoCritograficoConfigs();
+            AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig= entornoCriptograficoConfig.getAlmacenCertificadosConfiablesConfig();
+            List<DispositivoCriptograficoConfig> dispositivoCritograficoConfigs= entornoCriptograficoConfig.getDispositivoCritograficoConfigs();
 
 
             if (almacenCertificadosConfiablesConfig == null) {

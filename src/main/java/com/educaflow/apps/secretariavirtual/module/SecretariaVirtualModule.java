@@ -5,7 +5,7 @@ import com.axelor.app.AvailableAppSettings;
 import com.axelor.app.AxelorModule;
 import com.educaflow.common.criptografia.EntornoCriptografico;
 import com.educaflow.common.criptografia.config.AlmacenCertificadosConfiablesConfig;
-import com.educaflow.common.criptografia.config.ConfiguracionCriptografica;
+import com.educaflow.common.criptografia.config.EntornoCriptograficoConfig;
 import com.educaflow.common.criptografia.config.DispositivoCriptograficoConfig;
 import com.educaflow.common.db.BulkTables;
 
@@ -19,9 +19,8 @@ public class SecretariaVirtualModule extends AxelorModule {
     protected void configure() {
 
 
-        ConfiguracionCriptografica configuracionCriptografica = getConfiguracionCriptograficaFromAppSettings();
-
-        EntornoCriptografico.configure(configuracionCriptografica);
+        EntornoCriptograficoConfig entornoCriptograficoConfig = getEntornoCriptograficoConfigFromAppSettings();
+        EntornoCriptografico.configure(entornoCriptograficoConfig);
 
 
         String dataBaseDriver = AppSettings.get().get(AvailableAppSettings.DB_DEFAULT_DRIVER);
@@ -37,7 +36,7 @@ public class SecretariaVirtualModule extends AxelorModule {
         bulkTables.truncateTables(dataBaseDriver,dataBaseURL,dataBaseUser,dataBasePassword,schemaName,tablasExcluidas,tablasIncluidas);
     }
 
-    public ConfiguracionCriptografica getConfiguracionCriptograficaFromAppSettings()  {
+    public EntornoCriptograficoConfig getEntornoCriptograficoConfigFromAppSettings()  {
 
         Path pathAlmacen = Path.of(AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiables.path"));
         String passwordAlmacen = AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiables.password");
@@ -54,7 +53,7 @@ public class SecretariaVirtualModule extends AxelorModule {
             indice++;
         }
 
-        return new ConfiguracionCriptografica(almacenConfig, dispositivos);
+        return new EntornoCriptograficoConfig(almacenConfig, dispositivos);
     }
 
 
