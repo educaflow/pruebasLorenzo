@@ -1,31 +1,33 @@
 package com.educaflow.common.validation.rules
 
-import com.axelor.meta.db.MetaFile
-import com.educaflow.apps.expedientes.tiposexpedientes.shared.TipoExpedienteUtil
-import com.educaflow.common.pdf.DocumentoPdf
+import com.educaflow.common.domains.db.MetaFilePdf
 import com.educaflow.common.pdf.DocumentoPdfUtil
 import com.educaflow.common.validation.engine.ValidationRule
+import com.educaflow.common.validation.messages.BusinessMessage
 import com.educaflow.common.validation.messages.BusinessMessages
-import java.time.LocalDate
 
 class DocumentoPdfFirmaValida : ValidationRule {
     override fun validate(value: Any?, bean: Any): BusinessMessages? {
-        val metaFile: MetaFile = if (value is MetaFile) value else return null
+        val metaFilePdf: MetaFilePdf = if (value is MetaFilePdf) value else return null
 
-        val documentoPdf: DocumentoPdf
+        val documentoPdf=metaFilePdf.documentoPdf;
 
-        try {
-            documentoPdf = TipoExpedienteUtil.getDocumentoPdfFromMetaFile(metaFile);
-        } catch (e: Exception) {
-            return BusinessMessages.single("El archivo no es un documento PDF correcto");
+        val businessMessages=BusinessMessages();
+
+        for(resultadoFirma in documentoPdf.firmasPdf){
+            if (resultadoFirma.isCorrecta() == false) {
+                businessMessages.add(BusinessMessage(null,"La firma realizada por '${resultadoFirma.datosCertificado.cnSubject}' está dañada o se ha alterado el documento",null))
+            } else if (resultadoFirma.datosCertificado.isValidoEnListaCertificadosConfiables==false) {
+                businessMessages.add(BusinessMessage(null,"La firma realizada por '${resultadoFirma.datosCertificado.cnSubject}' no es válida ya que el emisor no es de confianza: '${resultadoFirma.datosCertificado.cnIssuer}'",null));
+            }
         }
 
-
-        if (DocumentoPdfUtil.isValidasTodasFirmas(documentoPdf)==false) {
-            return BusinessMessages.single("Las firmas del documento debe ser válidas");
+        if (businessMessages.isEmpty()==false) {
+            return businessMessages;
+        } else {
+            return null;
         }
 
-        return null;
     }
 }
 
