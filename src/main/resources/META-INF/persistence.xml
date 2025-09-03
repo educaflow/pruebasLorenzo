@@ -18,6 +18,11 @@
       <property name="javax.persistence.jdbc.user" value="sa" />
       <property name="javax.persistence.jdbc.password" value="" />
 
+<!--
+      <property name="hibernate.show_sql" value="true" />
+      <property name="hibernate.format_sql" value="true" />
+      <property name="hibernate.use_sql_comments" value="true" />
+-->
       <!-- value="create" to build a new database on each run;
            value="update" to modify an existing database;
            value="create-drop" means the same as "create" but also drops tables when Hibernate closes;
