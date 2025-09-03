@@ -1,5 +1,6 @@
 package com.educaflow.apps.expedientes.tiposexpedientes.shared;
 
+import com.axelor.db.Model;
 import com.axelor.rpc.ActionResponse;
 import com.educaflow.apps.expedientes.db.Expediente;
 import com.educaflow.common.pdf.CampoFirma;
@@ -7,6 +8,7 @@ import com.educaflow.common.pdf.Rectangulo;
 import com.educaflow.common.util.ReflectionUtil;
 import com.educaflow.common.util.TextUtil;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +44,9 @@ public class AutoFirma {
         Map<String, Object> payload = new HashMap<>();
         payload.put("nif", autofirma.getNif());
         payload.put("sourceField", autofirma.getSourceField());
+        payload.put("sourceFieldClass", getModelClassFromField(autofirma.getExpedienteClass(), autofirma.getSourceField()).getName());
         payload.put("targetField", autofirma.getTargetField());
+        payload.put("targetFieldClass", getModelClassFromField(autofirma.getExpedienteClass(),autofirma.getTargetField()).getName());
         payload.put("sufijo", autofirma.getSufijo());
         payload.put("pageNumber", autofirma.getPageNumber());
         payload.put("fontSize", autofirma.getFontSize());
@@ -128,6 +132,10 @@ public class AutoFirma {
         return fontSize;
     }
 
+    public Class<? extends Model> getExpedienteClass() {
+        return expedienteClass;
+    }
+
 
     private void checkFieldExists(String fieldName) {
         String getMethodName = "get" + TextUtil.toFirstsLetterToUpperCase(fieldName);
@@ -139,5 +147,13 @@ public class AutoFirma {
             throw new RuntimeException("El método sourceField: " + setMethodName + " no existe en la clase: " + expedienteClass.getName());
         }
     }
+
+    private static Class getModelClassFromField(Class expedienteClass,String fieldName) {
+        String getMethodName = "get" + TextUtil.toFirstsLetterToUpperCase(fieldName);
+        Method method=ReflectionUtil.getMethod(expedienteClass, getMethodName,null,null,null);
+
+        return method.getReturnType();
+    }
+
 
 }

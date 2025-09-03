@@ -18,10 +18,12 @@ globalThis.signDocument = async function(context, payload) {
                 id: idSource,
                 version: versionSource,
                 fileName: originalFileName,
-                field: payload.sourceField
+                field: payload.sourceField,
+                fieldClass:payload.sourceFieldClass
             },
             target: {
-                field: payload.targetField
+                field: payload.targetField,
+                fieldClass: payload.targetFieldClass
             },
             sufijo: payload.sufijo,
             nif: payload.nif,
@@ -38,7 +40,7 @@ globalThis.signDocument = async function(context, payload) {
         console.log("Contexto del expediente:", expedienteContext);
 
         // 3. Descargar PDF base64
-        const urlPdf = `${baseUrl}/ws/rest/com.axelor.meta.db.MetaFile/${expedienteContext.source.id}/content/download?version=${expedienteContext.source.version}`;
+        const urlPdf = `${baseUrl}/ws/rest/${expedienteContext.source.fieldClass}/${expedienteContext.source.id}/content/download?version=${expedienteContext.source.version}`;
         const base64Pdf = await fetchPdfBase64(urlPdf);
         console.log('PDF base64 descargado');
 
@@ -178,7 +180,7 @@ async function subirAFCTComoMetaFile(base64Firmado, expedienteContext) {
     const csrfToken = getCookie('CSRF-TOKEN');
     if (!csrfToken) throw new Error("CSRF-TOKEN no encontrado");
 
-    const response = await fetch(`${baseUrl}/ws/rest/com.axelor.meta.db.MetaFile/upload`, {
+    const response = await fetch(`${baseUrl}/ws/rest/${expedienteContext.target.fieldClass}/upload`, {
         method: "POST",
         body: formData,
         credentials: "include",
