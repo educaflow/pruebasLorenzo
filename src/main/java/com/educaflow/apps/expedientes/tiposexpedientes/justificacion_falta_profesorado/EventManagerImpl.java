@@ -1,6 +1,7 @@
 package com.educaflow.apps.expedientes.tiposexpedientes.justificacion_falta_profesorado;
 
-import com.axelor.meta.db.MetaFile;
+import com.educaflow.apps.secretariavirtual.module.SecretariaVirtualModule;
+import com.educaflow.common.domains.db.MetaFilePdf;
 import com.educaflow.apps.configuracioncentro.db.Centro;
 import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
@@ -8,8 +9,9 @@ import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.db.repo.JustificacionFaltaProfesoradoRepository;
-import com.educaflow.apps.expedientes.tiposexpedientes.shared.TipoExpedienteUtil;
 import com.educaflow.common.pdf.*;
+
+import com.educaflow.common.pdf.AlmacenClaveFichero;
 
 import com.educaflow.common.validation.messages.BusinessException;
 import com.google.inject.Inject;
@@ -43,25 +45,25 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
     @WhenEvent
     public void triggerGuardarDatos(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
         DocumentoPdf solicitudPdf = justificacionFaltaProfesorado.getDocumentoPdf(JustificacionFaltaProfesorado.TipoDocumentoPdf.SOLICITUD);
-        DocumentoPdf justificantePdf=TipoExpedienteUtil.getDocumentoPdfFromMetaFile(justificacionFaltaProfesorado.getJustificante());
+        DocumentoPdf justificantePdf= justificacionFaltaProfesorado.getJustificante().getDocumentoPdf();
         solicitudPdf=solicitudPdf.anyadirDocumentoPdf(justificantePdf);
 
 
 
 
-        MetaFile metaFile= TipoExpedienteUtil.getMetaFileFromDocumentoPdf(solicitudPdf);
-        justificacionFaltaProfesorado.setDocumentacionParaPresentarSinFirmar(metaFile);
+        MetaFilePdf metaFilePdf= new MetaFilePdf(solicitudPdf);
+        justificacionFaltaProfesorado.setDocumentacionParaPresentarSinFirmar(metaFilePdf);
 
 
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.PENDIENTE_PRESENTACION);
     }
     @WhenEvent
     public void triggerPresentar(JustificacionFaltaProfesorado justificacionFaltaProfesorado, JustificacionFaltaProfesorado original, EventContext eventContext) throws BusinessException {
-        DocumentoPdf documentacionPresentadaFirmadaUsuario=TipoExpedienteUtil.getDocumentoPdfFromMetaFile(justificacionFaltaProfesorado.getDocumentacionPresentadaFirmadaUsuario());
+        DocumentoPdf documentacionPresentadaFirmadaUsuario= justificacionFaltaProfesorado.getDocumentacionPresentadaFirmadaUsuario().getDocumentoPdf();
 
         byte[] sello=getSelloCentro(justificacionFaltaProfesorado.getCentroReceptor());
 
-        AlmacenClaveFichero almacenClave=new AlmacenClaveFichero(Path.of("mi_certificado.p12"),"nadanada");
+        AlmacenClaveFichero almacenClave=new AlmacenClaveFichero(EventManagerImpl.class.getResourceAsStream("/firma/mi_certificado.p12"),"nadanada");
         //AlmacenClaveDispositivo almacenClave=new AlmacenClaveDispositivo( 0,"CertFirmaDigital");
         CampoFirma campoFirma=new CampoFirma(new Rectangulo(80,10,120,100))
                 .setMensaje("Recibido en el centro CIPFP Mislata el día "+ LocalDate.now())
@@ -69,8 +71,8 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
                 .setNumeroPagina(1);
 
         DocumentoPdf justificanteDocumentacionPresentadaFirmadaCentro=documentacionPresentadaFirmadaUsuario.firmar(almacenClave,campoFirma);
-        MetaFile metaFile= TipoExpedienteUtil.getMetaFileFromDocumentoPdf(justificanteDocumentacionPresentadaFirmadaCentro);
-        justificacionFaltaProfesorado.setJustificanteDocumentacionPresentadaFirmadaCentro(metaFile);
+        MetaFilePdf metaFilePdf= new MetaFilePdf(justificanteDocumentacionPresentadaFirmadaCentro);
+        justificacionFaltaProfesorado.setJustificanteDocumentacionPresentadaFirmadaCentro(metaFilePdf);
 
         justificacionFaltaProfesorado.updateState(JustificacionFaltaProfesorado.State.PENDIENTE_RESOLUCION);
         justificacionFaltaProfesorado.setDisconformidad(null);
