@@ -11,7 +11,6 @@ import com.educaflow.apps.expedientes.db.ExpedienteHistorialEstados;
 import com.educaflow.apps.expedientes.db.TipoExpediente;
 import com.educaflow.apps.expedientes.db.repo.NumeradorRepository;
 import com.educaflow.common.mapper.BeanMapperModel;
-import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.util.ReflectionUtil;
 import com.educaflow.common.util.TextUtil;
 import com.educaflow.common.validation.engine.*;
@@ -39,7 +38,7 @@ public class Tramitador {
     public Expediente triggerInitialEvent(TipoExpediente tipoExpediente,  EventContext eventContext) throws BusinessException {
         try {
             EventManager eventManager = tipoExpediente.getEventManager();
-            JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+            JpaRepository<Expediente> expedienteRepository = JpaRepository.of(eventManager.getModelClass());
             Enum initialEvent = getInitialState(eventManager.getStateClass());
 
             Expediente expediente = (Expediente) eventManager.getModelClass().getDeclaredConstructor().newInstance();
@@ -67,7 +66,7 @@ public class Tramitador {
         EventManager eventManager= expediente.getTipoExpediente().getEventManager();
         Expediente expedienteOriginal=(Expediente) BeanMapperModel.getEntityCloned(expediente.getClass(), expediente);
         StateEventValidator stateEventValidator =expediente.getTipoExpediente().getStateEventValidator();
-        JpaRepository<Expediente> expedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+        JpaRepository<Expediente> expedienteRepository = JpaRepository.of(eventManager.getModelClass());
         StateEnum stateEnum = new StateEnum(ReflectionUtil.getEnumConstant(eventManager.getStateClass(), expediente.getCodeState()));
 
 

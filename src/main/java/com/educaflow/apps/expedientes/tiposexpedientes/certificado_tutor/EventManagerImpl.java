@@ -7,9 +7,7 @@ import com.educaflow.apps.expedientes.common.EventContext;
 import com.educaflow.apps.expedientes.common.annotations.OnEnterState;
 import com.educaflow.apps.expedientes.common.annotations.WhenEvent;
 import com.educaflow.apps.expedientes.db.CertificadoTutor;
-import com.educaflow.apps.expedientes.db.ValoresAmbito;
 import com.educaflow.apps.expedientes.db.repo.CertificadoTutorRepository;
-import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.validation.messages.BusinessException;
 
 import com.google.inject.Inject;

@@ -2,7 +2,6 @@ package com.educaflow.common.mapper;
 
 import com.axelor.db.JpaRepository;
 import com.axelor.db.Model;
-import com.educaflow.common.util.AxelorDBUtil;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import java.beans.PropertyDescriptor;
@@ -249,23 +248,29 @@ public class BeanMapperModel {
      * @throws Exception Si ocurre un error al crear o buscar el modelo
      */
     private static Model getInitialModelFromMap(Map<String, Object> values,Class<? extends Model> clazz) throws Exception {
-        Model model=clazz.getDeclaredConstructor().newInstance();
+        Model initialModel;
 
         if (values.get("id") != null) {
-            model=getModel(clazz,  ((Number) values.get("id")).longValue());
-            if (model == null) {
+            Model loadedModel=getModel(clazz,  ((Number) values.get("id")).longValue());
+            if (loadedModel == null) {
                 throw new RuntimeException("No se encontró el modelo con id: " + values.get("id") + " del tipo" + clazz);
             }
+
+            initialModel=loadedModel;
+        } else {
+            Model emptyModel=clazz.getDeclaredConstructor().newInstance();
+            initialModel=emptyModel;
         }
 
-        return model;
+
+        return initialModel;
     }
 
 
     private static Model getModel(Class<? extends Model> classModel, Long id) {
         System.out.println("ERROR:------>   TODO:Comprobar la seguridad de acceso a la base de datos al llamar a este método!!!!!!.");
 
-        JpaRepository jpaRepository=AxelorDBUtil.getRepository(classModel);
+        JpaRepository jpaRepository=JpaRepository.of(classModel);
         if (jpaRepository == null) {
             throw new RuntimeException("No se encontró el repositorio para la clase: " + classModel);
         }

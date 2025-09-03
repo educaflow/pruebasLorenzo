@@ -17,7 +17,6 @@ import com.educaflow.apps.expedientes.db.Tramite;
 import com.educaflow.apps.expedientes.db.repo.TramiteRepository;
 import com.educaflow.apps.configuracioncentro.db.Centro;
 import com.educaflow.common.util.ActionRequestHelper;
-import com.educaflow.common.util.AxelorDBUtil;
 import com.educaflow.common.util.AxelorViewUtil;
 import com.educaflow.common.util.Convert;
 import com.educaflow.common.validation.messages.BusinessException;
@@ -188,9 +187,7 @@ public class ExpedienteController {
             if (id==null) {
                 model=classModel.getConstructor().newInstance();
             } else {
-                String fqcnRepositoryClass="com.educaflow.apps.expedientes.db.repo."+classModel.getSimpleName()+"Repository";
-                Class<? extends JpaRepository> repositoryClass = (Class<? extends JpaRepository>) Class.forName(fqcnRepositoryClass);
-                JpaRepository<?> repository = Beans.get(repositoryClass);
+                JpaRepository<? extends Model> repository = JpaRepository.of(classModel);
                 model=repository.find(Convert.objectToLong(id));
             }
 
@@ -244,10 +241,10 @@ public class ExpedienteController {
      * @return
      */
     private JpaRepository<Expediente> getJpaRepository(long idExpediente) {
-        JpaRepository<Expediente> onlyExpedienteRepository = AxelorDBUtil.getRepository(Expediente.class);
+        JpaRepository<Expediente> onlyExpedienteRepository = JpaRepository.of(Expediente.class);
         Expediente expediente = onlyExpedienteRepository.find(idExpediente);
         EventManager eventManager = expediente.getTipoExpediente().getEventManager();
-        JpaRepository<Expediente> realExpedienteRepository = AxelorDBUtil.getRepository(eventManager.getModelClass());
+        JpaRepository<Expediente> realExpedienteRepository = JpaRepository.of(eventManager.getModelClass());
         JPA.em().detach(expediente);
 
         return realExpedienteRepository;
