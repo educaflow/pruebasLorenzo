@@ -9,6 +9,7 @@ import com.educaflow.common.criptografia.config.EntornoCriptograficoConfig;
 import com.educaflow.common.criptografia.config.DispositivoCriptograficoConfig;
 import com.educaflow.common.db.BulkTables;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +39,10 @@ public class SecretariaVirtualModule extends AxelorModule {
 
     public EntornoCriptograficoConfig getEntornoCriptograficoConfigFromAppSettings()  {
 
-        Path pathAlmacen = Path.of(AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiables.path"));
+        String pathAlmacen = AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiables.path");
         String passwordAlmacen = AppSettings.get().get("entornoCriptografico.almacenCertificadosConfiables.password");
-        AlmacenCertificadosConfiablesConfig almacenConfig = new AlmacenCertificadosConfiablesConfig(pathAlmacen, passwordAlmacen);
-
+        InputStream inputStreamAlamacen=SecretariaVirtualModule.class.getClassLoader().getResourceAsStream(pathAlmacen) ;
+        AlmacenCertificadosConfiablesConfig almacenConfig = new AlmacenCertificadosConfiablesConfig(inputStreamAlamacen, passwordAlmacen);
 
         List<DispositivoCriptograficoConfig> dispositivos = new ArrayList<>();
         int indice=0;
