@@ -14,16 +14,18 @@ public class ResultadoFirmaImpl implements ResultadoFirma {
     private final DatosCertificado datosCertificado;
     private LocalDateTime fechaFirma;
     private final boolean correcta;
+    private final String nombreCampo;
 
-    public ResultadoFirmaImpl(PdfPKCS7 pdfPKCS7, KeyStore trustedKeyStore) {
+    public ResultadoFirmaImpl(String nombreCampo,PdfPKCS7 pdfPKCS7, KeyStore trustedKeyStore) {
 
         try {
             X509Certificate certificate = pdfPKCS7.getSigningCertificate();
-            this.datosCertificado = new DatosCertificadoImpl(certificate, trustedKeyStore);
             Calendar signDateCalendar=pdfPKCS7.getSignDate();
-            fechaFirma=toLocalDateTime(signDateCalendar);
 
-            correcta = pdfPKCS7.verifySignatureIntegrityAndAuthenticity();
+            this.datosCertificado = new DatosCertificadoImpl(certificate, trustedKeyStore);
+            this.fechaFirma=toLocalDateTime(signDateCalendar);
+            this.nombreCampo=nombreCampo;
+            this.correcta = pdfPKCS7.verifySignatureIntegrityAndAuthenticity();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -42,6 +44,10 @@ public class ResultadoFirmaImpl implements ResultadoFirma {
     @Override
     public DatosCertificado getDatosCertificado() {
         return datosCertificado;
+    }
+
+    public String getNombreCampo() {
+        return nombreCampo;
     }
 
     /********************************************************************/

@@ -84,14 +84,13 @@ public class EntornoCriptografico {
 
     private static AlmacenCertificadosConfiables getAlmacenCertificadosConfiables(AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig) {
         try {
-            Path pathAlmacenCertificadosConfiables=almacenCertificadosConfiablesConfig.getPath();
-            String passwordAlmacenCertificadosConfiables=almacenCertificadosConfiablesConfig.getPassword();
+            InputStream inputStream=almacenCertificadosConfiablesConfig.getInputStream();
+            String password=almacenCertificadosConfiablesConfig.getPassword();
 
             AlmacenCertificadosConfiables almacenCertificadosConfiables;
-            try (InputStream inputStreamKeyStore = EntornoCriptografico.class.getClassLoader().getResourceAsStream(pathAlmacenCertificadosConfiables.toString())) {
-                KeyStore trustedKeyStore = CriptografiaUtil.getKeyStore(inputStreamKeyStore,passwordAlmacenCertificadosConfiables, CriptografiaUtil.KeyStoreType.PKCS12);
-                almacenCertificadosConfiables = new AlmacenCertificadosConfiables(trustedKeyStore);
-            }
+
+            KeyStore trustedKeyStore = CriptografiaUtil.getKeyStore(inputStream,password, CriptografiaUtil.KeyStoreType.PKCS12);
+            almacenCertificadosConfiables = new AlmacenCertificadosConfiables(trustedKeyStore);
 
             return almacenCertificadosConfiables;
         } catch (Exception ex) {

@@ -31,7 +31,7 @@ import com.itextpdf.signatures.SignerProperties;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.security.KeyStore;
@@ -85,9 +85,9 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
                 PdfFormField pdfFormField = entry.getValue();
                 if (allowFormField(pdfFormField) == true) {
                     fields.add(name);
-                    System.out.println("Campo:-->" + name + "<----                tipo:" + pdfFormField.getFormType() );
+                    //System.out.println("Campo:-->" + name + "<----                tipo:" + pdfFormField.getFormType() );
                     if ((pdfFormField.getAppearanceStates()!=null) && (pdfFormField.getAppearanceStates().length>0)) {
-                        System.out.println("    Valores posibles:" + Arrays.toString(pdfFormField.getAppearanceStates()));
+                        //System.out.println("    Valores posibles:" + Arrays.toString(pdfFormField.getAppearanceStates()));
                     }
                 }
             }
@@ -97,8 +97,8 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     }
     
     @Override
-    public Map<String, ResultadoFirma> getFirmasPdf() {
-        Map<String, ResultadoFirma> resultadoFirmas = new HashMap<>();
+    public List<ResultadoFirma> getFirmasPdf() {
+        List<ResultadoFirma> resultadoFirmas = new ArrayList<>();
 
         SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
 
@@ -108,8 +108,8 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             PdfPKCS7 pkcs7 = signatureUtil.readSignatureData(signatureName);
             KeyStore trustedKeyStore = EntornoCriptografico.getAlmacenCertificadosConfiables().getTrustedKeyStore();
 
-            ResultadoFirma resultadoFirma=new ResultadoFirmaImpl(pkcs7, trustedKeyStore);
-            resultadoFirmas.put(signatureName, resultadoFirma);
+            ResultadoFirma resultadoFirma=new ResultadoFirmaImpl(signatureName,pkcs7, trustedKeyStore);
+            resultadoFirmas.add(resultadoFirma);
         }
 
         return resultadoFirmas;
@@ -174,10 +174,10 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
             if (almacenClave instanceof AlmacenClaveFichero) {
                 AlmacenClaveFichero almacenClaveFichero=(AlmacenClaveFichero)almacenClave;
-                Path fileCertificate=almacenClaveFichero.getFileCertificate();
+                InputStream fileCertificate=almacenClaveFichero.getFileCertificate();
                 String password=almacenClaveFichero.getPassword();
 
-                KeyStore  userKeyStore = CriptografiaUtil.getKeyStore(new FileInputStream(fileCertificate.toFile()), password, CriptografiaUtil.KeyStoreType.PKCS12);
+                KeyStore  userKeyStore = CriptografiaUtil.getKeyStore(fileCertificate, password, CriptografiaUtil.KeyStoreType.PKCS12);
                 alias = userKeyStore.aliases().nextElement();
                 privateKey = (PrivateKey) userKeyStore.getKey(alias, password.toCharArray());
                 chain = userKeyStore.getCertificateChain(alias);
@@ -199,7 +199,9 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             PdfReader pdfReader = new PdfReader(byteArrayInputStream);
             PdfWriter pdfWriter = new PdfWriter(byteArrayOutputStream, new WriterProperties());
             PdfSigner signer = new PdfSigner(pdfReader,pdfWriter,new StampingProperties().useAppendMode());
-            signer.setSignerProperties(signerProperties);
+            if (signerProperties!=null) {
+                signer.setSignerProperties(signerProperties);
+            }
 
 
 
@@ -288,13 +290,14 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     
     
     private String getSignatureFieldName() {
-        Map<String, ResultadoFirma> resultadoFirmas = this.getFirmasPdf();
-        String signatureFieldName;
+        List<ResultadoFirma> resultadoFirmas = this.getFirmasPdf();
 
         for (int i = 1; i < 100; i++) {
-            signatureFieldName = "Signature" + Integer.toString(i);
+            final String signatureFieldName = "Signature" + Integer.toString(i);
 
-            if (resultadoFirmas.containsKey(signatureFieldName) == false) {
+            boolean existeCampoFirma = resultadoFirmas.stream().anyMatch( resultadoFirma-> signatureFieldName.equals(resultadoFirma.getNombreCampo()));
+
+            if (existeCampoFirma == false) {
                 return signatureFieldName;
             }
 
@@ -316,6 +319,9 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     }
 
     private SignerProperties getSignerProperties(CampoFirma campoFirma, X509Certificate cert, String alias) {
+        if (campoFirma == null) {
+            return null;
+        }
         SignatureFieldAppearance signatureFieldAppearance = getSignatureFieldAppearance(campoFirma,cert,alias);
 
         SignerProperties signerProperties = new SignerProperties();

@@ -29,7 +29,7 @@ class DispositivoCriptograficoConfig {
 }
 
 class AlmacenCertificadosConfiablesConfig {
-    path
+    InputStream
     password
 }
 

@@ -204,9 +204,6 @@ public class DatosCertificadoImpl implements DatosCertificado {
 
 
     private void populateDNINombreApellidosEmpy() {
-        X500Principal x500Principal = certificate.getSubjectX500Principal();
-        Map<String, String> data = getX500PrincipalData(x500Principal);
-
         dni = "";
         nombre = "";
         apellidos = "";

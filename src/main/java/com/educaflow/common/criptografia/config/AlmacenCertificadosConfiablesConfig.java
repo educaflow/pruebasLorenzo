@@ -1,18 +1,19 @@
 package com.educaflow.common.criptografia.config;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 
 public class AlmacenCertificadosConfiablesConfig {
-    private final Path path;
+    private final InputStream inputStream;
     private final String password;
 
-    public AlmacenCertificadosConfiablesConfig(Path path, String password) {
-        this.path = path;
+    public AlmacenCertificadosConfiablesConfig(InputStream inputStream, String password) {
+        this.inputStream = inputStream;
         this.password = password;
     }
 
-    public Path getPath() {
-        return path;
+    public InputStream getInputStream() {
+        return inputStream;
     }
 
     public String getPassword() {

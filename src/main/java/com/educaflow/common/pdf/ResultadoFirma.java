@@ -7,5 +7,5 @@ public interface ResultadoFirma {
     boolean isCorrecta();
     LocalDateTime getFechaFirma();
     DatosCertificado getDatosCertificado();
-
+    String getNombreCampo();
 }

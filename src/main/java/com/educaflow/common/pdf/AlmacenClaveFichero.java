@@ -1,5 +1,6 @@
 package com.educaflow.common.pdf;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 
 /**
@@ -8,10 +9,10 @@ import java.nio.file.Path;
  */
 public class AlmacenClaveFichero implements AlmacenClave {
     
-    private final Path fileCertificate;
+    private final InputStream fileCertificate;
     private final String password;
 
-    public AlmacenClaveFichero(Path fileCertificate, String password) {
+    public AlmacenClaveFichero(InputStream fileCertificate, String password) {
         this.fileCertificate = fileCertificate;
         this.password = password;
     }
@@ -19,7 +20,7 @@ public class AlmacenClaveFichero implements AlmacenClave {
     /**
      * @return the fileCertificate
      */
-    public Path getFileCertificate() {
+    public InputStream getFileCertificate() {
         return fileCertificate;
     }
 
