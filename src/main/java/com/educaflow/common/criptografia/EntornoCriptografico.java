@@ -3,6 +3,7 @@ package com.educaflow.common.criptografia;
 import com.educaflow.common.criptografia.config.AlmacenCertificadosConfiablesConfig;
 import com.educaflow.common.criptografia.config.EntornoCriptograficoConfig;
 import com.educaflow.common.criptografia.config.DispositivoCriptograficoConfig;
+import com.educaflow.common.criptografia.impl.DatosCertificadoImpl;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.Provider;
 import java.security.Security;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +78,14 @@ public class EntornoCriptografico {
         }
 
         return dispositivosCriptograficos.get(slot);
+    }
+
+
+    public static DatosCertificado getDatosCertificado(X509Certificate certificate) {
+        if (configured==false) {
+            throw new RuntimeException("El entorno criptográfico no ha sido configurado");
+        }
+        return new DatosCertificadoImpl(certificate,getAlmacenCertificadosConfiables().getTrustedKeyStore());
     }
 
     /*********************************************************************************/
