@@ -1,5 +1,7 @@
 package com.educaflow.common.pdf.impl.helper;
 
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.pdfa.PdfADocument;
 
@@ -118,5 +120,8 @@ public class PdfDocumentHelper {
         return outputIntent;
     }
 
+    public static boolean isSignatureFormField(PdfFormField pdfFormField) {
+        return pdfFormField instanceof PdfSignatureFormField;
+    }
 }
 

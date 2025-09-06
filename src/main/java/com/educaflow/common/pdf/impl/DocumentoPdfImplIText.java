@@ -3,6 +3,7 @@ package com.educaflow.common.pdf.impl;
 import com.educaflow.common.criptografia.*;
 import com.educaflow.common.criptografia.impl.DatosCertificadoImpl;
 import com.educaflow.common.pdf.*;
+import com.educaflow.common.pdf.impl.helper.DocumentoPdfHelper;
 import com.educaflow.common.pdf.impl.helper.PKCS11ExternalSignature;
 import com.educaflow.common.pdf.impl.helper.PdfDocumentHelper;
 import com.itextpdf.forms.PdfAcroForm;
@@ -72,8 +73,10 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     }    
 
 
-
-
+    @Override
+    public String toString() {
+        return DocumentoPdfHelper.toString(this);
+    }
 
     @Override
     public List<String> getNombreCamposFormulario() {
@@ -110,9 +113,8 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
         for (String signatureName : signatureNames) {
             PdfPKCS7 pkcs7 = signatureUtil.readSignatureData(signatureName);
-            KeyStore trustedKeyStore = EntornoCriptografico.getAlmacenCertificadosConfiables().getTrustedKeyStore();
 
-            ResultadoFirma resultadoFirma=new ResultadoFirmaImpl(signatureName,pkcs7, trustedKeyStore);
+            ResultadoFirma resultadoFirma=new ResultadoFirmaImpl(signatureName,pkcs7);
             resultadoFirmas.add(resultadoFirma);
         }
 
@@ -244,7 +246,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             PdfDocument pdfDestino = new PdfDocument(new PdfWriter(byteArrayOutputStream));
             PdfMerger merger = new PdfMerger(pdfDestino);
             merger.merge(this.pdfDocument, 1, this.pdfDocument.getNumberOfPages());
-            merger.merge(getPdfDocument(documentoPdf2), 1, getPdfDocument(documentoPdf2).getNumberOfPages());
+            merger.merge(DocumentoPdfHelper.getPdfDocument(documentoPdf2), 1, DocumentoPdfHelper.getPdfDocument(documentoPdf2).getNumberOfPages());
 
             merger.close();
             byteArrayOutputStream.close();
@@ -263,7 +265,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
 
     private boolean allowFormField(PdfFormField pdfFormField) {
-        if (isSignatureFormField(pdfFormField)) {
+        if (PdfDocumentHelper.isSignatureFormField(pdfFormField)) {
             return false;
         } else if (pdfFormField.getFormType() == null) {
             return false;
@@ -272,10 +274,6 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         }
     }
 
-
-    private boolean isSignatureFormField(PdfFormField pdfFormField) {
-        return pdfFormField instanceof PdfSignatureFormField;
-    }
 
 
     private String getSignatureFieldName() {
@@ -296,15 +294,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     }
 
 
-    private PdfDocument getPdfDocument(DocumentoPdf documentoPdf) {
-        try {
-            Field campo = DocumentoPdfImplIText.class.getDeclaredField("pdfDocument");
-            campo.setAccessible(true);
-            return (PdfDocument) campo.get(documentoPdf);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
+
 
     private SignerProperties getSignerProperties(CampoFirma campoFirma, X509Certificate cert, String alias) {
         if (campoFirma == null) {

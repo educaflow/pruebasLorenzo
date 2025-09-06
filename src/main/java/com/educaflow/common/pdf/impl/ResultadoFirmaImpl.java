@@ -1,5 +1,6 @@
 package com.educaflow.common.pdf.impl;
 
+import com.educaflow.common.criptografia.EntornoCriptografico;
 import com.educaflow.common.criptografia.impl.DatosCertificadoImpl;
 import com.educaflow.common.criptografia.DatosCertificado;
 import com.educaflow.common.pdf.ResultadoFirma;
@@ -17,13 +18,13 @@ public class ResultadoFirmaImpl implements ResultadoFirma {
     private final boolean correcta;
     private final String nombreCampo;
 
-    public ResultadoFirmaImpl(String nombreCampo,PdfPKCS7 pdfPKCS7, KeyStore trustedKeyStore) {
+    public ResultadoFirmaImpl(String nombreCampo,PdfPKCS7 pdfPKCS7) {
 
         try {
             X509Certificate certificate = pdfPKCS7.getSigningCertificate();
             Calendar signDateCalendar=pdfPKCS7.getSignDate();
 
-            this.datosCertificado = new DatosCertificadoImpl(certificate, trustedKeyStore);
+            this.datosCertificado = EntornoCriptografico.getDatosCertificado(certificate);
             this.fechaFirma=toLocalDateTime(signDateCalendar);
             this.nombreCampo=nombreCampo;
             this.correcta = pdfPKCS7.verifySignatureIntegrityAndAuthenticity();
