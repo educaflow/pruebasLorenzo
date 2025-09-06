@@ -2,12 +2,18 @@ package com.educaflow.common.pdf.impl;
 
 import com.educaflow.common.criptografia.EntornoCriptografico;
 import com.educaflow.common.criptografia.AlmacenClaveFichero;
+import com.educaflow.common.pdf.CampoFirma;
 import com.educaflow.common.pdf.DocumentoPdf;
 import com.educaflow.common.pdf.DocumentoPdfFactory;
+import com.educaflow.common.pdf.Rectangulo;
+import com.educaflow.common.pdf.impl.helper.PdfDocumentHelper;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +30,10 @@ class DocumentoPdfImplITextTest {
     public static final String FILE_PDF_2b="../prueba_pdf_2b.pdf";
     public static final String SUBJECT="Juan Garcia NIF:1234567Z";
     public static final String ISSUER="Juan Garcia NIF:1234567Z";
+
+    public static final String FILE_HOLA_MUNDO="../hola_mundo.pdf";
+    public static final String FILE_HOLA_MUNDO_PDF_1b="../hola_mundo_1b.pdf";
+    public static final String FILE_HOLA_MUNDO_PDF_2b="../hola_mundo_2b.pdf";
 
     @BeforeAll
     static void initAll() {
@@ -77,10 +87,39 @@ class DocumentoPdfImplITextTest {
     }
 
     @Test
+    void getFirmasPdf1b_Fallafirma() {
+        String nombreFichero=FILE_PDF_1b;
+        byte[] bytes= getBytes(nombreFichero);
+
+        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(bytes,nombreFichero);
+        Map<String,String> mapaCampos= new HashMap<>();
+        DocumentoPdf documentoPdfConDatos=documentoPdfPlantilla.setValorCamposFormularioAndFlatten(mapaCampos);
+
+        assertThrowsCause(PdfAConformanceException.class, () -> {
+            firmarPdf(documentoPdfConDatos, FILE_CERTIFICADO, PASSWORD_CERTIFICADO);
+        });
+    }
+
+    @Test
+    void getFirmasPdf2b_Fallafirma() {
+        String nombreFichero=FILE_PDF_2b;
+        byte[] bytes= getBytes(nombreFichero);
+
+        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(bytes,nombreFichero);
+        Map<String,String> mapaCampos= new HashMap<>();
+        DocumentoPdf documentoPdfConDatos=documentoPdfPlantilla.setValorCamposFormularioAndFlatten(mapaCampos);
+
+        assertThrowsCause(PdfAConformanceException.class, () -> {
+            firmarPdf(documentoPdfConDatos, FILE_CERTIFICADO, PASSWORD_CERTIFICADO);
+        });
+    }
+
+    @Test
     void getFirmasPdf1b() {
         String nombreFichero=FILE_PDF_1b;
         byte[] bytes= getBytes(nombreFichero);
-        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(bytes,nombreFichero);
+        byte[] datosArreglados= PdfDocumentHelper.removePdfAConformance(bytes);
+        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(datosArreglados,nombreFichero);
         Map<String,String> mapaCampos= new HashMap<>();
         DocumentoPdf documentoPdfConDatos=documentoPdfPlantilla.setValorCamposFormularioAndFlatten(mapaCampos);
 
@@ -98,7 +137,8 @@ class DocumentoPdfImplITextTest {
     void getFirmasPdf2b() {
         String nombreFichero=FILE_PDF_2b;
         byte[] bytes= getBytes(nombreFichero);
-        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(bytes,nombreFichero);
+        byte[] datosArreglados= PdfDocumentHelper.removePdfAConformance(bytes);
+        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(datosArreglados,nombreFichero);
         Map<String,String> mapaCampos= new HashMap<>();
         DocumentoPdf documentoPdfConDatos=documentoPdfPlantilla.setValorCamposFormularioAndFlatten(mapaCampos);
 
@@ -116,7 +156,8 @@ class DocumentoPdfImplITextTest {
     void getFirmasPdf1b_2firmas() {
         String nombreFichero=FILE_PDF_1b;
         byte[] bytes= getBytes(nombreFichero);
-        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(bytes,nombreFichero);
+        byte[] datosArreglados= PdfDocumentHelper.removePdfAConformance(bytes);
+        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(datosArreglados,nombreFichero);
         Map<String,String> mapaCampos= new HashMap<>();
         DocumentoPdf documentoPdfConDatos=documentoPdfPlantilla.setValorCamposFormularioAndFlatten(mapaCampos);
 
@@ -141,7 +182,8 @@ class DocumentoPdfImplITextTest {
     void getFirmasPdf2b_2firmas() {
         String nombreFichero=FILE_PDF_2b;
         byte[] bytes= getBytes(nombreFichero);
-        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(bytes,nombreFichero);
+        byte[] datosArreglados= PdfDocumentHelper.removePdfAConformance(bytes);
+        DocumentoPdf documentoPdfPlantilla = DocumentoPdfFactory.getDocumentoPdf(datosArreglados,nombreFichero);
         Map<String,String> mapaCampos= new HashMap<>();
         DocumentoPdf documentoPdfConDatos=documentoPdfPlantilla.setValorCamposFormularioAndFlatten(mapaCampos);
 
@@ -160,6 +202,73 @@ class DocumentoPdfImplITextTest {
         assertEquals(null,documentoPdfFirmado.getFirmasPdf().get(1).getDatosCertificado().getTipoEmisorCertificado());
         assertEquals(SUBJECT,documentoPdfFirmado.getFirmasPdf().get(1).getDatosCertificado().getCnSubject());
         assertEquals(ISSUER,documentoPdfFirmado.getFirmasPdf().get(1).getDatosCertificado().getCnIssuer());
+    }
+
+
+
+    @Test
+    void firmarHolaMundo() {
+        String nombreFichero = FILE_HOLA_MUNDO;
+        byte[] bytes = getBytes(nombreFichero);
+        DocumentoPdf documentoPdf = DocumentoPdfFactory.getDocumentoPdf(bytes, nombreFichero);
+
+        DocumentoPdf documentoPdfFirmado = firmarPdf(documentoPdf, FILE_CERTIFICADO, PASSWORD_CERTIFICADO);
+
+        assertEquals(1,documentoPdfFirmado.getFirmasPdf().size());
+        assertEquals(true,documentoPdfFirmado.getFirmasPdf().get(0).isCorrecta());
+    }
+
+    @Test
+    void firmarHolaMundo1b() {
+        String nombreFichero = FILE_HOLA_MUNDO_PDF_1b;
+        byte[] bytes = getBytes(nombreFichero);
+        DocumentoPdf documentoPdf = DocumentoPdfFactory.getDocumentoPdf(bytes, nombreFichero);
+
+        assertThrowsCause(PdfAConformanceException.class, () -> {
+            firmarPdf(documentoPdf, FILE_CERTIFICADO, PASSWORD_CERTIFICADO);
+        });
+    }
+
+    @Test
+    void firmarHolaMundo2b() {
+        String nombreFichero = FILE_HOLA_MUNDO_PDF_1b;
+        byte[] bytes = getBytes(nombreFichero);
+        DocumentoPdf documentoPdf = DocumentoPdfFactory.getDocumentoPdf(bytes, nombreFichero);
+
+        assertThrowsCause(PdfAConformanceException.class, () -> {
+            firmarPdf(documentoPdf, FILE_CERTIFICADO, PASSWORD_CERTIFICADO);
+        });
+    }
+
+    @Test
+    void firmarHolaMundo1bArreglado() {
+        String nombreFichero = FILE_HOLA_MUNDO_PDF_1b;
+        byte[] bytes = getBytes(nombreFichero);
+
+        byte[] datosArreglados= PdfDocumentHelper.removePdfAConformance(bytes);
+
+        DocumentoPdf documentoPdf = DocumentoPdfFactory.getDocumentoPdf(datosArreglados, nombreFichero);
+
+        DocumentoPdf documentoPdfFirmado = firmarPdf(documentoPdf, FILE_CERTIFICADO, PASSWORD_CERTIFICADO);
+
+        assertEquals(1,documentoPdfFirmado.getFirmasPdf().size());
+        assertEquals(true,documentoPdfFirmado.getFirmasPdf().get(0).isCorrecta());
+    }
+
+    @Test
+    void firmarHolaMundo2bArreglado() {
+        String nombreFichero = FILE_HOLA_MUNDO_PDF_2b;
+        byte[] bytes = getBytes(nombreFichero);
+
+        byte[] datosArreglados= PdfDocumentHelper.removePdfAConformance(bytes);
+
+        DocumentoPdf documentoPdf = DocumentoPdfFactory.getDocumentoPdf(datosArreglados, nombreFichero);
+
+        DocumentoPdf documentoPdfFirmado = firmarPdf(documentoPdf, FILE_CERTIFICADO, PASSWORD_CERTIFICADO);
+
+        assertEquals(1,documentoPdfFirmado.getFirmasPdf().size());
+        assertEquals(true,documentoPdfFirmado.getFirmasPdf().get(0).isCorrecta());
+
     }
 
 
@@ -195,11 +304,29 @@ class DocumentoPdfImplITextTest {
 
 
         AlmacenClaveFichero almacenClaveSistemaArchivos = new AlmacenClaveFichero(this.getClass().getResourceAsStream(ficheroCertificado),passwordCertificado);
-        byte[] certificadoBytes= getBytes(ficheroCertificado);
-        DocumentoPdf documentoPdfFirmado= documentoPdf.firmar(almacenClaveSistemaArchivos,null);
+        CampoFirma campoFirma=(new CampoFirma(new Rectangulo(100,150,130,100))).setFontSize(8).setNumeroPagina(1).setFechaFirma(LocalDateTime.of(2025, 8, 1, 14, 30, 45));
+        DocumentoPdf documentoPdfFirmado= documentoPdf.firmar(almacenClaveSistemaArchivos,campoFirma);
 
 
 
         return documentoPdfFirmado;
+    }
+
+    public static <T extends Throwable> T assertThrowsCause(Class<T> expectedType, Executable executable) {
+        Throwable ex = assertThrows(Throwable.class, executable);
+
+        Throwable cause = ex;
+        while (cause != null) {
+            if (expectedType.isInstance(cause)) {
+                @SuppressWarnings("unchecked")
+                T result = (T) cause;
+                return result;
+            }
+            cause = cause.getCause();
+        }
+
+        fail("No se encontró excepción de tipo " + expectedType.getName() +
+                " en la cadena de causas de " + ex);
+        return null; // nunca llega aquí
     }
 }

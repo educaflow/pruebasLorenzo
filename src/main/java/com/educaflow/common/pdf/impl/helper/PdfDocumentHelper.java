@@ -3,6 +3,7 @@ package com.educaflow.common.pdf.impl.helper;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.pdfa.PdfADocument;
 
 import java.io.ByteArrayInputStream;
@@ -122,6 +123,16 @@ public class PdfDocumentHelper {
 
     public static boolean isSignatureFormField(PdfFormField pdfFormField) {
         return pdfFormField instanceof PdfSignatureFormField;
+    }
+
+    public static byte[] removePdfAConformance(byte[] datos) {
+        byte[] datosNoPdfAConformance=PdfDocumentHelper.transformPdfDocument(datos, pdfDocument -> {
+            pdfDocument.getXmpMetadata().deleteProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
+            pdfDocument.getXmpMetadata().deleteProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE);
+            PdfDocumentHelper.setPdfConformance(pdfDocument, null);
+        });
+
+        return datosNoPdfAConformance;
     }
 }
 
