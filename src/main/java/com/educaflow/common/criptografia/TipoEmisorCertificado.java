@@ -1,4 +1,4 @@
-package com.educaflow.common.pdf;
+package com.educaflow.common.criptografia;
 
 /**
  *

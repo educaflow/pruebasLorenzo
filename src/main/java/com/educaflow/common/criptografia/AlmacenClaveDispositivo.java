@@ -2,9 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.educaflow.common.pdf;
-
-import java.nio.file.Path;
+package com.educaflow.common.criptografia;
 
 /**
  *

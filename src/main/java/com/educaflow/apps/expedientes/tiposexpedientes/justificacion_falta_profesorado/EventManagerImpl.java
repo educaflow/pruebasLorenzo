@@ -1,6 +1,5 @@
 package com.educaflow.apps.expedientes.tiposexpedientes.justificacion_falta_profesorado;
 
-import com.educaflow.apps.secretariavirtual.module.SecretariaVirtualModule;
 import com.educaflow.common.domains.db.MetaFilePdf;
 import com.educaflow.apps.configuracioncentro.db.Centro;
 import com.educaflow.apps.expedientes.common.EventContext;
@@ -11,13 +10,12 @@ import com.educaflow.apps.expedientes.db.TipoResolucionJustificacionFaltaProfeso
 import com.educaflow.apps.expedientes.db.repo.JustificacionFaltaProfesoradoRepository;
 import com.educaflow.common.pdf.*;
 
-import com.educaflow.common.pdf.AlmacenClaveFichero;
+import com.educaflow.common.criptografia.AlmacenClaveFichero;
 
 import com.educaflow.common.validation.messages.BusinessException;
 import com.google.inject.Inject;
 
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.time.LocalDate;
 
 

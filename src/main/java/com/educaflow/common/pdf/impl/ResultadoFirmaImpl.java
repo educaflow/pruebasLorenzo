@@ -1,6 +1,7 @@
 package com.educaflow.common.pdf.impl;
 
-import com.educaflow.common.pdf.DatosCertificado;
+import com.educaflow.common.criptografia.impl.DatosCertificadoImpl;
+import com.educaflow.common.criptografia.DatosCertificado;
 import com.educaflow.common.pdf.ResultadoFirma;
 import com.itextpdf.signatures.PdfPKCS7;
 

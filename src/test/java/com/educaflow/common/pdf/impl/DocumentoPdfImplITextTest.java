@@ -1,7 +1,7 @@
 package com.educaflow.common.pdf.impl;
 
 import com.educaflow.common.criptografia.EntornoCriptografico;
-import com.educaflow.common.pdf.AlmacenClaveFichero;
+import com.educaflow.common.criptografia.AlmacenClaveFichero;
 import com.educaflow.common.pdf.DocumentoPdf;
 import com.educaflow.common.pdf.DocumentoPdfFactory;
 import org.junit.jupiter.api.BeforeAll;

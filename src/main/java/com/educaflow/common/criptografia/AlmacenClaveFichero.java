@@ -1,7 +1,6 @@
-package com.educaflow.common.pdf;
+package com.educaflow.common.criptografia;
 
 import java.io.InputStream;
-import java.nio.file.Path;
 
 /**
  *

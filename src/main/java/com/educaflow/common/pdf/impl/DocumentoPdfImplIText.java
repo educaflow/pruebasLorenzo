@@ -1,7 +1,7 @@
 package com.educaflow.common.pdf.impl;
 
-import com.educaflow.common.criptografia.CriptografiaUtil;
-import com.educaflow.common.criptografia.EntornoCriptografico;
+import com.educaflow.common.criptografia.*;
+import com.educaflow.common.criptografia.impl.DatosCertificadoImpl;
 import com.educaflow.common.pdf.*;
 import com.educaflow.common.pdf.impl.helper.PKCS11ExternalSignature;
 import com.educaflow.common.pdf.impl.helper.PdfDocumentHelper;
@@ -51,7 +51,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     private final String fileName;
 
     public DocumentoPdfImplIText(byte[] bytesPdf, String fileName) {
-        this.bytesPdf = PdfDocumentHelper.transformPdfDocument(bytesPdf, null);
+        this.bytesPdf = bytesPdf;
         this.fileName = fileName;
         this.pdfDocument = PdfDocumentHelper.getPdfDocument(this.bytesPdf);
     }
@@ -72,11 +72,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     }    
 
 
-    private void doTransformPdfDocument(PdfDocument pdfDocument) throws Exception {
 
-
-
-    }
 
 
     @Override

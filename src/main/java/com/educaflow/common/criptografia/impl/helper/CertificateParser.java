@@ -1,4 +1,4 @@
-package com.educaflow.common.pdf.impl.helper;
+package com.educaflow.common.criptografia.impl.helper;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;

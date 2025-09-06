@@ -1,8 +1,8 @@
-package com.educaflow.common.pdf.impl;
+package com.educaflow.common.criptografia.impl;
 
-import com.educaflow.common.pdf.DatosCertificado;
-import com.educaflow.common.pdf.TipoEmisorCertificado;
-import com.educaflow.common.pdf.impl.helper.CertificateParser;
+import com.educaflow.common.criptografia.DatosCertificado;
+import com.educaflow.common.criptografia.TipoEmisorCertificado;
+import com.educaflow.common.criptografia.impl.helper.CertificateParser;
 
 import java.security.KeyStore;
 import java.security.cert.CertPath;
