@@ -3,6 +3,8 @@ package com.educaflow.common.pdf.impl;
 import com.educaflow.common.criptografia.CriptografiaUtil;
 import com.educaflow.common.criptografia.EntornoCriptografico;
 import com.educaflow.common.pdf.*;
+import com.educaflow.common.pdf.impl.helper.PKCS11ExternalSignature;
+import com.educaflow.common.pdf.impl.helper.PdfDocumentHelper;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
@@ -33,7 +35,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -49,10 +50,10 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     protected final PdfDocument pdfDocument;
     private final String fileName;
 
-    public DocumentoPdfImplIText(byte[] bytesPdf,String fileName) {
-        this.bytesPdf=bytesPdf;
-        this.fileName=fileName;
-        this.pdfDocument = getPdfDocument(bytesPdf);
+    public DocumentoPdfImplIText(byte[] bytesPdf, String fileName) {
+        this.bytesPdf = PdfDocumentHelper.transformPdfDocument(bytesPdf, null);
+        this.fileName = fileName;
+        this.pdfDocument = PdfDocumentHelper.getPdfDocument(this.bytesPdf);
     }
 
     @Override
@@ -71,6 +72,13 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     }    
 
 
+    private void doTransformPdfDocument(PdfDocument pdfDocument) throws Exception {
+
+
+
+    }
+
+
     @Override
     public List<String> getNombreCamposFormulario() {
         List<String> fields = new ArrayList<>();
@@ -86,7 +94,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
                 if (allowFormField(pdfFormField) == true) {
                     fields.add(name);
                     //System.out.println("Campo:-->" + name + "<----                tipo:" + pdfFormField.getFormType() );
-                    if ((pdfFormField.getAppearanceStates()!=null) && (pdfFormField.getAppearanceStates().length>0)) {
+                    if ((pdfFormField.getAppearanceStates() != null) && (pdfFormField.getAppearanceStates().length > 0)) {
                         //System.out.println("    Valores posibles:" + Arrays.toString(pdfFormField.getAppearanceStates()));
                     }
                 }
@@ -114,8 +122,8 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
         return resultadoFirmas;
 
-    }    
-    
+    }
+
 
     @Override
     public DocumentoPdf setValorCamposFormularioAndFlatten(Map<String,String> valores) {
@@ -126,7 +134,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             PdfDocument pdfDocumentNuevosValoresCampos = new PdfDocument(
                     new PdfReader(new ByteArrayInputStream(bytesPdf)),
                     new PdfWriter(byteArrayOutputStream)
-            );        
+            );
 
 
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocumentNuevosValoresCampos, false);
@@ -157,52 +165,49 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        
+
 
     }
 
 
-       
-
     @Override
-    public DocumentoPdf firmar(AlmacenClave almacenClave,CampoFirma campoFirma) {
+    public DocumentoPdf firmar(AlmacenClave almacenClave, CampoFirma campoFirma) {
         try {
             String alias;
-            Certificate[] chain=null;
+            Certificate[] chain = null;
             PrivateKey privateKey = null;
-            int slot=0;
+            int slot = 0;
 
             if (almacenClave instanceof AlmacenClaveFichero) {
-                AlmacenClaveFichero almacenClaveFichero=(AlmacenClaveFichero)almacenClave;
-                InputStream fileCertificate=almacenClaveFichero.getFileCertificate();
-                String password=almacenClaveFichero.getPassword();
+                AlmacenClaveFichero almacenClaveFichero = (AlmacenClaveFichero) almacenClave;
+                InputStream fileCertificate = almacenClaveFichero.getFileCertificate();
+                String password = almacenClaveFichero.getPassword();
 
-                KeyStore  userKeyStore = CriptografiaUtil.getKeyStore(fileCertificate, password, CriptografiaUtil.KeyStoreType.PKCS12);
+                KeyStore userKeyStore = CriptografiaUtil.getKeyStore(fileCertificate, password, CriptografiaUtil.KeyStoreType.PKCS12);
                 alias = userKeyStore.aliases().nextElement();
                 privateKey = (PrivateKey) userKeyStore.getKey(alias, password.toCharArray());
                 chain = userKeyStore.getCertificateChain(alias);
             } else if (almacenClave instanceof AlmacenClaveDispositivo) {
-                AlmacenClaveDispositivo almacenClaveDispositivo=(AlmacenClaveDispositivo)almacenClave;
-                slot= almacenClaveDispositivo.getSlot();
-                alias= almacenClaveDispositivo.getAlias();
+                AlmacenClaveDispositivo almacenClaveDispositivo = (AlmacenClaveDispositivo) almacenClave;
+                slot = almacenClaveDispositivo.getSlot();
+                alias = almacenClaveDispositivo.getAlias();
 
                 privateKey = EntornoCriptografico.getDispositivoCriptografico(slot).getPrivateKey(alias);
                 chain = EntornoCriptografico.getDispositivoCriptografico(slot).getCertificateChain(alias);
             } else {
-                throw new RuntimeException("Almacen desconocido:"+almacenClave.getClass().getName());
+                throw new RuntimeException("Almacen desconocido:" + almacenClave.getClass().getName());
             }
 
-            SignerProperties signerProperties=getSignerProperties(campoFirma,(X509Certificate)chain[0],alias);
+            SignerProperties signerProperties = getSignerProperties(campoFirma, (X509Certificate) chain[0], alias);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytesPdf);
             PdfReader pdfReader = new PdfReader(byteArrayInputStream);
             PdfWriter pdfWriter = new PdfWriter(byteArrayOutputStream, new WriterProperties());
-            PdfSigner signer = new PdfSigner(pdfReader,pdfWriter,new StampingProperties().useAppendMode());
-            if (signerProperties!=null) {
+            PdfSigner signer = new PdfSigner(pdfReader, pdfWriter, new StampingProperties().useAppendMode());
+            if (signerProperties != null) {
                 signer.setSignerProperties(signerProperties);
             }
-
 
 
             if (almacenClave instanceof AlmacenClaveFichero) {
@@ -211,19 +216,19 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
                 signer.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CMS);
             } else if (almacenClave instanceof AlmacenClaveDispositivo) {
-                synchronized(EntornoCriptografico.getDispositivoCriptografico(slot)) {
+                synchronized (EntornoCriptografico.getDispositivoCriptografico(slot)) {
                     IExternalDigest digest = new BouncyCastleDigest();
                     IExternalSignature pks = new PKCS11ExternalSignature(privateKey, DigestAlgorithms.SHA256, "RSA");
 
                     signer.signDetached(digest, pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CMS);
                 }
             } else {
-                throw new RuntimeException("Almacen desconocido:"+almacenClave.getClass().getName());
+                throw new RuntimeException("Almacen desconocido:" + almacenClave.getClass().getName());
             }
 
             pdfReader.close();
             byteArrayOutputStream.close();
-            return DocumentoPdfFactory.getDocumentoPdf(byteArrayOutputStream.toByteArray(),this.fileName);
+            return DocumentoPdfFactory.getDocumentoPdf(byteArrayOutputStream.toByteArray(), this.fileName);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -231,14 +236,13 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     }
 
 
-
     @Override
     public DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf2) {
-        return anyadirDocumentoPdf(documentoPdf2,this.fileName);
+        return anyadirDocumentoPdf(documentoPdf2, this.fileName);
     }
 
     @Override
-    public DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf2,String fileName) {
+    public DocumentoPdf anyadirDocumentoPdf(DocumentoPdf documentoPdf2, String fileName) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             PdfDocument pdfDestino = new PdfDocument(new PdfWriter(byteArrayOutputStream));
@@ -249,34 +253,23 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             merger.close();
             byteArrayOutputStream.close();
 
-            return DocumentoPdfFactory.getDocumentoPdf(byteArrayOutputStream.toByteArray(),fileName);
+            return DocumentoPdfFactory.getDocumentoPdf(byteArrayOutputStream.toByteArray(), fileName);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    
+
     /**********************************************************************************/
     /*********************************** Utilidades ***********************************/
     /**********************************************************************************/
-    
-    
-    
-    private PdfDocument getPdfDocument(byte[] bytesPdf) {
-        try {
-            PdfReader reader = new PdfReader(new ByteArrayInputStream(bytesPdf));
-            PdfDocument pdfDocumentNuevo = new PdfDocument(reader);
 
-            return pdfDocumentNuevo;
-        } catch (Exception e) {
-            throw new RuntimeException("Error al leer el PDF", e);
-        }
-    }
+
 
     private boolean allowFormField(PdfFormField pdfFormField) {
         if (isSignatureFormField(pdfFormField)) {
             return false;
-        } else if (pdfFormField.getFormType()==null) {
+        } else if (pdfFormField.getFormType() == null) {
             return false;
         } else {
             return true;
@@ -287,15 +280,15 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
     private boolean isSignatureFormField(PdfFormField pdfFormField) {
         return pdfFormField instanceof PdfSignatureFormField;
     }
-    
-    
+
+
     private String getSignatureFieldName() {
         List<ResultadoFirma> resultadoFirmas = this.getFirmasPdf();
 
         for (int i = 1; i < 100; i++) {
             final String signatureFieldName = "Signature" + Integer.toString(i);
 
-            boolean existeCampoFirma = resultadoFirmas.stream().anyMatch( resultadoFirma-> signatureFieldName.equals(resultadoFirma.getNombreCampo()));
+            boolean existeCampoFirma = resultadoFirmas.stream().anyMatch(resultadoFirma -> signatureFieldName.equals(resultadoFirma.getNombreCampo()));
 
             if (existeCampoFirma == false) {
                 return signatureFieldName;
@@ -305,7 +298,6 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
         throw new RuntimeException("No se encontró ningun campo donde firmar , están todos usados");
     }
-
 
 
     private PdfDocument getPdfDocument(DocumentoPdf documentoPdf) {
@@ -322,7 +314,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         if (campoFirma == null) {
             return null;
         }
-        SignatureFieldAppearance signatureFieldAppearance = getSignatureFieldAppearance(campoFirma,cert,alias);
+        SignatureFieldAppearance signatureFieldAppearance = getSignatureFieldAppearance(campoFirma, cert, alias);
 
         SignerProperties signerProperties = new SignerProperties();
         signerProperties.setFieldName(getSignatureFieldName());
@@ -334,11 +326,11 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         return signerProperties;
     }
 
-    private SignatureFieldAppearance getSignatureFieldAppearance(CampoFirma campoFirma,X509Certificate cert,String alias) {
+    private SignatureFieldAppearance getSignatureFieldAppearance(CampoFirma campoFirma, X509Certificate cert, String alias) {
         try {
             String message;
             if (campoFirma.getMensaje() == null) {
-                message = getMensajeFirma( cert, alias,campoFirma.getFechaFirma());
+                message = getMensajeFirma(cert, alias, campoFirma.getFechaFirma());
             } else {
                 message = campoFirma.getMensaje();
             }
@@ -370,37 +362,37 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         float width;
         float height;
 
-        float mensajeX=campoFirma.getRectanguloMensaje().getX();
-        float mensajeY=campoFirma.getRectanguloMensaje().getY();
-        float mensajeWidth=campoFirma.getRectanguloMensaje().getWidth();
-        float mensajeHeight=campoFirma.getRectanguloMensaje().getHeight();
+        float mensajeX = campoFirma.getRectanguloMensaje().getX();
+        float mensajeY = campoFirma.getRectanguloMensaje().getY();
+        float mensajeWidth = campoFirma.getRectanguloMensaje().getWidth();
+        float mensajeHeight = campoFirma.getRectanguloMensaje().getHeight();
 
         if (campoFirma.getImage() != null) {
             ImageData imageData = ImageDataFactory.create(campoFirma.getImage());
-            float imageWidth=imageData.getWidth();
-            float imageHeight=imageData.getHeight();
+            float imageWidth = imageData.getWidth();
+            float imageHeight = imageData.getHeight();
 
-            width=Math.max(mensajeWidth, imageWidth);
-            height=mensajeHeight+imageHeight;
+            width = Math.max(mensajeWidth, imageWidth);
+            height = mensajeHeight + imageHeight;
         } else {
-            width=mensajeWidth;
-            height=mensajeHeight;
+            width = mensajeWidth;
+            height = mensajeHeight;
         }
 
-        return new Rectangle(mensajeX, mensajeY,width, height);
+        return new Rectangle(mensajeX, mensajeY, width, height);
     }
 
 
     /***********************************************************************************/
     /******************************* Mensaje de la firma *******************************/
     /***********************************************************************************/
-    private static String getMensajeFirma(X509Certificate cert,String alias,LocalDateTime localDateTime)  {
+    private static String getMensajeFirma(X509Certificate cert, String alias, LocalDateTime localDateTime) {
         try {
             String mensaje;
 
 
-            DatosCertificado datosCertificado=new DatosCertificadoImpl(cert, null);
-            mensaje="Firmado por "+ datosCertificado.getCnSubject() + " el dia " + getStringDateForMensajeFirma(localDateTime) + " con un certificado emitido por " + datosCertificado.getCnIssuer();
+            DatosCertificado datosCertificado = new DatosCertificadoImpl(cert, null);
+            mensaje = "Firmado por " + datosCertificado.getCnSubject() + " el dia " + getStringDateForMensajeFirma(localDateTime) + " con un certificado emitido por " + datosCertificado.getCnIssuer();
 
 
             return mensaje;
@@ -409,9 +401,9 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         }
     }
 
-    /***********************************************************************************/
-    /******************************* Date Utils *******************************/
-    /***********************************************************************************/
+    /************************************************************************************/
+    /************************************ Date Utils ************************************/
+    /************************************************************************************/
 
     private static String getStringDateForMensajeFirma(LocalDateTime localDateTime) {
         String fecha = localDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
