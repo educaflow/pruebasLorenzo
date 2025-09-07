@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
+import org.verapdf.pdfa.flavours.PDFAFlavour;
 /**
  *
  * @author logongas
@@ -63,7 +63,7 @@ public class DocumentoPdfHelper {
         sb.append(toStringFuentesFormulario(pdfDocument)).append("\n");
         sb.append(toStringFuentesFields(pdfDocument)).append("\n");
         sb.append(toStringOtrosDatos(pdfDocument)).append("\n");
-
+        sb.append(toStringVeraPdf(documentoPdf.getDatos())).append("\n");
         
         return sb.toString();
     }
@@ -325,7 +325,35 @@ public class DocumentoPdfHelper {
 
 
     }
-    
+    private static  String toStringVeraPdf(byte[] datos) {
+        List<List<Object>> rows=new ArrayList<>();
+
+        Map<PDFAFlavour,List<String>> pdfAFlavourValid=VeraPdfHelper.getPDFAFlavourValid(datos);
+        for(Map.Entry<PDFAFlavour,List<String>> entry:pdfAFlavourValid.entrySet()) {
+
+            PDFAFlavour pdfAFlavour=entry.getKey();
+            List<String> mensajesFallo=entry.getValue();
+
+            if (mensajesFallo==null) {
+                List<Object> row=new ArrayList<>();
+                row.add(pdfAFlavour);
+                row.add("Correcto");
+                rows.add(row);
+            } else {
+                for(String mensajeFallo:mensajesFallo) {
+                    List<Object> row=new ArrayList<>();
+                    row.add(pdfAFlavour);
+                    row.add(mensajeFallo);
+                    rows.add(row);
+                }
+            }
+        }
+
+        return renderTable("Verificacion PDF/A Conformance con VeraPdf",List.of("Versión","Resultado"),rows);
+
+
+    }
+
     private static  String renderTable(String tableName,List<String> heads,List<List<Object>> rows) {
 
         List<String> titulo=new ArrayList<>();
