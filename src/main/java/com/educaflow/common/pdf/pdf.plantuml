@@ -2,13 +2,13 @@
 
 DocumentoPdfFactory --> "*" DocumentoPdf
 
- AlmacenClave <- DocumentoPdf
-DocumentoPdf -> CampoFirma
-DocumentoPdf -> ResultadoFirma
+DocumentoPdf .> AlmacenClave
+DocumentoPdf .left> CampoFirma
+DocumentoPdf *-- ResultadoFirma
 AlmacenClave <|-- AlmacenClaveFichero
 AlmacenClave <|-- AlmacenClaveDispositivo
 
-ResultadoFirma *-- DatosCertificado
+ResultadoFirma o-- DatosCertificado
 
 class DocumentoPdf {
     List<String> getNombreCamposFormulario();

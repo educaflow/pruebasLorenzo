@@ -10,7 +10,9 @@ EntornoCriptograficoConfig *-left-  AlmacenCertificadosConfiablesConfig
 EntornoCriptograficoConfig *-right- "*" DispositivoCriptograficoConfig
 
 
-
+class EntornoCriptografico {
+    getDispositivoCriptografico(slot)
+}
 
 class AlmacenCertificadosConfiables {
     trustedKeyStore
@@ -33,5 +35,14 @@ class AlmacenCertificadosConfiablesConfig {
     password
 }
 
+AlmacenClave <|-- AlmacenClaveFichero
+AlmacenClave <|-- AlmacenClaveDispositivo
 
+class AlmacenClaveDispositivo {
+slot
+alias
+}
+
+DatosCertificado --> AlmacenCertificadosConfiables
+AlmacenClaveDispositivo --> DispositivoCriptografico
 @enduml
