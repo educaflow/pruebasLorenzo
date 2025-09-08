@@ -1,5 +1,6 @@
 package com.educaflow.apps.expedientes.tiposexpedientes.justificacion_falta_profesorado;
 
+import com.educaflow.common.criptografia.AlmacenClaveDispositivo;
 import com.educaflow.common.domains.db.MetaFilePdf;
 import com.educaflow.apps.configuracioncentro.db.Centro;
 import com.educaflow.apps.expedientes.common.EventContext;
@@ -61,8 +62,8 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
 
         byte[] sello=getSelloCentro(justificacionFaltaProfesorado.getCentroReceptor());
 
-        AlmacenClaveFichero almacenClave=new AlmacenClaveFichero(EventManagerImpl.class.getResourceAsStream("/firma/mi_certificado.p12"),"nadanada");
-        //AlmacenClaveDispositivo almacenClave=new AlmacenClaveDispositivo( 0,"CertFirmaDigital");
+        //AlmacenClaveFichero almacenClave=new AlmacenClaveFichero(EventManagerImpl.class.getResourceAsStream("/firma/mi_certificado.p12"),"nadanada");
+        AlmacenClaveDispositivo almacenClave=new AlmacenClaveDispositivo( 0,"CertFirmaDigitalDirector");
         CampoFirma campoFirma=new CampoFirma(new Rectangulo(80,10,120,100))
                 .setMensaje("Recibido en el centro CIPFP Mislata el día "+ LocalDate.now())
                 .setImage(sello)
