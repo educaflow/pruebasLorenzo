@@ -75,6 +75,7 @@ dependencies {
     implementation 'org.verapdf:core:1.28.1'
     implementation 'org.verapdf:validation-model:1.28.1'
     implementation 'org.verapdf:validation-model-jakarta:1.28.1'
+    implementation 'net.java.dev.jna:jna:5.14.0'
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.2.0")
 
