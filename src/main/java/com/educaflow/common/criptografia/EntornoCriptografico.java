@@ -4,6 +4,7 @@ import com.educaflow.common.criptografia.config.AlmacenCertificadosConfiablesCon
 import com.educaflow.common.criptografia.config.EntornoCriptograficoConfig;
 import com.educaflow.common.criptografia.config.DispositivoCriptograficoConfig;
 import com.educaflow.common.criptografia.impl.DatosCertificadoImpl;
+import com.educaflow.common.criptografia.impl.helper.CriptografiaUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.InputStream;

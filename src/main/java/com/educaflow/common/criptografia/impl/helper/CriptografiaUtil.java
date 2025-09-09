@@ -1,4 +1,4 @@
-package com.educaflow.common.criptografia;
+package com.educaflow.common.criptografia.impl.helper;
 
 import java.io.File;
 import java.io.InputStream;
