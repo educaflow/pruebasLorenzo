@@ -5,25 +5,41 @@
 TRUSTSTORE=./truststore.jks
 TRUSTSTORE_PASSWORD=s3cr3T
 CERTS_DIR=./certs
+CRL_DIR=./crl
+CRL_FILE_LIST=crls.xml
 #Lista de confianza de prestadores cualificados de servicios electrónicos de confianza
 #Pagina desde donde descargarla: https://sedediatid.digital.gob.es/Prestadores/Paginas/Inicio.aspx
 URL_TSL=https://sedediatid.digital.gob.es/Prestadores/TSL/TSL.xml
 
+rm -rf ${CRL_DIR}
 rm -rf ${CERTS_DIR}
 rm *.zip
 rm TSL.xml
 rm ${TRUSTSTORE}
 mkdir -p ${CERTS_DIR}
+mkdir -p ${CRL_DIR}
+
+download_crt() {
+    local url="$1"
+    local file="$(basename "$url")"  # Extrae el nombre del archivo de la URL
+    wget -O ${CERTS_DIR}/"$file" "$url"
+}
 
 
-
-download_and_unzip() {
+download_crt_and_unzip() {
     local url="$1"
     local file="$(basename "$url")"  # Extrae el nombre del archivo de la URL
     wget -O "$file" "$url"
     unzip -o "$file" -d ${CERTS_DIR}   # -o sobrescribe sin preguntar
     rm "$file"
 }
+
+download_crl() {
+    local url="$1"
+    local file="$(basename "$url")"  # Extrae el nombre del archivo de la URL
+    wget -O ${CRL_DIR}/"$file" "$url"
+}
+
 
 import_certs() {
 
@@ -54,7 +70,7 @@ import_certs() {
 
 
 # Lista de URLs de certificados del DNI Electrónico
-urls=(
+urls_cert_download_unzip=(
     "https://www.dnielectronico.es/ZIP/ACRAIZ-DNIE2.zip"
     "https://www.dnielectronico.es/ZIP/ACRAIZ-SHA1.zip"
     "https://www.dnielectronico.es/ZIP/ACRAIZ-SHA2.zip"
@@ -67,12 +83,83 @@ urls=(
 )
 
 # Descargar y descomprimir todos los zips
-for url in "${urls[@]}"; do
-    download_and_unzip "$url"
+for url in "${urls_cert_download_unzip[@]}"; do
+    download_crt_and_unzip "$url"
 done
 
-#Mover los certificados a la carpeta del resto de certificados
-for f in certs/*.crt; do
+urls_cert_download=(
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_tls_cross.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_root_rsa_eidas_2023.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_cliente.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_profesionales.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_root_rsa_tls_2024.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_root_ecc_tls_2024.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_root_rsa_eidas_tsa_2024.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_root_ecc_eidas_tsa_2024.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_tls.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_ecc1_tls.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_tsa.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_ecc1_tsa.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_componentes.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_root_ecc_eidas_2023.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_ecc1_cliente.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_ecc1_profesionales.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_ecc1_componentes.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/ACCVRAIZ1.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/ACCVCA120.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/ACCVCA110SHA2.cacert.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/ACCVCA130SHA2.cacert.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/rootca.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv-ca2.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv-ca1.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv-ca3.crt"
+"https://www.accv.es/fileadmin/Archivos/certificados/ca.crt"
+)
+
+# Descargar los certificados
+for url in "${urls_cert_download[@]}"; do
+    download_crt "$url"
+done
+
+urls_crl_download=(
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_root_rsa_eidas_2023.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_cliente.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_profesionales.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_rsa1_componentes.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_root_ecc_eidas_2023.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_ecc1_cliente.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_ecc1_profesionales.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accv_ecc1_componentes.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/raizaccv1_der.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accvca120_der.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accvca110_der.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/accvca130_der.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/rootgva_der.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/ciudadanos.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/cagva-entidad_der.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/cagva-entidad_der.crl"
+"https://www.accv.es/fileadmin/Archivos/certificados/cagva_der.crl"
+)
+
+for url in "${urls_crl_download[@]}"; do
+    download_crl "$url"
+done
+
+#Generar el fichero XML con la lista de CRL
+{
+    echo '<?xml version="1.0" encoding="UTF-8"?>'
+    echo '<crls>'
+    for fichero in "${CRL_DIR}"/*.crl; do
+        nombre=$(basename "$fichero")
+        echo "  <crl>${nombre}</crl>"
+    done
+    echo '</crls>'
+} > "${CRL_DIR}/${CRL_FILE_LIST}"
+
+
+
+#Renombrar los .crt a .cer para que el keytool los acepte
+for f in ${CERTS_DIR}/*.crt; do
     [ -e "$f" ] || continue  # Saltar si no hay archivos .crt
     mv "$f" "${f%.crt}.cer"
 done
