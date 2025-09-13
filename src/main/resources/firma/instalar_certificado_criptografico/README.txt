@@ -10,3 +10,8 @@ load_certificate.sh: Carga el certificado en el dispositivo
 
 
 crear_certificado_ficticio.sh : Crea un certificado ficticio autofirmado
+
+
+Se crean los alias:
+CertFirmaDigitalDirector
+CertFirmaDigitalSecretario
