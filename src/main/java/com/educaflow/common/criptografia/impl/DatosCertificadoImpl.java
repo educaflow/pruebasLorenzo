@@ -1,24 +1,15 @@
 package com.educaflow.common.criptografia.impl;
 
 import com.educaflow.common.criptografia.DatosCertificado;
+import com.educaflow.common.criptografia.EntornoCriptografico;
+import com.educaflow.common.criptografia.TipoCertificado;
 import com.educaflow.common.criptografia.TipoEmisorCertificado;
 import com.educaflow.common.criptografia.impl.helper.CertificateParser;
+import com.educaflow.common.criptografia.impl.helper.CriptografiaUtil;
 
 import java.security.KeyStore;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXCertPathValidatorResult;
-import java.security.cert.PKIXParameters;
-import java.security.cert.TrustAnchor;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.cert.*;
+import java.util.*;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 import javax.security.auth.x500.X500Principal;
@@ -36,25 +27,40 @@ public class DatosCertificadoImpl implements DatosCertificado {
     private static final String OID_NIF_ACCV = "0.9.2342.19200300.100.1.1";
     private static final String OID_NOMBRE_APELLIDOS_ACCV = "2.5.4.3";
     private static final String OID_NOMBRE_APELLIDOS_ACCV_LOCATION = "2.5.29.17";
+    private static final String OID_TIME_STAMPING = "1.3.6.1.5.5.7.3.8";
+    private static final String OID_EXTENDED_KEY_USAGE = "2.5.29.37";
 
     private final X509Certificate certificate;
     private final TipoEmisorCertificado tipoEmisorCertificado;
-    private String dni;
-    private String nombre;
-    private String apellidos;
+    private String dni="";
+    private String nombre="";
+    private String apellidos="";
     private String cnSubject;
     private String cnIssuer;
     private final boolean validoEnListaCertificadosConfiables;
-
+    private TipoCertificado tipoCertificado;
+    private boolean selloTiempo;
+    private Date validoNoAntesDe;
+    private Date validoNoDespuesDe;
 
     public DatosCertificadoImpl(X509Certificate certificate, KeyStore trustedKeyStore) {
 
         try {
             this.certificate = certificate;
-            this.tipoEmisorCertificado = getTipoEmisorCertificado(this.certificate);
-            populateDNINombreApellidosSegunTipoEmisorCertificado(this.tipoEmisorCertificado);
+            this.cnSubject = getCnPrincipal(certificate.getSubjectX500Principal());
+            this.cnIssuer = getCnPrincipal(certificate.getIssuerX500Principal());
+            this.tipoCertificado=getTipoCertificado(this.certificate);
+            this.selloTiempo= isSelloTiempo(this.certificate);
+            this.validoNoAntesDe= certificate.getNotBefore();
+            this.validoNoDespuesDe= certificate.getNotAfter();
 
-            validoEnListaCertificadosConfiables = isValidoEnListaCertificadosConfiables(certificate, trustedKeyStore);
+            this.tipoEmisorCertificado = getTipoEmisorCertificado(this.cnIssuer);
+            this.validoEnListaCertificadosConfiables = isValidoEnListaCertificadosConfiables(certificate, trustedKeyStore);
+
+            if ((this.selloTiempo==false) && (this.tipoCertificado==TipoCertificado.USUARIO_FINAL)) {
+                populateDNINombreApellidosSegunTipoEmisorCertificado(this.tipoEmisorCertificado);
+            }
+
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -97,7 +103,24 @@ public class DatosCertificadoImpl implements DatosCertificado {
         return validoEnListaCertificadosConfiables;
     }
 
+    @Override
+    public TipoCertificado getTipoCertificado() {
+        return tipoCertificado;
+    }
 
+    @Override
+    public boolean isSelloTiempo() {
+        return selloTiempo;
+    }
+
+    @Override
+    public Date getValidoNoAntesDe() {
+        return validoNoAntesDe;
+    }
+    @Override
+    public Date getValidoNoDespuesDe() {
+        return validoNoDespuesDe;
+    }
 
     private boolean isValidoEnListaCertificadosConfiables(X509Certificate certificate, KeyStore trustStore) {
         try {
@@ -109,7 +132,13 @@ public class DatosCertificadoImpl implements DatosCertificado {
             CertPathValidator validator = CertPathValidator.getInstance("PKIX");
 
             PKIXParameters params = new PKIXParameters(trustStore);
-            params.setRevocationEnabled(false); // desactivar CRL/OCSP si no tienes
+            params.setRevocationEnabled(false);
+            List<CertStore> certStoresCertificateRevocationList=getCertStoresFromCertificateRevocationLists(EntornoCriptografico.getAlmacenCertificadosConfiables().getCertificateRevocationLists());
+            params.setCertStores(certStoresCertificateRevocationList);
+            PKIXRevocationChecker rc = (PKIXRevocationChecker) validator.getRevocationChecker();
+            rc.setOptions(EnumSet.of(PKIXRevocationChecker.Option.SOFT_FAIL));
+            params.addCertPathChecker(rc);
+
 
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
@@ -133,14 +162,13 @@ public class DatosCertificadoImpl implements DatosCertificado {
 
     }
 
-    private TipoEmisorCertificado getTipoEmisorCertificado(X509Certificate x509Certificate) {
+    private TipoEmisorCertificado getTipoEmisorCertificado(String cnIssuer) {
         TipoEmisorCertificado tipoEmisorCertificado;
-        String strCertificado = x509Certificate.toString();
-        if (strCertificado.contains("FNMT") && !strCertificado.contains("ACCV") && !strCertificado.contains("DNIE")) {
+        if (cnIssuer.contains("FNMT") && !cnIssuer.contains("ACCV") && !cnIssuer.contains("DNIE")) {
             tipoEmisorCertificado = TipoEmisorCertificado.FNMT;
-        } else if (!strCertificado.contains("FNMT") && strCertificado.contains("ACCV") && !strCertificado.contains("DNIE")) {
+        } else if (!cnIssuer.contains("FNMT") && cnIssuer.contains("ACCV") && !cnIssuer.contains("DNIE")) {
             tipoEmisorCertificado = TipoEmisorCertificado.ACCV;
-        } else if (!strCertificado.contains("FNMT") && !strCertificado.contains("ACCV") && strCertificado.contains("DNIE")) {
+        } else if (!cnIssuer.contains("FNMT") && !cnIssuer.contains("ACCV") && cnIssuer.contains("DNIE")) {
             tipoEmisorCertificado = TipoEmisorCertificado.DNI;
         } else {
             tipoEmisorCertificado = null;
@@ -148,7 +176,57 @@ public class DatosCertificadoImpl implements DatosCertificado {
 
         return tipoEmisorCertificado;
     }
-    
+
+    private TipoCertificado getTipoCertificado(X509Certificate x509Certificate) {
+        try {
+            int basicConstraints = x509Certificate.getBasicConstraints();
+            X500Principal subject = x509Certificate.getSubjectX500Principal();
+            X500Principal issuer = x509Certificate.getIssuerX500Principal();
+
+            TipoCertificado tipoCertificado;
+
+            if (basicConstraints == -1) {
+                tipoCertificado= TipoCertificado.USUARIO_FINAL;
+            } else if (subject.equals(issuer)) {
+                tipoCertificado= TipoCertificado.CA_RAIZ;
+            } else {
+                tipoCertificado= TipoCertificado.CA_INTERMEDIA;
+            }
+
+            return tipoCertificado;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private boolean isSelloTiempo(X509Certificate x509Certificate) {
+        try {
+            List<String> eku = x509Certificate.getExtendedKeyUsage();
+            if (eku == null || eku.isEmpty()) {
+                return false;
+            }
+
+            if (eku.contains(OID_TIME_STAMPING)==false) {
+                return false;
+            }
+
+            boolean critical = (x509Certificate.getCriticalExtensionOIDs() != null) && (x509Certificate.getCriticalExtensionOIDs().contains(OID_EXTENDED_KEY_USAGE));
+            if (critical==false) {
+                return false;
+            }
+
+            return true;
+        } catch (CertificateParsingException e) {
+            throw new RuntimeException("Error analizando EKU del certificado", e);
+        }
+    }
+
+    private List<CertStore> getCertStoresFromCertificateRevocationLists(List<CRL> certStoreFromCertificateRevocationLists) {
+        CertStore certStore = CriptografiaUtil.getCertStore(certStoreFromCertificateRevocationLists);
+
+        return Collections.singletonList(certStore);
+    }
+
     /*******************************************************************************************************/
     /********************** Extraer Información del certificado según el emissor (CA) **********************/
     /*******************************************************************************************************/     
@@ -163,6 +241,7 @@ public class DatosCertificadoImpl implements DatosCertificado {
                     break;
                 case ACCV:
                     populateDNINombreApellidosACCV();
+                    break;
                 case DNI:
                     populateDNINombreApellidosDNI();
                     break;
@@ -173,34 +252,68 @@ public class DatosCertificadoImpl implements DatosCertificado {
             populateDNINombreApellidosEmpy();
         }
 
-        cnSubject = getCnPrincipal(certificate.getSubjectX500Principal());
-        cnIssuer = getCnPrincipal(certificate.getIssuerX500Principal());
+
     }
 
     private void populateDNINombreApellidosFNMT() {
-        dni = getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_NIF_FNMT));
-        nombre = getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_NOMBRE_FNMT));
-        apellidos = (getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_APE1_FNMT)) + " " + getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_APE2_FNMT))).trim();
+        try {
+            dni = getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_NIF_FNMT));
+        } catch (Exception ex) {
+            //Si falla algo se quedan los datos sin cargar
+        }
+        try {
+            nombre = getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_NOMBRE_FNMT));
+        } catch (Exception ex) {
+            //Si falla algo se quedan los datos sin cargar
+        }
+        try {
+            apellidos = (getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_APE1_FNMT)) + " " + getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_APE2_FNMT))).trim();
+        } catch (Exception ex) {
+            //Si falla algo se quedan los datos sin cargar
+        }
+
     }
 
     private void populateDNINombreApellidosACCV() {
-        dni = getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_NIF_ACCV));
+        try {
+            dni = getOnlyValueInMap(CertificateParser.findOidsWithLocation(certificate, OID_NIF_ACCV));
+        } catch (Exception ex) {
+            //Si falla algo se quedan los datos sin cargar
+        }
 
-        String nombreApellidos = CertificateParser.findOidsWithLocation(certificate, OID_NOMBRE_APELLIDOS_ACCV).get(OID_NOMBRE_APELLIDOS_ACCV_LOCATION);
-        String[] arrNombreApellidos = nombreApellidos.split("\\|");
 
-        nombre = arrNombreApellidos[0];
-        apellidos = String.join(" ", Arrays.copyOfRange(arrNombreApellidos, 1, arrNombreApellidos.length));
+        try {
+            String nombreApellidos = CertificateParser.findOidsWithLocation(certificate, OID_NOMBRE_APELLIDOS_ACCV).get(OID_NOMBRE_APELLIDOS_ACCV_LOCATION);
+            if ((nombreApellidos!=null) && (nombreApellidos.contains("|"))) {
+                String[] arrNombreApellidos = nombreApellidos.split("\\|");
+                nombre = arrNombreApellidos[0];
+                apellidos = String.join(" ", Arrays.copyOfRange(arrNombreApellidos, 1, arrNombreApellidos.length));
+            }
+        } catch (Exception ex) {
+            //Si falla algo se quedan los datos sin cargar
+        }
     }
 
     private void populateDNINombreApellidosDNI() {
         X500Principal x500Principal = certificate.getSubjectX500Principal();
         Map<String, String> data = getX500PrincipalData(x500Principal);
-
-        dni = data.get("SERIALNUMBER");
-        nombre = data.get("GIVENNAME");
-        apellidos = data.get("CN").split(",")[0].trim();
+        try {
+            dni = data.get("SERIALNUMBER");
+        } catch (Exception ex) {
+            //Si falla algo se quedan los datos sin cargar
+        }
+        try {
+            nombre = data.get("GIVENNAME");
+        } catch (Exception ex) {
+            //Si falla algo se quedan los datos sin cargar
+        }
+        try {
+            apellidos = data.get("CN").split(",")[0].trim();
+        } catch (Exception ex) {
+            //Si falla algo se quedan los datos sin cargar
+        }
     }
+
 
 
 
@@ -269,12 +382,23 @@ public class DatosCertificadoImpl implements DatosCertificado {
     /**************************************************************************************/
     
     private String getOnlyValueInMap(Map<String, String> map) {
-        if (map.size() != 1) {
-            throw new RuntimeException("Existe más de un elemento en el Map:" + map.size() + " " + this.certificate.toString());
+        if (map.size() == 0) {
+            return null;
         }
 
-        Map.Entry<String, String> entry = map.entrySet().iterator().next();
-        return entry.getValue();
+        String value=null;
+
+        for(Map.Entry<String, String> entry : map.entrySet()) {
+            if (value==null) {
+                value=entry.getValue();
+            } else if (value.equals(entry.getValue())==true) {
+                // ok, es el mismo valor
+            } else {
+                throw new RuntimeException("Existe más de un elemento en el Map:" + map.size() + " " + this.certificate.toString());
+            }
+        }
+
+        return value;
     }    
     
     

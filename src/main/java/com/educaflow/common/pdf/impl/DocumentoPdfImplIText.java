@@ -376,7 +376,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
             String mensaje;
 
 
-            DatosCertificado datosCertificado = new DatosCertificadoImpl(cert, null);
+            DatosCertificado datosCertificado = EntornoCriptografico.getDatosCertificado(cert);
             mensaje = "Firmado por " + datosCertificado.getCnSubject() + " el dia " + getStringDateForMensajeFirma(localDateTime) + " con un certificado emitido por " + datosCertificado.getCnIssuer();
 
 

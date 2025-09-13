@@ -4,6 +4,8 @@
  */
 package com.educaflow.common.criptografia;
 
+import java.util.Date;
+
 /**
  *
  * @author logongas
@@ -16,7 +18,10 @@ public interface DatosCertificado {
     String getCnSubject();
     String getCnIssuer();
     TipoEmisorCertificado getTipoEmisorCertificado();
-
+    TipoCertificado getTipoCertificado();
+    boolean isSelloTiempo();
+    Date getValidoNoAntesDe();
+    Date getValidoNoDespuesDe();
 
     /**
      * Valida contra https://sedediatid.digital.gob.es/Prestadores/Paginas/Inicio.aspx

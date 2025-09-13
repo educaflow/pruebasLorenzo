@@ -13,10 +13,9 @@ import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.Provider;
 import java.security.Security;
+import java.security.cert.CRL;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class EntornoCriptografico {
@@ -34,7 +33,7 @@ public class EntornoCriptografico {
         Security.addProvider(new BouncyCastleProvider());
 
         if (entornoCriptograficoConfig == null) {
-            almacenCertificadosConfiables=new AlmacenCertificadosConfiables(null);
+            almacenCertificadosConfiables=new AlmacenCertificadosConfiables();
             dispositivosCriptograficos=new HashMap<>();
         } else {
             AlmacenCertificadosConfiablesConfig almacenCertificadosConfiablesConfig= entornoCriptograficoConfig.getAlmacenCertificadosConfiablesConfig();
@@ -42,7 +41,7 @@ public class EntornoCriptografico {
 
 
             if (almacenCertificadosConfiablesConfig == null) {
-                almacenCertificadosConfiables=new AlmacenCertificadosConfiables(null);
+                almacenCertificadosConfiables=new AlmacenCertificadosConfiables();
             } else {
                 almacenCertificadosConfiables=getAlmacenCertificadosConfiables(almacenCertificadosConfiablesConfig);
             }
@@ -83,7 +82,7 @@ public class EntornoCriptografico {
 
 
     public static DatosCertificado getDatosCertificado(X509Certificate certificate) {
-        if (configured==false) {
+        if (configured == false) {
             throw new RuntimeException("El entorno criptográfico no ha sido configurado");
         }
         return new DatosCertificadoImpl(certificate,getAlmacenCertificadosConfiables().getTrustedKeyStore());
@@ -101,7 +100,16 @@ public class EntornoCriptografico {
             AlmacenCertificadosConfiables almacenCertificadosConfiables;
 
             KeyStore trustedKeyStore = CriptografiaUtil.getKeyStore(inputStream,password, CriptografiaUtil.KeyStoreType.PKCS12);
-            almacenCertificadosConfiables = new AlmacenCertificadosConfiables(trustedKeyStore);
+            List<InputStream> certificateRevocationListsInputStream=almacenCertificadosConfiablesConfig.getCertificateRevocationListsInputStream();
+
+            List<CRL> certificateRevocationLists;
+            if (certificateRevocationListsInputStream==null) {
+                certificateRevocationLists=new ArrayList<>();
+            } else {
+                certificateRevocationLists = CriptografiaUtil.getCertificateRevocationLists(certificateRevocationListsInputStream);
+            }
+
+            almacenCertificadosConfiables = new AlmacenCertificadosConfiables(trustedKeyStore,certificateRevocationLists);
 
             return almacenCertificadosConfiables;
         } catch (Exception ex) {

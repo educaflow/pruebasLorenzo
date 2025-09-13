@@ -20,6 +20,7 @@ import com.itextpdf.kernel.xmp.properties.XMPPropertyInfo;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestLine;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -220,7 +221,8 @@ public class DocumentoPdfHelper {
     
     private static  String toStringResultadoFirmas(DocumentoPdf documentoPdf) {
         List<List<Object>> rows=new ArrayList<>();
-        
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
         for(ResultadoFirma resultadoFirma:documentoPdf.getFirmasPdf()) {
             List<Object> row=new ArrayList<>();
 
@@ -233,12 +235,16 @@ public class DocumentoPdfHelper {
             row.add(resultadoFirma.getDatosCertificado().getDNI());
             row.add(resultadoFirma.getDatosCertificado().getCnIssuer());
             row.add(resultadoFirma.getDatosCertificado().getTipoEmisorCertificado());
+            row.add(resultadoFirma.getDatosCertificado().getTipoCertificado());
+            row.add(resultadoFirma.getDatosCertificado().isSelloTiempo());
+            row.add(simpleDateFormat.format(resultadoFirma.getDatosCertificado().getValidoNoAntesDe()));
+            row.add(simpleDateFormat.format(resultadoFirma.getDatosCertificado().getValidoNoDespuesDe()));
             row.add(resultadoFirma.getDatosCertificado().isValidoEnListaCertificadosConfiables());
 
             rows.add(row); 
         }
         
-        return renderTable("Firmas",List.of("Fecha Firma","Correcta","Nombre Campo","CN Firmante","Nombre","Apellidos","DNI","CN Emisor","TipoCertificado","Valido TSL"),rows);
+        return renderTable("Firmas",List.of("Fecha Firma","Correcta","Nombre Campo","CN Firmante","Nombre","Apellidos","DNI","CN Emisor","Tipo emisor certificado","Tipo Certificado","Sello tiempo","Fecha inicio","Fecha fin","Valido TSL"),rows);
         
     }
     
