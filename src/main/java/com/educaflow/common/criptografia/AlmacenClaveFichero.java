@@ -12,6 +12,15 @@ public class AlmacenClaveFichero implements AlmacenClave {
     private final String password;
 
     public AlmacenClaveFichero(InputStream fileCertificate, String password) {
+
+        if (fileCertificate==null) {
+            throw new RuntimeException("El fileCertificate no puede ser null");
+        }
+
+        if (password==null) {
+            throw new RuntimeException("El password no puede ser null");
+        }
+
         this.fileCertificate = fileCertificate;
         this.password = password;
     }
