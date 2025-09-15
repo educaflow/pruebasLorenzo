@@ -70,149 +70,172 @@ public class DocumentoPdfHelper {
     }
     
     private static String toStringNombreFichero(String fileName) {
-        List<List<Object>> rows=new ArrayList<>();
-        List<Object> row;
-                
-        row=new ArrayList<>();
-        row.add(fileName);
-        rows.add(row);
+        try {
+            List<List<Object>> rows = new ArrayList<>();
+            List<Object> row;
+
+            row = new ArrayList<>();
+            row.add(fileName);
+            rows.add(row);
 
 
-        return renderTable("Nombre del fichero",null,rows);            
-
+            return renderTable("Nombre del fichero", null, rows);
+        } catch (Exception e) {
+            return renderTable("Nombre del fichero", e);
+        }
 
     }
     
     
     private static  String toStringFieldsDocumento(PdfDocument pdfDocument) {
-        List<List<Object>> rows=new ArrayList<>();
-        
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+        try {
+            List<List<Object>> rows = new ArrayList<>();
 
-        if (form != null) {
-            Map<String, PdfFormField> pdfFormFields = form.getAllFormFields();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
 
-            for (Map.Entry<String, PdfFormField> entry : pdfFormFields.entrySet()) {
-                String name = entry.getKey();
-                PdfFormField pdfFormField = entry.getValue();
-                if (PdfDocumentHelper.isSignatureFormField(pdfFormField) == false) {
-                    
-                    List<Object> row=new ArrayList<>();
+            if (form != null) {
+                Map<String, PdfFormField> pdfFormFields = form.getAllFormFields();
 
-                    row.add(name);
-                    if ((pdfFormField.getAppearanceStates() != null) && (pdfFormField.getAppearanceStates().length > 0)) {
-                        row.add(Arrays.toString(pdfFormField.getAppearanceStates()));
-                    } else {
-                        row.add("");
-                    }
-                    
-                    rows.add(row);
-                }
-            }
-        }
-        
-        return renderTable("Campos del formulario del documento",List.of("Nombre","valores"),rows);
-    }
-    
-    
-    private static  String toStringFieldsPagina(PdfDocument pdfDocument) {
-        List<List<Object>> rows=new ArrayList<>();
-        
-        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
-            PdfPage page = pdfDocument.getPage(i);
-            
-            for (PdfAnnotation pdfAnnotation : page.getAnnotations()) {
-                if (pdfAnnotation.getSubtype().equals(PdfName.Widget)) {
-                    PdfWidgetAnnotation widget = (PdfWidgetAnnotation) pdfAnnotation;
+                for (Map.Entry<String, PdfFormField> entry : pdfFormFields.entrySet()) {
+                    String name = entry.getKey();
+                    PdfFormField pdfFormField = entry.getValue();
+                    if (PdfDocumentHelper.isSignatureFormField(pdfFormField) == false) {
 
-                    PdfFormField pdfFormField = PdfFormField.makeFormField(widget.getPdfObject(), pdfDocument);
-                    if (pdfFormField!=null) {
-                        if (PdfDocumentHelper.isSignatureFormField(pdfFormField) == false) {
+                        List<Object> row = new ArrayList<>();
 
-                            List<Object> row=new ArrayList<>();
-
-                            row.add(i);
-                            row.add(pdfFormField.getFieldName());
-                            if ((pdfFormField.getAppearanceStates() != null) && (pdfFormField.getAppearanceStates().length > 0)) {
-                                row.add(Arrays.toString(pdfFormField.getAppearanceStates()));
-                            } else {
-                                row.add("");
-                            }
-
-                            rows.add(row);
+                        row.add(name);
+                        if ((pdfFormField.getAppearanceStates() != null) && (pdfFormField.getAppearanceStates().length > 0)) {
+                            row.add(Arrays.toString(pdfFormField.getAppearanceStates()));
+                        } else {
+                            row.add("");
                         }
-                    } else {
-                        List<Object> row=new ArrayList<>();
-                        row.add(i);
-                        row.add(null);
-                        row.add("PdfWidgetAnnotation sin PdfFormField asociado");
-                        
+
                         rows.add(row);
                     }
                 }
             }
 
+            return renderTable("Campos del formulario del documento", List.of("Nombre", "valores"), rows);
+        } catch (Exception e) {
+            return renderTable("Campos del formulario del documento", e);
         }
-        
-        
-        return renderTable("Campos sueltos por página",List.of("Página","Nombre","valores"),rows);
+    }
+    
+    
+    private static  String toStringFieldsPagina(PdfDocument pdfDocument) {
+        try {
+            List<List<Object>> rows=new ArrayList<>();
+
+            for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+                PdfPage page = pdfDocument.getPage(i);
+
+                for (PdfAnnotation pdfAnnotation : page.getAnnotations()) {
+                    if (pdfAnnotation.getSubtype().equals(PdfName.Widget)) {
+                        PdfWidgetAnnotation widget = (PdfWidgetAnnotation) pdfAnnotation;
+
+                        PdfFormField pdfFormField = PdfFormField.makeFormField(widget.getPdfObject(), pdfDocument);
+                        if (pdfFormField!=null) {
+                            if (PdfDocumentHelper.isSignatureFormField(pdfFormField) == false) {
+
+                                List<Object> row=new ArrayList<>();
+
+                                row.add(i);
+                                row.add(pdfFormField.getFieldName());
+                                if ((pdfFormField.getAppearanceStates() != null) && (pdfFormField.getAppearanceStates().length > 0)) {
+                                    row.add(Arrays.toString(pdfFormField.getAppearanceStates()));
+                                } else {
+                                    row.add("");
+                                }
+
+                                rows.add(row);
+                            }
+                        } else {
+                            List<Object> row=new ArrayList<>();
+                            row.add(i);
+                            row.add(null);
+                            row.add("PdfWidgetAnnotation sin PdfFormField asociado");
+
+                            rows.add(row);
+                        }
+                    }
+                }
+
+            }
+
+
+            return renderTable("Campos sueltos por página",List.of("Página","Nombre","valores"),rows);
+        } catch (Exception e) {
+            return renderTable("Campos sueltos por página",e);
+        }
     }    
     
     
     
     private static  String toStringFuentesFields(PdfDocument pdfDocument) {
-        List<List<Object>> rows=new ArrayList<>();
-        
-        
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
-        if (acroForm != null) {
-            Map<String, PdfFormField> fields = acroForm.getAllFormFields();
-            for (PdfFormField field : fields.values()) {
-                PdfDictionary fieldResources = field.getPdfObject().getAsDictionary(PdfName.DR);
-                
-                if (fieldResources!=null) {
-                    addFontToRows(fieldResources,field.getFieldName(),rows);
-                }
-            }
-            
-        }
+        try {
+            List<List<Object>> rows = new ArrayList<>();
 
-        
-        return renderTable("Fuentes de los campos del formulario",List.of("Campo","Nombre","Tipo","Base","Incrustada"),rows);
+
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+            if (acroForm != null) {
+                Map<String, PdfFormField> fields = acroForm.getAllFormFields();
+                for (PdfFormField field : fields.values()) {
+                    PdfDictionary fieldResources = field.getPdfObject().getAsDictionary(PdfName.DR);
+
+                    if (fieldResources != null) {
+                        addFontToRows(fieldResources, field.getFieldName(), rows);
+                    }
+                }
+
+            }
+
+
+            return renderTable("Fuentes de los campos del formulario", List.of("Campo", "Nombre", "Tipo", "Base", "Incrustada"), rows);
+        } catch (Exception e) {
+            return renderTable("Fuentes de los campos del formulario", e);
+        }
     }   
     
     
     private static  String toStringFuentesFormulario(PdfDocument pdfDocument) {
-        List<List<Object>> rows=new ArrayList<>();
-        
-        
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
-        if (acroForm != null) {
-            PdfDictionary formResources = acroForm.getPdfObject().getAsDictionary(PdfName.DR);
-            if (formResources!=null) {
-                addFontToRows(formResources,null,rows);
-            }
-        }
+        try {
+            List<List<Object>> rows = new ArrayList<>();
 
-        
-        return renderTable("Fuentes del formulario",List.of("Nombre","Tipo","Base","Incrustada"),rows);
+
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+            if (acroForm != null) {
+                PdfDictionary formResources = acroForm.getPdfObject().getAsDictionary(PdfName.DR);
+                if (formResources != null) {
+                    addFontToRows(formResources, null, rows);
+                }
+            }
+
+
+            return renderTable("Fuentes del formulario", List.of("Nombre", "Tipo", "Base", "Incrustada"), rows);
+        } catch (Exception e) {
+            return renderTable("Fuentes del formulario", e);
+        }
     }     
     
     private static  String toStringFuentesPaginas(PdfDocument pdfDocument) {
-        List<List<Object>> rows=new ArrayList<>();
-        
-        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
-            PdfPage page = pdfDocument.getPage(i);
-            
-            
-            PdfDictionary pageResources = page.getResources().getPdfObject();
+        try {
+            List<List<Object>> rows=new ArrayList<>();
 
-            if (pageResources!=null) {
-                addFontToRows(pageResources, i, rows);
+            for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+                PdfPage page = pdfDocument.getPage(i);
+
+
+                PdfDictionary pageResources = page.getResources().getPdfObject();
+
+                if (pageResources!=null) {
+                    addFontToRows(pageResources, i, rows);
+                }
             }
+
+            return renderTable("Fuentes de páginas",List.of("Página","Nombre","Tipo","Base","Incrustada"),rows);
+        } catch (Exception e) {
+            return renderTable("Fuentes de páginas",e);
         }
-        
-        return renderTable("Fuentes de páginas",List.of("Página","Nombre","Tipo","Base","Incrustada"),rows);
     }    
     
     
@@ -220,31 +243,35 @@ public class DocumentoPdfHelper {
     
     
     private static  String toStringResultadoFirmas(DocumentoPdf documentoPdf) {
-        List<List<Object>> rows=new ArrayList<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        try {
+            List<List<Object>> rows = new ArrayList<>();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-        for(ResultadoFirma resultadoFirma:documentoPdf.getFirmasPdf()) {
-            List<Object> row=new ArrayList<>();
+            for (ResultadoFirma resultadoFirma : documentoPdf.getFirmasPdf()) {
+                List<Object> row = new ArrayList<>();
 
-            row.add(resultadoFirma.getFechaFirma());
-            row.add(resultadoFirma.isCorrecta());
-            row.add(resultadoFirma.getNombreCampo());
-            row.add(resultadoFirma.getDatosCertificado().getCnSubject());
-            row.add(resultadoFirma.getDatosCertificado().getNombre());
-            row.add(resultadoFirma.getDatosCertificado().getApellidos());
-            row.add(resultadoFirma.getDatosCertificado().getDNI());
-            row.add(resultadoFirma.getDatosCertificado().getCnIssuer());
-            row.add(resultadoFirma.getDatosCertificado().getTipoEmisorCertificado());
-            row.add(resultadoFirma.getDatosCertificado().getTipoCertificado());
-            row.add(resultadoFirma.getDatosCertificado().isSelloTiempo());
-            row.add(simpleDateFormat.format(resultadoFirma.getDatosCertificado().getValidoNoAntesDe()));
-            row.add(simpleDateFormat.format(resultadoFirma.getDatosCertificado().getValidoNoDespuesDe()));
-            row.add(resultadoFirma.getDatosCertificado().isValidoEnListaCertificadosConfiables());
+                row.add(resultadoFirma.getFechaFirma());
+                row.add(resultadoFirma.isCorrecta());
+                row.add(resultadoFirma.getNombreCampo());
+                row.add(resultadoFirma.getDatosCertificado().getCnSubject());
+                row.add(resultadoFirma.getDatosCertificado().getNombre());
+                row.add(resultadoFirma.getDatosCertificado().getApellidos());
+                row.add(resultadoFirma.getDatosCertificado().getDNI());
+                row.add(resultadoFirma.getDatosCertificado().getCnIssuer());
+                row.add(resultadoFirma.getDatosCertificado().getTipoEmisorCertificado());
+                row.add(resultadoFirma.getDatosCertificado().getTipoCertificado());
+                row.add(resultadoFirma.getDatosCertificado().isSelloTiempo());
+                row.add(simpleDateFormat.format(resultadoFirma.getDatosCertificado().getValidoNoAntesDe()));
+                row.add(simpleDateFormat.format(resultadoFirma.getDatosCertificado().getValidoNoDespuesDe()));
+                row.add(resultadoFirma.getDatosCertificado().isValidoEnListaCertificadosConfiables());
 
-            rows.add(row); 
+                rows.add(row);
+            }
+
+            return renderTable("Firmas", List.of("Fecha Firma", "Correcta", "Nombre Campo", "CN Firmante", "Nombre", "Apellidos", "DNI", "CN Emisor", "Tipo emisor certificado", "Tipo Certificado", "Sello tiempo", "Fecha inicio", "Fecha fin", "Valido TSL"), rows);
+        } catch (Exception e) {
+            return renderTable("Firmas", e);
         }
-        
-        return renderTable("Firmas",List.of("Fecha Firma","Correcta","Nombre Campo","CN Firmante","Nombre","Apellidos","DNI","CN Emisor","Tipo emisor certificado","Tipo Certificado","Sello tiempo","Fecha inicio","Fecha fin","Valido TSL"),rows);
         
     }
     
@@ -272,7 +299,7 @@ public class DocumentoPdfHelper {
             return renderTable("MXP Documento",List.of("Path","Value","Namespace"),rows);            
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return renderTable("MXP Documento",e);
         }
     }    
     
@@ -307,64 +334,75 @@ public class DocumentoPdfHelper {
             return renderTable("MXP Página",List.of("Página","Path","Value","Namespace"),rows);            
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return renderTable("MXP Página",e);
         }
     }    
     
     
     private static  String toStringOtrosDatos(PdfDocument pdfDocument) {
-        List<List<Object>> rows=new ArrayList<>();
-        List<Object> row;
-                
-        row=new ArrayList<>();
-        row.add("Tiene OutputIntent");
-        row.add(PdfDocumentHelper.hasOutputIntent(pdfDocument));
-        rows.add(row);
-        
-        
-        row=new ArrayList<>();
-        row.add("Valor PdfConformance");
-        row.add(PdfDocumentHelper.getPdfConformance(pdfDocument));
-        rows.add(row);
+        try {
+            List<List<Object>> rows = new ArrayList<>();
+            List<Object> row;
 
-        return renderTable("Otros Datos",List.of("Clave","Valor"),rows);            
+            row = new ArrayList<>();
+            row.add("Tiene OutputIntent");
+            row.add(PdfDocumentHelper.hasOutputIntent(pdfDocument));
+            rows.add(row);
 
+
+            row = new ArrayList<>();
+            row.add("Valor PdfConformance");
+            row.add(PdfDocumentHelper.getPdfConformance(pdfDocument));
+            rows.add(row);
+
+            return renderTable("Otros Datos", List.of("Clave", "Valor"), rows);
+        } catch (Exception e) {
+            return renderTable("Otros Datos", e);
+        }
 
     }
     private static  String toStringVeraPdf(byte[] datos) {
-        List<List<Object>> rows=new ArrayList<>();
+        try {
+            List<List<Object>> rows = new ArrayList<>();
 
-        Map<PDFAFlavour,List<String>> pdfAFlavourValid=VeraPdfHelper.getPDFAFlavourValid(datos);
-        for(Map.Entry<PDFAFlavour,List<String>> entry:pdfAFlavourValid.entrySet()) {
+            Map<PDFAFlavour, List<String>> pdfAFlavourValid = VeraPdfHelper.getPDFAFlavourValid(datos);
+            for (Map.Entry<PDFAFlavour, List<String>> entry : pdfAFlavourValid.entrySet()) {
 
-            PDFAFlavour pdfAFlavour=entry.getKey();
-            List<String> mensajesFallo=entry.getValue();
+                PDFAFlavour pdfAFlavour = entry.getKey();
+                List<String> mensajesFallo = entry.getValue();
 
-            if (mensajesFallo==null) {
-                List<Object> row=new ArrayList<>();
-                row.add(pdfAFlavour);
-                row.add("Correcto");
-                rows.add(row);
-            } else {
-                for(String mensajeFallo:mensajesFallo) {
-                    List<Object> row=new ArrayList<>();
+                if (mensajesFallo == null) {
+                    List<Object> row = new ArrayList<>();
                     row.add(pdfAFlavour);
-                    row.add(mensajeFallo);
+                    row.add("Correcto");
                     rows.add(row);
+                } else {
+                    for (String mensajeFallo : mensajesFallo) {
+                        List<Object> row = new ArrayList<>();
+                        row.add(pdfAFlavour);
+                        row.add(mensajeFallo);
+                        rows.add(row);
+                    }
                 }
             }
-        }
 
-        return renderTable("Verificacion PDF/A Conformance con VeraPdf",List.of("Versión","Resultado"),rows);
+            return renderTable("Verificacion PDF/A Conformance con VeraPdf", List.of("Versión", "Resultado"), rows);
+        } catch (Exception e) {
+            return renderTable("Verificacion PDF/A Conformance con VeraPdf", e);
+        }
 
 
     }
 
     private static  String renderTable(String tableName,Exception ex) {
         List<List<Object>> rows=new ArrayList<>();
-        List<Object> row=new ArrayList<>();
-        row.add(ex.toString());
-        rows.add(row);
+
+        for(String trace:getStackTrace(ex,0)) {
+            List<Object> row=new ArrayList<>();
+            row.add(trace);
+            rows.add(row);
+        }
+
         return renderTable(tableName,List.of("Error"),rows);
     }
 
@@ -438,6 +476,25 @@ public class DocumentoPdfHelper {
         }       
         
     }
-    
-    
+
+    private static List<String> getStackTrace(Throwable ex,int deep) {
+        String tabulador="\u00B7".repeat(4);
+
+        List<String> stackTrace=new ArrayList<>();
+
+        if (deep==0) {
+            stackTrace.add(ex.getLocalizedMessage());
+        }
+
+        for (StackTraceElement stackTraceElement : ex.getStackTrace()) {
+            stackTrace.add(tabulador.repeat(deep)+stackTraceElement.toString());
+        }
+
+        if (ex.getCause()!=null) {
+            stackTrace.add(tabulador.repeat(deep)+"Caused by:"+ex.getCause().getLocalizedMessage());
+            stackTrace.addAll(getStackTrace(ex.getCause(),deep+1));
+        }
+
+        return stackTrace;
+    }
 }
