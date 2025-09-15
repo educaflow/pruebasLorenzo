@@ -360,6 +360,14 @@ public class DocumentoPdfHelper {
 
     }
 
+    private static  String renderTable(String tableName,Exception ex) {
+        List<List<Object>> rows=new ArrayList<>();
+        List<Object> row=new ArrayList<>();
+        row.add(ex.toString());
+        rows.add(row);
+        return renderTable(tableName,List.of("Error"),rows);
+    }
+
     private static  String renderTable(String tableName,List<String> heads,List<List<Object>> rows) {
 
         List<String> titulo=new ArrayList<>();
