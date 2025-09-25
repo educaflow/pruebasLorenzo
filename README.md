@@ -34,14 +34,24 @@ se pueden buscar por esos campos en la barra de búsqueda de la parte superior d
 Pero NO se puede buscar el campo es "Enum" pero se podría modificar añadiendo el tipo "enum" 
 en el switch de "axelor-front/src/view-containers/advance-search/utils.ts" línea 292 en la función "getFreeSearchCriteria"
 
-#Traducción
+# Traducción
 Es necesario instalar `sudo apt install apertium apertium-spa-cat cg3 vislcg3 apertium-all-dev`
 
-# Funciones que se pueden usar en las plantillas de React cuando se usa "<template>"
+# Funciones que se pueden usar en las plantillas de React cuando se usa \<template\>
 Están en el fichero `/hooks/use-parser/context/script-context.ts`
 
-#Que un pdf no sea PDF/A
+# Que un pdf no sea PDF/A
 `gs -dPDFA=0 -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=salida.pdf entrada.pdf`
 
-#Portafirmas
+# Portafirmas
 Documentación oficial: [Descargas](https://administracionelectronica.gob.es/ctt/portafirmas/descargas)
+
+# Certificados FNMT:
+```
+AC RAÍZ FNMT-RCM
+├── AC FNMT Usuarios          → Persona Física
+├── AC Representación         → Representantes de entidades
+├── AC Sello FNMT-RCM         → Sello electrónico de entidad
+└── AC Administración Pública → Entidades públicas
+```
+
