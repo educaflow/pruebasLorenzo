@@ -42,3 +42,6 @@ Están en el fichero `/hooks/use-parser/context/script-context.ts`
 
 #Que un pdf no sea PDF/A
 `gs -dPDFA=0 -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=salida.pdf entrada.pdf`
+
+#Portafirmas
+Documentación oficial: [Descargas](https://administracionelectronica.gob.es/ctt/portafirmas/descargas)
