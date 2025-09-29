@@ -1,6 +1,7 @@
 package com.educaflow.common.criptografia.config;
 
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 public class AlmacenCertificadosConfiablesConfig {

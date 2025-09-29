@@ -91,5 +91,34 @@ public class CertificateParser {
             recursiveFindWithLocation(tagged.getBaseObject(), targetOid, location, results);
         }
     }
+    
+    
+    /**
+     * Devuelve el DNI a partir de un valor con prefijo "IDCES-".
+     * 
+     * @param value Ejemplo: "IDCES-73544886V"
+     * @return El DNI sin prefijo (ej. "73544886V")
+     * @throws IllegalArgumentException si el valor no empieza por "IDCES-"
+     */
+    public static String getDNIFromIDCES(String value) {
+        if (value == null || !value.startsWith("IDCES-")) {
+            throw new IllegalArgumentException("Valor inválido para DNI con prefijo IDCES: " + value);
+        }
+        return value.substring("IDCES-".length());
+    }
+
+    /**
+     * Devuelve el CIF/NIF a partir de un valor con prefijo "VATES-".
+     * 
+     * @param value Ejemplo: "VATES-Q9655676F"
+     * @return El CIF/NIF sin prefijo (ej. "Q9655676F")
+     * @throws IllegalArgumentException si el valor no empieza por "VATES-"
+     */
+    public static String getCIFFromVATES(String value) {
+        if (value == null || !value.startsWith("VATES-")) {
+            throw new IllegalArgumentException("Valor inválido para CIF con prefijo VATES: " + value);
+        }
+        return value.substring("VATES-".length());
+    }    
 
 }

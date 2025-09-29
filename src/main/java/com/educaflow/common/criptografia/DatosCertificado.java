@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.educaflow.common.criptografia;
 
+import java.security.cert.X509Certificate;
 import java.util.Date;
 
 /**
@@ -22,6 +19,8 @@ public interface DatosCertificado {
     boolean isSelloTiempo();
     Date getValidoNoAntesDe();
     Date getValidoNoDespuesDe();
+    X509Certificate getCertificate();
+    String getCif();
 
     /**
      * Valida contra https://sedediatid.digital.gob.es/Prestadores/Paginas/Inicio.aspx

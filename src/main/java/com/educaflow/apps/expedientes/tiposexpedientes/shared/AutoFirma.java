@@ -19,6 +19,7 @@ public class AutoFirma {
     private final Class<? extends Expediente> expedienteClass;
     private Rectangulo rectangulo;
     private String nif=null;
+    private String motivo =null;
     private String sourceField;
     private String targetField;
     private String sufijo="_signed";
@@ -43,6 +44,7 @@ public class AutoFirma {
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("nif", autofirma.getNif());
+        payload.put("motivo", autofirma.getMotivo());
         payload.put("sourceField", autofirma.getSourceField());
         payload.put("sourceFieldClass", getModelClassFromField(autofirma.getExpedienteClass(), autofirma.getSourceField()).getName());
         payload.put("targetField", autofirma.getTargetField());
@@ -78,11 +80,17 @@ public class AutoFirma {
         this.nif = nif;
         return this;
     }
+    public AutoFirma setMotivo(String motivo) {
+        this.motivo = motivo;
+        return this;
+    }
 
     public String getNif() {
         return nif;
     }
-
+    public String getMotivo() {
+        return motivo;
+    }
     public AutoFirma setSourceField(String sourceField) {
         checkFieldExists(sourceField);
 

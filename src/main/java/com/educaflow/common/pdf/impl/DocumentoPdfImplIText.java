@@ -1,7 +1,6 @@
 package com.educaflow.common.pdf.impl;
 
 import com.educaflow.common.criptografia.*;
-import com.educaflow.common.criptografia.impl.DatosCertificadoImpl;
 import com.educaflow.common.criptografia.impl.helper.CriptografiaUtil;
 import com.educaflow.common.pdf.*;
 import com.educaflow.common.pdf.impl.helper.DocumentoPdfHelper;
@@ -27,6 +26,7 @@ import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPKCS7;
+import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignatureUtil;
@@ -112,8 +112,9 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
 
         for (String signatureName : signatureNames) {
             PdfPKCS7 pkcs7 = signatureUtil.readSignatureData(signatureName);
+            PdfSignature pdfSignature=signatureUtil.getSignature(signatureName);
 
-            ResultadoFirma resultadoFirma=new ResultadoFirmaImpl(signatureName,pkcs7);
+            ResultadoFirma resultadoFirma=new ResultadoFirmaImpl(signatureName,pkcs7,pdfSignature);
             resultadoFirmas.add(resultadoFirma);
         }
 
@@ -140,7 +141,7 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
                 throw new RuntimeException("No existe ningun formulario en el pdf");
             }
 
-            for(Map.Entry<String, String> entry:valores.entrySet()) {
+            for(Entry<String, String> entry:valores.entrySet()) {
                 String nombre=entry.getKey();
                 String valor=entry.getValue();
 
@@ -307,6 +308,9 @@ public class DocumentoPdfImplIText implements DocumentoPdf {
         signerProperties.setPageNumber(campoFirma.getNumeroPagina());
         signerProperties.setSignatureAppearance(signatureFieldAppearance);
         signerProperties.setClaimedSignDate(toCalendar(campoFirma.getFechaFirma()));
+        if (campoFirma.getMotivo()!=null) {
+            signerProperties.setReason(campoFirma.getMotivo());
+        }
 
         return signerProperties;
     }

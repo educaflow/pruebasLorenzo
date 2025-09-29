@@ -12,6 +12,7 @@ public class CampoFirma {
     public final static int DEFAULT_NUMERO_PAGINA=-1;
 
     private String mensaje=null;
+    private String motivo=null;
     private Rectangulo rectanguloMensaje=null;
     private int fontSize=DEFAULT_FONT_SIZE;
     private int numeroPagina=DEFAULT_NUMERO_PAGINA;
@@ -25,6 +26,11 @@ public class CampoFirma {
 
     public CampoFirma setMensaje(String mensaje) {
         this.mensaje=mensaje;
+        return this;
+    }
+
+    public CampoFirma setMotivo(String motivo) {
+        this.motivo=motivo;
         return this;
     }
 
@@ -60,6 +66,10 @@ public class CampoFirma {
      */
     public String getMensaje() {
         return mensaje;
+    }
+
+    public String getMotivo() {
+        return motivo;
     }
 
     /**

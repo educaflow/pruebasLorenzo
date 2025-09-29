@@ -250,25 +250,29 @@ public class DocumentoPdfHelper {
             for (ResultadoFirma resultadoFirma : documentoPdf.getFirmasPdf()) {
                 List<Object> row = new ArrayList<>();
 
+
                 row.add(resultadoFirma.getFechaFirma());
                 row.add(resultadoFirma.isCorrecta());
+                row.add(resultadoFirma.getDatosCertificado().isValidoEnListaCertificadosConfiables());
+                row.add(resultadoFirma.getDatosCertificado().isSelloTiempo());
                 row.add(resultadoFirma.getNombreCampo());
                 row.add(resultadoFirma.getDatosCertificado().getCnSubject());
                 row.add(resultadoFirma.getDatosCertificado().getNombre());
                 row.add(resultadoFirma.getDatosCertificado().getApellidos());
                 row.add(resultadoFirma.getDatosCertificado().getDNI());
+                row.add(resultadoFirma.getDatosCertificado().getCif());
                 row.add(resultadoFirma.getDatosCertificado().getCnIssuer());
                 row.add(resultadoFirma.getDatosCertificado().getTipoEmisorCertificado());
                 row.add(resultadoFirma.getDatosCertificado().getTipoCertificado());
-                row.add(resultadoFirma.getDatosCertificado().isSelloTiempo());
                 row.add(simpleDateFormat.format(resultadoFirma.getDatosCertificado().getValidoNoAntesDe()));
                 row.add(simpleDateFormat.format(resultadoFirma.getDatosCertificado().getValidoNoDespuesDe()));
-                row.add(resultadoFirma.getDatosCertificado().isValidoEnListaCertificadosConfiables());
+                row.add(resultadoFirma.getMotivo());
+
 
                 rows.add(row);
             }
 
-            return renderTable("Firmas", List.of("Fecha Firma", "Correcta", "Nombre Campo", "CN Firmante", "Nombre", "Apellidos", "DNI", "CN Emisor", "Tipo emisor certificado", "Tipo Certificado", "Sello tiempo", "Fecha inicio", "Fecha fin", "Valido TSL"), rows);
+            return renderTable("Firmas", List.of("Fecha Firma", "Correcta", "Valido según TSL", "Es sello tiempo", "Nombre Campo", "CN Firmante", "Nombre", "Apellidos", "DNI", "CIF", "CN Emisor", "Tipo emisor certificado", "Tipo Certificado", "Fecha inicio", "Fecha fin","Motivo"), rows);
         } catch (Exception e) {
             return renderTable("Firmas", e);
         }
@@ -279,8 +283,12 @@ public class DocumentoPdfHelper {
         try {
             List<List<Object>> rows=new ArrayList<>();
         
-       
-            XMPMeta xmpMeta = pdfDocument.getXmpMetadata();
+            XMPMeta xmpMeta;
+            try {
+                xmpMeta = pdfDocument.getXmpMetadata();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
             if (xmpMeta!=null) {
                 XMPIterator iterator = xmpMeta.iterator();
                 while (iterator.hasNext()) {

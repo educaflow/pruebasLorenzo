@@ -7,8 +7,6 @@ import com.educaflow.apps.expedientes.db.JustificacionFaltaProfesorado;
 import com.educaflow.apps.expedientes.tiposexpedientes.shared.AutoFirma;
 import com.educaflow.common.pdf.Rectangulo;
 
-import java.util.Map;
-
 public class ActionController {
 
     @CallMethod
@@ -17,6 +15,7 @@ public class ActionController {
         AutoFirma autofirma = (new AutoFirma(JustificacionFaltaProfesorado.class))
             .setRectangulo(new Rectangulo(300,10,120,100))
             .setPageNumber(1)
+            .setMotivo("Registrar documentación presentada por el usuario")
             .setSourceField("documentacionParaPresentarSinFirmar")
             .setTargetField("documentacionPresentadaFirmadaUsuario");
 

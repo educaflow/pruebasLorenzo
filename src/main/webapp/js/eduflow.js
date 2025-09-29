@@ -34,7 +34,8 @@ globalThis.signDocument = async function(context, payload) {
                 "upperRightY": payload.signaturePositionOnPageUpperRightY
             },
             pageNumber: payload.pageNumber,
-            fontSize: payload.fontSize
+            fontSize: payload.fontSize,
+            signReason: payload.motivo
         };
 
         console.log("Contexto del expediente:", expedienteContext);
@@ -133,6 +134,10 @@ function firmarBase64(base64Pdf, expedienteContext) {
                 "signaturePositionOnPageUpperRightY=" + expedienteContext.signaturePositionOnPage.upperRightY + "\n" +
                 "signaturePage=" + expedienteContext.pageNumber + "\n" +
                 "layer2FontSize=" + expedienteContext.fontSize + "";
+
+        if (expedienteContext.signReason && expedienteContext.signReason.trim() !== "") {
+            params += "\nsignReason=" + expedienteContext.signReason;
+        }
 
         if (expedienteContext.nif && expedienteContext.nif.trim() !== "") {
             params += "\nheadless=true\nfilters.1=subject.rfc2254:(SERIALNUMBER=*" + expedienteContext.nif + "*);nonexpired:\nfilters.2=subject.rfc2254:(CN=*" + expedienteContext.nif + "*);nonexpired:";

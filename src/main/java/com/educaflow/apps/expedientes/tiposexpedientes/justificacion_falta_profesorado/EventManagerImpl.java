@@ -66,6 +66,7 @@ public class EventManagerImpl extends com.educaflow.apps.expedientes.common.Even
         AlmacenClaveDispositivo almacenClave=new AlmacenClaveDispositivo( 0,"CertFirmaDigitalDirector");
         CampoFirma campoFirma=new CampoFirma(new Rectangulo(80,10,120,100))
                 .setMensaje("Recibido en el centro CIPFP Mislata el día "+ LocalDate.now())
+                .setMotivo("Registro por parte del director que ha recibido la  documentación presentada por el usuario")
                 .setImage(sello)
                 .setNumeroPagina(1);
 

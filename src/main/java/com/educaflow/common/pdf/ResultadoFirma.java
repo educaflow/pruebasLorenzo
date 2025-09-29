@@ -10,4 +10,5 @@ public interface ResultadoFirma {
     LocalDateTime getFechaFirma();
     DatosCertificado getDatosCertificado();
     String getNombreCampo();
+    String getMotivo();
 }

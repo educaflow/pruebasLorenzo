@@ -1,10 +1,10 @@
 package com.educaflow.common.pdf.impl;
 
 import com.educaflow.common.criptografia.EntornoCriptografico;
-import com.educaflow.common.criptografia.impl.DatosCertificadoImpl;
 import com.educaflow.common.criptografia.DatosCertificado;
 import com.educaflow.common.pdf.ResultadoFirma;
 import com.itextpdf.signatures.PdfPKCS7;
+import com.itextpdf.signatures.PdfSignature;
 
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
@@ -17,8 +17,9 @@ public class ResultadoFirmaImpl implements ResultadoFirma {
     private LocalDateTime fechaFirma;
     private final boolean correcta;
     private final String nombreCampo;
+    private String motivo;
 
-    public ResultadoFirmaImpl(String nombreCampo,PdfPKCS7 pdfPKCS7) {
+    public ResultadoFirmaImpl(String nombreCampo, PdfPKCS7 pdfPKCS7, PdfSignature pdfSignature) {
 
         try {
             X509Certificate certificate = pdfPKCS7.getSigningCertificate();
@@ -28,9 +29,15 @@ public class ResultadoFirmaImpl implements ResultadoFirma {
             this.fechaFirma=toLocalDateTime(signDateCalendar);
             this.nombreCampo=nombreCampo;
             this.correcta = pdfPKCS7.verifySignatureIntegrityAndAuthenticity();
+            this.motivo = pdfSignature.getReason();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    @Override
+    public String getMotivo() {
+        return motivo;
     }
 
     @Override
