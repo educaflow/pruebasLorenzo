@@ -177,13 +177,13 @@ public class DatosCertificadoImpl implements DatosCertificado {
 
     }
 
-    private TipoEmisorCertificado getTipoEmisorCertificado(String OrganizacionIssuer,String cnIssuer) {
+    private TipoEmisorCertificado getTipoEmisorCertificado(String organizacionIssuer,String cnIssuer) {
         TipoEmisorCertificado tipoEmisorCertificado;
-        if (OrganizacionIssuer.contains("FNMT") && !cnIssuer.contains("ACCV") && !cnIssuer.contains("DNIE")) {
+        if (organizacionIssuer.contains("FNMT") && !cnIssuer.contains("ACCV") && !cnIssuer.contains("DNIE")) {
             tipoEmisorCertificado = TipoEmisorCertificado.FNMT;
-        } else if (!OrganizacionIssuer.contains("FNMT") && cnIssuer.contains("ACCV") && !cnIssuer.contains("DNIE")) {
+        } else if (!organizacionIssuer.contains("FNMT") && cnIssuer.contains("ACCV") && !cnIssuer.contains("DNIE")) {
             tipoEmisorCertificado = TipoEmisorCertificado.ACCV;
-        } else if (!OrganizacionIssuer.contains("FNMT") && !cnIssuer.contains("ACCV") && cnIssuer.contains("DNIE")) {
+        } else if (!organizacionIssuer.contains("FNMT") && !cnIssuer.contains("ACCV") && cnIssuer.contains("DNIE")) {
             tipoEmisorCertificado = TipoEmisorCertificado.DNI;
         } else {
             tipoEmisorCertificado = null;
